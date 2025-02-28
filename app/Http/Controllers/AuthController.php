@@ -14,19 +14,20 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'username'   => 'required|unique:users,username',
             'first_name' => 'required|string',
             'last_name'  => 'required|string',
-            'email'      => [
+            'username'   => 'required|unique:users,username',
+            'email' => [
                 'required',
-                'unique:users,email',
                 'email',
-                function ($value, $fail) {
+                'unique:users,email',
+                function ($attribute, $value, $fail) {
                     if (!str_ends_with($value, '@mu.edu.lb')) {
-                        $fail('You should use your university email. (@mu.edu.lb)');
+                        $fail('The email must be an email address with the domain @mu.edu.lb.');
                     }
                 },
             ],
+
             'password' => 'required|string|min:8|confirmed',
         ]);
 
