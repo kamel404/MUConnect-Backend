@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('avatar')->nullable()->default('/images/default.png');
             $table->text('bio')->nullable();
-            $table->string('role')->default('student'); // removed and managed by spatie
-            $table->integer('points')->default(0);
+            $table->unsignedInteger('points')->default(0);
             $table->json('badges')->nullable();
             $table->boolean('is_active')->default(true);
             $table->enum('status', ['active', 'suspended', 'banned'])->default('active');

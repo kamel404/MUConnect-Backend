@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Faculty;
 
 class User extends Authenticatable
 {
@@ -39,4 +40,9 @@ class User extends Authenticatable
         'badges' => 'array',
         'is_active' => 'boolean',
     ];
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
+    }
 }

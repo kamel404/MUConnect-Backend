@@ -32,6 +32,8 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($validated);
+        // Assign default role
+        $user->assignRole('student');
         return response()->json(['message' => 'User created successfully', 'user' => $user]);
     }
 

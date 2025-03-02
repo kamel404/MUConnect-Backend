@@ -64,4 +64,22 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User deleted successfully']);
     }
+    
+    // get user role
+    public function getUserRole($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $roles = $user->getRoleNames(); // Returns a collection of role names
+
+        return response()->json([
+            'user_id' => $user->id,
+            'username' => $user->username,
+            'roles' => $roles
+        ]);
+    }
 }
