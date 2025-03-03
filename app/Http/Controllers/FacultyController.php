@@ -71,20 +71,23 @@ class FacultyController extends Controller
     }
 
     /**
-    * Search for a name
+    * Search for a query (name and abbreviation).
     */
-    public function search($name)
+    public function search(Request $request)
     {
-        $faculty = Faculty::where('name', 'like', '%' . $name . '%')->get();
-        return response()->json($faculty);
+        $query = $request->input('query');
+        $faculties = Faculty::where('name', 'LIKE', "%$query%")
+            ->orWhere('abbreviation', 'LIKE', "%$query%")
+            ->paginate(10);
+
+        return response()->json($faculties);
     }
 
-    /**
-    * Search for an abbreviation
-    */
-    public function searchAbbreviation($abbreviation)
+    // get faculty majors
+    public function getFacultyMajors($id)
     {
-        $faculty = Faculty::where('abbreviation', 'like', '%' . $abbreviation . '%')->get();
-        return response()->json($faculty);
+        $faculty = Faculty::findOrFail($id);
+        $majors = $faculty->majors;
+        return response()->json($majors);
     }
 }

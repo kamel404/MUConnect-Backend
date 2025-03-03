@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Faculty::class);
     }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
 }

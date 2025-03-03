@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\MajorController;
 
 // User routes (public)
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -14,21 +15,38 @@ Route::get('/users/{id}', [UserController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Faculty routes (protected)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/faculties', [FacultyController::class, 'index'])->middleware('role:super-admin|moderator');
+// Super Admin and Moderator Routes
+Route::middleware(['auth:sanctum' ,('role:super-admin|moderator')])->group(function () {
+
+    // Faculty routes (protected)
+    Route::get('/faculties', [FacultyController::class, 'index']);
     Route::post('/faculties', [FacultyController::class, 'store']);
     Route::get('/faculties/{id}', [FacultyController::class, 'show']);
     Route::put('/faculties/{id}', [FacultyController::class, 'update']);
     Route::delete('/faculties/{id}', [FacultyController::class, 'destroy']);
+    Route::get('/faculties/{id}/majors', [FacultyController::class, 'getFacultyMajors']);
 
-    Route::get('faculties/search/{name}', [FacultyController::class, 'search']);
-    Route::get('faculties/search/abbreviation/{abbreviation}', [FacultyController::class, 'searchAbbreviation']);
+    // Major routes (protected)
+    Route::get('/majors', [MajorController::class, 'index']);
+    Route::post('/majors', [MajorController::class, 'store']);
+    Route::get('/majors/{id}', [MajorController::class, 'show']);
+    Route::put('/majors/{id}', [MajorController::class, 'update']);
+    Route::delete('/majors/{id}', [MajorController::class, 'destroy']);
+    Route::get('/majors/{id}/students', [MajorController::class, 'getMajorStudents']);
+
 });
 
 
-// Auth routes (protected)
+// Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Faculty routes (protected)
+    Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
+
+    // Major routes (protected)
+    Route::get('majors/search/{query}', [MajorController::class, 'search']);
+
+    // User routes (protected)
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/users/{id}', [UserController::class, 'update']);

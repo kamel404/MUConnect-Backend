@@ -22,5 +22,10 @@ class Faculty extends Model
     {
         return $this->hasMany(User::class);
     }
-           
+
+    // Majors that belong to the faculty
+    public function majors()
+    {
+        return $this->hasMany(Major::class);
+    }
 }
