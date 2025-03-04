@@ -18,7 +18,7 @@ class MajorController extends Controller
     }
 
     /**
-     * Show major profile
+     * Show major 
      */
     public function show($id)
     {

@@ -14,11 +14,33 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            // e.g: Faculty 
-            'create faculty',
+            // Faculty 
+            'get faculties', // index
+            'show faculty', // show
+            'create faculty', // store
             'update faculty',
-            'view faculty',
             'delete faculty',
+            'view faculty majors', // getFacultyMajors
+            'search faculty', // search
+            // Major
+            'get majors', // index
+            'create major', //store
+            'update major',
+            'view major', //show
+            'delete major',
+            'view major students', // getMajorStudents
+            'search major',
+            // User
+            'get users', // index
+            'view user', // show
+            'update user',
+            'delete user',
+            'view user roles', // getUserRole
+            'update user roles', //updateUserRole
+            // Auth
+            'register',
+            'login',
+            'logout',
         ];
 
         foreach ($permissions as $permission) {

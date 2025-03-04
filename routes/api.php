@@ -34,6 +34,11 @@ Route::middleware(['auth:sanctum' ,('role:super-admin|moderator')])->group(funct
     Route::delete('/majors/{id}', [MajorController::class, 'destroy']);
     Route::get('/majors/{id}/students', [MajorController::class, 'getMajorStudents']);
 
+    // User routes (protected)
+    Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
+    Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
+    
+
 });
 
 
@@ -51,6 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
-    Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
+    
 });
 

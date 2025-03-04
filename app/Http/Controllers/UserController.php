@@ -82,4 +82,22 @@ class UserController extends Controller
             'roles' => $roles
         ]);
     }
+
+    // update user role
+    public function updateUserRole(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $validated = $request->validate([
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
+        $user->syncRoles([$validated['role']]);
+
+        return response()->json(['message' => 'User role updated successfully']);
+    }
 }
