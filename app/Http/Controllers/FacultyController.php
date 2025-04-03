@@ -11,7 +11,7 @@ class FacultyController extends Controller
      * Display a listing of the faculties.
     */
     public function index()
-    {
+    {   
         $faculties = Faculty::all();
         return response()->json($faculties);
     }
@@ -20,9 +20,10 @@ class FacultyController extends Controller
     * Store a newly created faculty in storage.
     */
     public function store(Request $request)
-    {
+    {   //removed the unique for testing todo
+        dd("success");
         $validatedData = $request->validate([
-            'name'         => 'required|string|unique:faculties,name',
+            'name'         => 'required|string',
             'description'  => 'string', // optional
             'abbreviation' => 'required|string|unique:faculties,abbreviation',
         ]);
