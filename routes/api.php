@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -7,10 +8,19 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\MajorController;
+<<<<<<< HEAD
 use App\Http\Controllers\PostController;
+=======
+use App\Http\Controllers\DocumentController;
+>>>>>>> ed1d9c871cb10d9425031bf5006452d7512174a1
 
 // User routes (public)
 Route::get('/users/{id}', [UserController::class, 'show']);
+
+Route::post('/upload', [DocumentController::class, 'upload']) -> WithoutMiddleware(['auth']); // Upload a document
+Route::get('/documents', [DocumentController::class, 'list']); // List all documents
+Route::get('/download/{id}', [DocumentController::class, 'download']); // Download a document by ID
+
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
