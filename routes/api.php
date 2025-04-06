@@ -8,11 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\MajorController;
-<<<<<<< HEAD
 use App\Http\Controllers\PostController;
-=======
 use App\Http\Controllers\DocumentController;
->>>>>>> ed1d9c871cb10d9425031bf5006452d7512174a1
 
 // User routes (public)
 Route::get('/users/{id}', [UserController::class, 'show']);
