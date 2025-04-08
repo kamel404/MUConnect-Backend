@@ -10,6 +10,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\StudyGroupController;
 
 // User routes (public)
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -70,6 +71,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{id}', [PostController::class, 'update']);
-    Route::delete('/posts/{id}', [PostController::class, 'destroy']);    
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+    
+    // Study Groups routes
+    Route::get('/study-groups', [StudyGroupController::class, 'index']);
+    Route::post('/study-groups', [StudyGroupController::class, 'store']);
+    Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
+    Route::put('/study-groups/{id}', [StudyGroupController::class, 'update']);
+    Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
 });
 

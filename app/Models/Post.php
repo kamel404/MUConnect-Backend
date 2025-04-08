@@ -26,4 +26,8 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function studyGroup(){
+        return $this->hasOne(StudyGroup::class);
+    }
 }
