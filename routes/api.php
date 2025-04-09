@@ -11,6 +11,7 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StudyGroupController;
+use App\Http\Controllers\EventController;
 
 // User routes (public)
 Route::get('/users/{id}', [UserController::class, 'show']);
@@ -79,5 +80,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
     Route::put('/study-groups/{id}', [StudyGroupController::class, 'update']);
     Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
+
+    // Events routes
+    Route::get('/events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'store']);
+    Route::get('/events/{id}', [EventController::class, 'show']);
+    Route::put('/events/{id}', [EventController::class, 'update']);
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);
 });
 

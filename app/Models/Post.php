@@ -30,4 +30,8 @@ class Post extends Model
     public function studyGroup(){
         return $this->hasOne(StudyGroup::class);
     }
+
+    public function event(){
+        return $this->hasOne(Event::class);
+    }
 }
