@@ -25,8 +25,8 @@ Route::get('/download/{id}', [DocumentController::class, 'download']); // Downlo
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Super Admin and Moderator Routes
-Route::middleware(['auth:sanctum' ,('role:super-admin|moderator')])->group(function () {
+// Moderator Routes
+Route::middleware(['auth:sanctum' ,('role:moderator')])->group(function () {
 
     // Faculty routes (protected)
     Route::get('/faculties', [FacultyController::class, 'index']);

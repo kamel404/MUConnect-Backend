@@ -12,39 +12,17 @@ class AssignPermissionsSeeder extends Seeder
     {
 
         // Fetch roles
-        $superAdmin = Role::where('name', 'super-admin')->first();
         $moderator = Role::where('name', 'moderator')->first();
         $student = Role::where('name', 'student')->first();
 
         // Fetch permissions
         $allPermissions = Permission::all(); // All permissions
 
-        // Assign all permissions to Super Admin
-        if ($superAdmin) {
-            $superAdmin->syncPermissions($allPermissions);
+        // Assign all permissions to Moderator
+        if ($moderator) {
+            $moderator->syncPermissions($allPermissions);
         }
 
-        // Assign specific permissions to Moderator
-        if ($moderator) {
-            $moderator->syncPermissions([
-                'get faculties',
-                'show faculty',
-                'create faculty',
-                'update faculty',
-                'delete faculty',
-                'get majors',
-                'create major',
-                'update major',
-                'view major',
-                'delete major',
-                'get users',
-                'view user',
-                'update user',
-                'delete user',
-                'view user roles',
-                'update user roles',
-            ]);
-        }
 
         // Assign limited permissions to Student
         if ($student) {
