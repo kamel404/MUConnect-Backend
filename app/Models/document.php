@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class document extends Model
 {
+    
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'title',
@@ -18,7 +20,8 @@ class document extends Model
     
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class)
+            ->withTimestamps();
     }
 }
     

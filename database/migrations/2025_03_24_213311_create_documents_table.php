@@ -13,23 +13,17 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table ->foreignId('user_id')->constrained()->onDelete('cascade');
+//            $table ->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('file_path');
+            $table->string('checksum')->unique();
             $table->string('mime_type');
             $table->integer('size');
             $table->enum('visibility', ['public', 'private'])->default('private');
             $table->timestamps();
              
-            /*    'user_id',
-        'title',
-        'description',
-        'file_path',
-        'mime_type',
-        'size',
-        'visibility',*/
-            
+
 
         });
     }

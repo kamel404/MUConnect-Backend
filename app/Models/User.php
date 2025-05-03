@@ -45,6 +45,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Faculty::class);
     }
+    public function doucments()
+    {
+        return $this->belongsToMany(document::class)
+            ->withTimestamps();
+
+    }
 
     public function major()
     {

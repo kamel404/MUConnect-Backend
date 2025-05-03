@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -15,8 +17,8 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'first_name' => 'required|string',
-            'last_name'  => 'required|string',
-            'username'   => 'required|unique:users,username',
+            'last_name' => 'required|string',
+            'username' => 'required|unique:users,username',
             'email' => [
                 'required',
                 'email',
@@ -42,40 +44,38 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validate that the login identifier and password are provided
-        $request->validate([
-            'login'    => 'required',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
-    
-        // Retrieve the login input and determine if it's an email or username
-        $loginInput = $request->input('login');
-        $loginField = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-    
-        // Build credentials array
-        $credentials = [
-            $loginField => $loginInput,
-            'password'  => $request->input('password')
-        ];
-    
-        // Attempt to authenticate
-        if (!auth()->attempt($credentials)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+
+        if (!Auth::attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+
+            ]);
         }
-    
-        // On successful authentication, create a token for the user
-        $user = auth()->user();
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json(['message' => 'Login Successful ', 'token' => $token]);
+        $request->session()->regenerate(); // Regenerate session to prevent session fixation attacks
+        return response()->json([
+            'message' => 'Logged in successfully',
+            'user' => Auth::user()
+
+        ]);
     }
-    
+
 
     /**
      * Logout user
      */
-    public function logout()
+    
+    public function logout(Request $request)
+    
     {
-        auth()->user()->tokens()->delete();
-        return response()->json(['message' => 'Logged out']);
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();// Regenerate CSRF token
+
+        return response()->json(['message' => 'Logged out successfully']);
     }
 }
