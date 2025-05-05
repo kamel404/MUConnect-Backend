@@ -1,8 +1,12 @@
 <?php
 
+use App\Models\SectionSwapApplication;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\SectionSwapRequestController;
+use App\Http\Controllers\SectionSwapApplicationController;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -28,7 +32,13 @@ Route::get('/documents', [DocumentController::class, 'list']); // List all docum
 Route::post('/documents/upload', [DocumentController::class, 'upload']); // Upload a document
 Route::get('/download/{id}', [DocumentController::class, 'download']); // Download a document by ID
 
+//todo I should add those to a protected route but now keep for testing...
 
+Route::get('/section-requests', [SectionSwapRequestController::class, 'index']);
+Route::post('/section-requests', [SectionSwapRequestController::class, 'store']);
+Route::get('/section-requests/{id}', [SectionSwapRequestController::class, 'show']);
+Route::post('/section-requests/{id}/accept/{applicantId}', [SectionSwapRequestController::class, 'acceptApplicant']);
+Route::post('/section-applications', [SectionSwapApplicationController::class, 'store']);
 
 
 
