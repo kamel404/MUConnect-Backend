@@ -9,14 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    //todo abberviation should be unique but it is not due to the json file frm the unviersity 
     public function up(): void
     {
-        Schema::create('faculties', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('description');
-            $table->string('abbreviation');
+            $table->string('name');
+            $table->string('code')->unique();
+            $table->foreignId('faculty_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faculties');
+        Schema::dropIfExists('courses');
     }
 };

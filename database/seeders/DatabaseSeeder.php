@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        //todo put the seeder of faculty and courses so it would run when the applciation runs 
         // User::factory(10)->create();
 
         User::factory()->create([
@@ -23,6 +24,8 @@ class DatabaseSeeder extends Seeder
             "password" => "password123",
             "password_confirmation" => "password123"
         ]);
+        //a$this->call(CourseAndFacultySeeder::class);
 
     }
+
 }

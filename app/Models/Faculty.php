@@ -28,4 +28,8 @@ class Faculty extends Model
     {
         return $this->hasMany(Major::class);
     }
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
 }
