@@ -8,7 +8,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\StudyGroupController;
 use App\Http\Controllers\EventController;
 
@@ -21,7 +20,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Moderator Routes
-Route::middleware(['auth:sanctum' ,('role:moderator')])->group(function () {
+Route::middleware(['auth:sanctum', ('role:moderator')])->group(function () {
 
     // Faculty routes (protected)
     Route::get('/faculties', [FacultyController::class, 'index']);
@@ -42,8 +41,6 @@ Route::middleware(['auth:sanctum' ,('role:moderator')])->group(function () {
     // User routes (protected)
     Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
     Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
-    
-
 });
 
 
@@ -69,13 +66,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{id}', [PostController::class, 'update']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
-    
+
     // Study Groups routes
     Route::get('/study-groups', [StudyGroupController::class, 'index']);
     Route::post('/study-groups', [StudyGroupController::class, 'store']);
     Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
     Route::put('/study-groups/{id}', [StudyGroupController::class, 'update']);
     Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
+    Route::get('/study-groups/search', [StudyGroupController::class, 'search']);
+    Route::post('/study-groups/{group}/join', [StudyGroupController::class, 'joinGroup']);
+    Route::post('/study-groups/{group}/leave', [StudyGroupController::class, 'leaveGroup']);
 
     // Events routes
     Route::get('/events', [EventController::class, 'index']);
@@ -84,4 +84,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
 });
-

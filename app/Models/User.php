@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Major::class);
     }
+
+    public function studyGroups()
+    {
+        return $this->belongsToMany(StudyGroup::class, 'study_group_user')->withTimestamps();
+    }
+
+    public function ledStudyGroups()
+    {
+        return $this->hasMany(StudyGroup::class, 'leader_id');
+    }
 }
