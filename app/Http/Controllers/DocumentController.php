@@ -16,7 +16,7 @@ class DocumentController extends Controller
 {
     /**
      * Upload a document.
-    //  */
+    */
     // public function upload(UploadDocumentRequest $request){
     //     dd($request->all(), $request->hasFile('document'));
     // }

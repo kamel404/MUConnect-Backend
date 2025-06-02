@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //todo put the seeder of faculty and courses so it would run when the applciation runs 
+        //todo put the seeder of faculty and courses so it would run when the applciation runs
         // User::factory(10)->create();
 
         User::factory()->create([

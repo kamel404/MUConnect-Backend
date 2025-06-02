@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Models\SectionSwapApplication;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
@@ -7,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\SectionSwapRequestController;
 use App\Http\Controllers\SectionSwapApplicationController;
-
+use App\Http\Controllers\StudyGroupController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
@@ -15,7 +16,11 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\TestController;
 // User routes (public)
-
+//todo I should add those to a protected route but now keep for testing...
+Route::post('/post', [PostController::class, 'store']); // Register a new user
+Route::get('/posts', [PostController::class, 'index']); // List all posts
+Route::get('/posts/{id}', [PostController::class, 'show']); // Get a specific post by ID
+Route::delete('/posts/{id}', [PostController::class, 'destroy']); // Delete a post by ID
 // Auth routes (public)
 Route::get('/me', function () {
     return auth()->user();
@@ -44,6 +49,13 @@ Route::post('/section-applications', [SectionSwapApplicationController::class, '
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
+
+
+    //study group routes (protected)
+    Route::get('/study-groups', [StudyGroupController::class, 'index']);
+    Route::post('/study-groups', [StudyGroupController::class, 'store']);
+    Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
+    Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
 
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);

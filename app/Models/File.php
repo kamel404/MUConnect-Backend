@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class File extends Model
 {
+    //todo this is for deleting i think check before delete
     use HasFactory;
 
     protected $fillable = [
