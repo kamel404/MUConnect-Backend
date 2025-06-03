@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('document_user', function (Blueprint $table) {
+        Schema::create('study_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('document_id')->constrained()->onDelete('cascade');
+            $table->foreignId('post_id')->constrained()->onDelete('cascade'); // this became unique (updated in another migration)
+            $table->date('study_date'); // this became nullable (updated in another migration)
+            $table->string('topic')->nullable();
             $table->timestamps();
         });
-        
     }
 
     /**
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_users');
+        Schema::dropIfExists('study_groups');
     }
 };

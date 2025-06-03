@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -37,7 +38,7 @@ class UserController extends Controller
             'first_name' => 'sometimes|required|string',
             'last_name'  => 'sometimes|required|string',
             'email'      => [
-                'required',
+                'sometimes',
                 'unique:users,email,'.$id,
                 'email',
                 function ($attribute, $value, $fail) {
@@ -99,5 +100,36 @@ class UserController extends Controller
         $user->syncRoles([$validated['role']]);
 
         return response()->json(['message' => 'User role updated successfully']);
+    }
+
+    /**
+     * Store a newly created user.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'username'   => 'required|unique:users,username',
+            'first_name' => 'required|string',
+            'last_name'  => 'required|string',
+            'email'      => [
+                'required',
+                'unique:users,email',
+                'email',
+                function ($attribute, $value, $fail) {
+                    if (!str_ends_with($value, '@mu.edu.lb')) {
+                        $fail('The '.$attribute.' must be an email address with the domain @mu.edu.lb.');
+                    }
+                },
+            ],
+            'password'   => 'required|min:6',
+            'avatar'     => 'nullable|string',
+            'bio'        => 'nullable|string',
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+        
+        $user = User::create($validated);
+        
+        return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }
 }

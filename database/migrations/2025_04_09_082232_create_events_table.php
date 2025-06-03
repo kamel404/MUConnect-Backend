@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('section_swap_requests', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('request_id')->constrained('exchange_requests')->onDelete('cascade');
-            $table->foreignId('applicant_id')->constrained('students')->onDelete('cascade');
-            $table->text('message');
+            $table->string('topic');
+            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
+            $table->date('event_date');
+            $table->string('location');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('section_swap_requests');
+        Schema::dropIfExists('events');
     }
 };

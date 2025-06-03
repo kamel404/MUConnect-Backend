@@ -1,87 +1,26 @@
 <?php
 
-use App\Http\Controllers\PostController;
-use App\Models\SectionSwapApplication;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\SectionSwapRequestController;
-use App\Http\Controllers\SectionSwapApplicationController;
-use App\Http\Controllers\StudyGroupController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\MajorController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\TestController;
-// User routes (public)
-//todo I should add those to a protected route but now keep for testing...
-Route::post('/post', [PostController::class, 'store']); // Register a new user
-Route::get('/posts', [PostController::class, 'index']); // List all posts
-Route::get('/posts/{id}', [PostController::class, 'show']); // Get a specific post by ID
-Route::delete('/posts/{id}', [PostController::class, 'destroy']); // Delete a post by ID
-// Auth routes (public)
-Route::get('/me', function () {
-    return auth()->user();
-})->middleware('auth:sanctum');
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\StudyGroupController;
+use App\Http\Controllers\EventController;
 
+// User routes (public)
+Route::get('/users/{id}', [UserController::class, 'show']);
+
+
+// Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/test', [TestController::class, 'testPost']);
 
-
-//todo if we want we can move this to the protected routes
-
-Route::get('/documents', [DocumentController::class, 'list']); // List all documents
-Route::post('/documents/upload', [DocumentController::class, 'upload']); // Upload a document
-Route::get('/download/{id}', [DocumentController::class, 'download']); // Download a document by ID
-
-//todo I should add those to a protected route but now keep for testing...
-
-Route::get('/section-requests', [SectionSwapRequestController::class, 'index']);
-Route::post('/section-requests', [SectionSwapRequestController::class, 'store']);
-Route::get('/section-requests/{id}', [SectionSwapRequestController::class, 'show']);
-Route::post('/section-requests/{id}/accept/{applicantId}', [SectionSwapRequestController::class, 'acceptApplicant']);
-Route::post('/section-applications', [SectionSwapApplicationController::class, 'store']);
-
-
-
-// Protected Routes
-Route::middleware('auth:sanctum')->group(function () {
-
-
-    //study group routes (protected)
-    Route::get('/study-groups', [StudyGroupController::class, 'index']);
-    Route::post('/study-groups', [StudyGroupController::class, 'store']);
-    Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
-    Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
-
-    // Faculty routes (protected)
-    Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
-
-    // Major routes (protected)
-    Route::get('majors/search/{query}', [MajorController::class, 'search']);
-
-    // User routes (protected)
-    Route::get('/users', [UserController::class, 'index']);
-    Route::put('/users/{id}', [UserController::class, 'update']);
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    //logout 
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    }); // this function is for getting auth users 
-
-
-});
-
-
-
-// Super Admin and Moderator Routes
-Route::middleware(['auth:sanctum', 'role:super-admin|moderator'])->group(function () {
+// Moderator Routes
+Route::middleware(['auth:sanctum', ('role:moderator')])->group(function () {
 
     // Faculty routes (protected)
     Route::get('/faculties', [FacultyController::class, 'index']);
@@ -102,7 +41,46 @@ Route::middleware(['auth:sanctum', 'role:super-admin|moderator'])->group(functio
     // User routes (protected)
     Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
     Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
-
-
 });
 
+
+// Protected Routes
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Faculty routes (protected)
+    Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
+
+    // Major routes (protected)
+    Route::get('majors/search/{query}', [MajorController::class, 'search']);
+
+    // User routes (protected)
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+    // Post routes (protected)
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::get('/posts/{id}', [PostController::class, 'show']);
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::put('/posts/{id}', [PostController::class, 'update']);
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+
+    // Study Groups routes
+    Route::get('/study-groups', [StudyGroupController::class, 'index']);
+    Route::post('/study-groups', [StudyGroupController::class, 'store']);
+    Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
+    Route::put('/study-groups/{id}', [StudyGroupController::class, 'update']);
+    Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
+    Route::get('/study-groups/search', [StudyGroupController::class, 'search']);
+    Route::post('/study-groups/{group}/join', [StudyGroupController::class, 'joinGroup']);
+    Route::post('/study-groups/{group}/leave', [StudyGroupController::class, 'leaveGroup']);
+
+    // Events routes
+    Route::get('/events', [EventController::class, 'index']);
+    Route::post('/events', [EventController::class, 'store']);
+    Route::get('/events/{id}', [EventController::class, 'show']);
+    Route::put('/events/{id}', [EventController::class, 'update']);
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);
+});

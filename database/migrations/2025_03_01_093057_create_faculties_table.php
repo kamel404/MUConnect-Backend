@@ -9,14 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    //todo abberviation should be unique but it is not due to the json file frm the unviersity 
     public function up(): void
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('description');
-            $table->string('abbreviation');
+            $table->string('abbreviation')->unique();
             $table->timestamps();
         });
     }

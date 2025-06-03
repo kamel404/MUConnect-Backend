@@ -2,37 +2,69 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Post;
 
 class StudyGroup extends Model
 {
     use HasFactory;
 
-    protected $fillable =
-    [
-        'name',
-        'description', 
-        'course_id',
-        'user_id',//creatorID
+    protected $fillable = [
+        'group_name',
+        'major',
+        'course_code',
+        'description',
+        'members',
+        'capacity',
+        'location',
+        'is_online',
+        'is_complete',
         'meeting_time',
-        'meeting_location',
+        'leader_id',
+        'major_id',
+        'course_id',
     ];
 
-    // Users that belong to the faculty
-    public function users()
+    protected $casts = [
+        'is_online' => 'boolean',
+        'is_complete' => 'boolean',
+        'meeting_time' => 'datetime',
+    ];
+
+    // 🔗 Leader of the group
+    public function leader()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'leader_id');
     }
 
-    // // Majors that belong to the faculty
-    // public function majors()
-    // {
-    //     return $this->hasMany(Major::class);
-    // }
-    public function courses()
+    // 🔗 Users who joined this group
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'study_group_user')->withTimestamps();
+    }
+
+    // 🔗 Related major
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    // 🔗 Related course
+    public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    // ✅ Check if group is full
+    public function isFull(): bool
+    {
+        return $this->capacity !== null && $this->members()->count() >= $this->capacity;
+    }
+
+    // ✅ Check if the group is online
+    public function isOnline(): bool
+    {
+        return $this->is_online === true;
     }
 }

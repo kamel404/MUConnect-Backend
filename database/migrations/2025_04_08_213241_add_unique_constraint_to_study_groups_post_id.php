@@ -8,16 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('faculties', function (Blueprint $table) {
-            $table->dropUnique(['abbreviation']);
+        Schema::table('study_groups', function (Blueprint $table) {
+            $table->unique('post_id');
         });
     }
-    
+
     public function down(): void
     {
-        Schema::table('faculties', function (Blueprint $table) {
-            $table->unique('abbreviation');
+        Schema::table('study_groups', function (Blueprint $table) {
+            $table->dropUnique(['post_id']);
         });
     }
-    
 };
