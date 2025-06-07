@@ -14,14 +14,13 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('avatar')->nullable()->default('/images/default.png');
+            $table->string('avatar')->nullable()->default('default.png');
             $table->text('bio')->nullable();
-            $table->unsignedInteger('points')->default(0);
-            $table->json('badges')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->enum('status', ['active', 'suspended', 'banned'])->default('active');
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_moderator')->default(false);
+            $table->boolean('is_verified')->default(false);
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

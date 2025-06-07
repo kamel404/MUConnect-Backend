@@ -22,9 +22,6 @@ class User extends Authenticatable
         'password',
         'avatar',
         'bio',
-        'role',
-        'points',
-        'badges',
         'is_active',
         'status',
     ];
@@ -40,6 +37,12 @@ class User extends Authenticatable
         'badges' => 'array',
         'is_active' => 'boolean',
     ];
+
+    public function getAvatarUrlAttribute()
+    {
+        return asset('storage/avatars/' . ($this->avatar ?? 'default.png'));
+    }
+
 
     public function faculty()
     {

@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_id')->constrained()->onDelete('cascade');
             $table->string('file_path');
             $table->string('checksum')->unique(); // Added checksum column
             $table->string('mime_type')->nullable();

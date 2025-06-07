@@ -61,10 +61,10 @@ class PostController extends Controller
                     $path = $file->store($storagePath, 'public');
 
                     $attachment = Attachment::create([
-                        'original_name' => $file->getClientOriginalName(),
                         'file_path' => $path,
                         'mime_type' => $file->getMimeType(),
                         'checksum' => $checksum,
+                        'size' => $file->getSize(),
                     ]);
                 }
             }

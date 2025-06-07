@@ -11,9 +11,6 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\StudyGroupController;
 use App\Http\Controllers\EventController;
 
-// User routes (public)
-Route::get('/users/{id}', [UserController::class, 'show']);
-
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -55,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User routes (protected)
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
     Route::post('/users', [UserController::class, 'store']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/users/{id}', [UserController::class, 'update']);
