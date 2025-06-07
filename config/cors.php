@@ -14,12 +14,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'login', 'register', 'logout', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    // Replace wildcard with your frontend URL
-    'allowed_origins' => ['http://localhost:5173'],
+    // Replace with your frontend URLs
+    'allowed_origins' => [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +32,6 @@ return [
 
     'max_age' => 0,
 
-    // Change this to true to allow credentials
+    // Keep this true even for token auth to ensure proper CORS behavior
     'supports_credentials' => true,
 ];

@@ -17,6 +17,28 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+       public function me(Request $request)
+    {
+        $user = $request->user()->load('roles', 'faculty', 'major');
+        return response()->json([
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'roles' => $user->roles->pluck('name'), // array of role names
+            'faculty' => $user->faculty,
+            'major' => $user->major,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'avatar' => $user->avatar,
+            'bio' => $user->bio,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+            'is_admin' => $user->hasRole('admin'),
+            'is_moderator' => $user->hasRole('moderator'),
+            'is_student' => $user->hasRole('student'),
+        ]);
+    }
+
     /**
      * Show user profile
      */
