@@ -29,12 +29,36 @@ class AuthController extends Controller
             ],
 
             'password' => 'required|string|min:8|confirmed',
+            
+            // Add faculty and major validation
+            'faculty_id' => 'required|exists:faculties,id',
+            'major_id' => 'required|exists:majors,id',
+            
+            // Optional: Add validation to ensure major belongs to selected faculty
+            'major_id' => [
+                'required',
+                'exists:majors,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    $major = \App\Models\Major::find($value);
+                    if ($major && $major->faculty_id != $request->faculty_id) {
+                        $fail('The selected major does not belong to the selected faculty.');
+                    }
+                }
+            ],
         ]);
 
         $user = User::create($validated);
+        
         // Assign default role
         $user->assignRole('student');
-        return response()->json(['message' => 'User created successfully', 'user' => $user]);
+        
+        // Load relationships for response
+        $user->load(['faculty', 'major', 'roles']);
+        
+        return response()->json([
+            'message' => 'User created successfully', 
+            'user' => $user
+        ]);
     }
 
     /**

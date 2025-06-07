@@ -16,16 +16,21 @@ use App\Http\Controllers\EventController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Public routes for registration form
+Route::get('/registration/faculties', [FacultyController::class, 'index']);
+Route::get('/registration/faculties/{id}/majors', [FacultyController::class, 'getFacultyMajors']);
+
+
 // Moderator Routes
 Route::middleware(['auth:sanctum', ('role:moderator')])->group(function () {
 
     // Faculty routes (protected)
-    Route::get('/faculties', [FacultyController::class, 'index']);
+    // Route::get('/faculties', [FacultyController::class, 'index']);
     Route::post('/faculties', [FacultyController::class, 'store']);
     Route::get('/faculties/{id}', [FacultyController::class, 'show']);
     Route::put('/faculties/{id}', [FacultyController::class, 'update']);
     Route::delete('/faculties/{id}', [FacultyController::class, 'destroy']);
-    Route::get('/faculties/{id}/majors', [FacultyController::class, 'getFacultyMajors']);
+    // Route::get('/faculties/{id}/majors', [FacultyController::class, 'getFacultyMajors']);
 
     // Major routes (protected)
     Route::get('/majors', [MajorController::class, 'index']);

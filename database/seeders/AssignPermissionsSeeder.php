@@ -10,21 +10,24 @@ class AssignPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-
         // Fetch roles
+        $admin = Role::where('name', 'admin')->first();
         $moderator = Role::where('name', 'moderator')->first();
         $student = Role::where('name', 'student')->first();
 
-        // Fetch permissions
-        $allPermissions = Permission::all(); // All permissions
+        $allPermissions = Permission::all();
 
-        // Assign all permissions to Moderator
+        // Admin gets all permissions
+        if ($admin) {
+            $admin->syncPermissions($allPermissions);
+        }
+
+        // Moderator gets all permissions (or subset if needed)
         if ($moderator) {
             $moderator->syncPermissions($allPermissions);
         }
 
-
-        // Assign limited permissions to Student
+        // Student gets limited permissions
         if ($student) {
             $student->syncPermissions([
                 'register',

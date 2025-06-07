@@ -14,12 +14,13 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable()->default('default.png');
             $table->text('bio')->nullable();
+            $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('major_id')->nullable()->constrained()->onDelete('set null');
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_admin')->default(false);
-            $table->boolean('is_moderator')->default(false);
             $table->boolean('is_verified')->default(false);
             $table->rememberToken();
             $table->softDeletes();

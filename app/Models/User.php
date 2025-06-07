@@ -22,6 +22,8 @@ class User extends Authenticatable
         'password',
         'avatar',
         'bio',
+        'faculty_id',  // Add this
+        'major_id',    // Add this
         'is_active',
         'status',
     ];
@@ -37,6 +39,12 @@ class User extends Authenticatable
         'badges' => 'array',
         'is_active' => 'boolean',
     ];
+
+    // Always eager load roles to prevent N+1 queries
+    protected $with = ['roles'];
+
+    // Add computed attributes to JSON responses
+    protected $appends = ['primary_role', 'role_names'];
 
     public function getAvatarUrlAttribute()
     {
@@ -62,5 +70,32 @@ class User extends Authenticatable
     public function ledStudyGroups()
     {
         return $this->hasMany(StudyGroup::class, 'leader_id');
+    }
+
+    // Computed attributes
+    public function getPrimaryRoleAttribute(): ?string
+    {
+        return $this->roles->first()?->name;
+    }
+
+    public function getRoleNamesAttribute(): array
+    {
+        return $this->roles->pluck('name')->toArray();
+    }
+
+    // Convenience methods (same performance as boolean columns)
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isModerator(): bool
+    {
+        return $this->hasRole('moderator');
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->hasRole('student');
     }
 }
