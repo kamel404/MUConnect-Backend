@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/study-groups/{group}/join', [StudyGroupController::class, 'joinGroup']);
     Route::post('/study-groups/{group}/leave', [StudyGroupController::class, 'leaveGroup']);
     Route::post('/study-groups/{group}/make-admin', [StudyGroupController::class, 'makeAdmin']);
+    Route::get('/study-groups/filters', [StudyGroupController::class, 'applyFilters']);
 
 
     // Events routes

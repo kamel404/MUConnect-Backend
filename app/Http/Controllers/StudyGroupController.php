@@ -10,40 +10,35 @@ class StudyGroupController extends Controller
 {
     public function index(Request $request)
     {
-        $query = StudyGroup::with(['creator', 'major', 'course', 'faculty']);
+        $query = StudyGroup::with(['creator', 'major', 'course', 'faculty'])
+            ->withCount('members');
 
-        // Search by name or description
+        // Search by name or description if 'q' is present
         if ($request->filled('q')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->q . '%')
-                  ->orWhere('description', 'like', '%' . $request->q . '%');
+            $search = $request->input('q');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        // Filter by online/offline
+        // Apply filters
         if ($request->has('is_online')) {
             $query->where('is_online', $request->boolean('is_online'));
         }
-
-        // Filter by complete/incomplete
         if ($request->has('is_complete')) {
             $query->where('is_complete', $request->boolean('is_complete'));
         }
-
-        // Filter by course, major, faculty
         if ($request->has('course_id')) {
             $query->where('course_id', $request->course_id);
         }
-
         if ($request->has('major_id')) {
             $query->where('major_id', $request->major_id);
         }
-
         if ($request->has('faculty_id')) {
             $query->where('faculty_id', $request->faculty_id);
         }
 
-        // Pagination
         $perPage = $request->input('per_page', 10);
         return response()->json($query->paginate($perPage));
     }
@@ -51,7 +46,7 @@ class StudyGroupController extends Controller
     public function show($id)
     {
         $group = StudyGroup::with(['creator', 'major', 'course', 'faculty', 'members'])
-                          ->findOrFail($id);
+            ->findOrFail($id);
         return response()->json($group);
     }
 
@@ -75,7 +70,7 @@ class StudyGroupController extends Controller
 
         // Create the study group
         $group = StudyGroup::create($validated);
-        
+
         // Add creator as member and admin
         $group->members()->attach(Auth::id(), ['is_admin' => true]);
 
@@ -85,7 +80,7 @@ class StudyGroupController extends Controller
     public function update(Request $request, $id)
     {
         $group = StudyGroup::findOrFail($id);
-        
+
         // Check if user is admin of the group
         if (!$group->admins->contains(Auth::id())) {
             return response()->json(['message' => 'Unauthorized. Only group admins can update the group.'], 403);
@@ -111,7 +106,7 @@ class StudyGroupController extends Controller
     public function destroy($id)
     {
         $group = StudyGroup::findOrFail($id);
-        
+
         // Check if user is the creator
         if ($group->creator_id !== Auth::id() && !Auth::user()->hasRole('admin')) {
             return response()->json(['message' => 'Unauthorized. Only the creator can delete the group.'], 403);
@@ -144,7 +139,7 @@ class StudyGroupController extends Controller
 
         // Add user to group
         $group->members()->attach($user->id);
-        
+
         return response()->json(['message' => 'Successfully joined the study group.']);
     }
 
@@ -159,19 +154,14 @@ class StudyGroupController extends Controller
             return response()->json(['message' => 'You are not a member of this group.'], 422);
         }
 
-        // Check if the creator is trying to leave
+        // If the creator (admin) is leaving, delete the group and remove all members
         if ($group->creator_id === $user->id) {
-            // If creator, check if there are other admins
-            $otherAdmins = $group->admins()->where('user_id', '!=', $user->id)->count();
-            
-            if ($otherAdmins === 0) {
-                return response()->json(['message' => 'As the creator, you must promote another member to admin before leaving.'], 422);
-            }
+            $group->delete();
+            return response()->json(['message' => 'You were the creator/admin. The group has been deleted and all members removed.']);
         }
 
         // Remove user from group
         $group->members()->detach($user->id);
-        
         return response()->json(['message' => 'Successfully left the study group.']);
     }
 
@@ -183,7 +173,7 @@ class StudyGroupController extends Controller
         ]);
 
         $group = StudyGroup::findOrFail($groupId);
-        
+
         // Check if current user is admin
         if (!$group->admins->contains(Auth::id())) {
             return response()->json(['message' => 'Unauthorized. Only admins can promote members.'], 403);
@@ -196,15 +186,22 @@ class StudyGroupController extends Controller
 
         // Update pivot to make the user an admin
         $group->members()->updateExistingPivot($validated['user_id'], ['is_admin' => true]);
-        
+
         return response()->json(['message' => 'User has been promoted to admin.']);
     }
 
     // Get all study groups where the authenticated user is a member
+    // return members count with it
     public function myGroups(Request $request)
     {
         $user = $request->user();
         $groups = $user->studyGroups()->with(['creator', 'major', 'course', 'faculty'])->get();
+
+        // Add member count to each group
+        $groups->each(function ($group) {
+            $group->member_count = $group->members()->count();
+        });
+
         return response()->json($groups);
     }
 }
