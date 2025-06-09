@@ -89,6 +89,7 @@ class UserController extends Controller
     }
     
     // get user role
+    // not working, change it 
     public function getUserRole($id)
     {
         $user = User::find($id);
@@ -97,13 +98,9 @@ class UserController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
-        $roles = $user->getRoleNames(); // Returns a collection of role names
+        $roles = $user->getRoleNames();
 
-        return response()->json([
-            'user_id' => $user->id,
-            'username' => $user->username,
-            'roles' => $roles
-        ]);
+        return response()->json(['roles' => $roles]);
     }
 
     // update user role

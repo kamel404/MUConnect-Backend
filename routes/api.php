@@ -10,6 +10,9 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\StudyGroupController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseCategoryController;
+use App\Http\Controllers\PrerequisiteController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,6 +26,7 @@ Route::get('/registration/faculties/{id}/majors', [FacultyController::class, 'ge
 // Moderator Routes
 Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
     // Faculty routes (protected)
+    Route::get('/faculties', [FacultyController::class, 'index']);
     Route::post('/faculties', [FacultyController::class, 'store']);
     Route::get('/faculties/{id}', [FacultyController::class, 'show']);
     Route::put('/faculties/{id}', [FacultyController::class, 'update']);
@@ -60,18 +64,40 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
     // Post routes (protected)
-    Route::apiResource('/posts', PostController::class)->except('create','edit');
+    Route::apiResource('/posts', PostController::class)->except('create', 'edit');
 
     // Study Groups routes
     Route::get('/study-groups', [StudyGroupController::class, 'index']);
     Route::post('/study-groups', [StudyGroupController::class, 'store']);
+    Route::get('/study-groups/my-groups', [StudyGroupController::class, 'myGroups']);
     Route::get('/study-groups/{id}', [StudyGroupController::class, 'show']);
     Route::put('/study-groups/{id}', [StudyGroupController::class, 'update']);
     Route::delete('/study-groups/{id}', [StudyGroupController::class, 'destroy']);
     Route::get('/study-groups/search', [StudyGroupController::class, 'search']);
     Route::post('/study-groups/{group}/join', [StudyGroupController::class, 'joinGroup']);
     Route::post('/study-groups/{group}/leave', [StudyGroupController::class, 'leaveGroup']);
+    Route::post('/study-groups/{group}/make-admin', [StudyGroupController::class, 'makeAdmin']);
+
 
     // Events routes
-    Route::apiResource('/events', EventController::class)->except('create','edit');
+    Route::apiResource('/events', EventController::class)->except('create', 'edit');
+
+    // Course routes
+    Route::get('/courses', [CourseController::class, 'index']);
+    Route::post('/courses', [CourseController::class, 'store']);
+    Route::get('/courses/{course}', [CourseController::class, 'show']);
+    Route::put('/courses/{course}', [CourseController::class, 'update']);
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy']);
+
+    // Course prerequisites routes
+    Route::get('/courses/{course}/prerequisites', [PrerequisiteController::class, 'index']);
+    Route::post('/courses/{course}/prerequisites', [PrerequisiteController::class, 'addPrerequisite']);
+    Route::delete('/courses/{course}/prerequisites/{prerequisite}', [PrerequisiteController::class, 'removePrerequisite']);
+
+    // Course Category routes
+    Route::get('/course-categories', [CourseCategoryController::class, 'index']);
+    Route::post('/course-categories', [CourseCategoryController::class, 'store']);
+    Route::get('/course-categories/{category}', [CourseCategoryController::class, 'show']);
+    Route::put('/course-categories/{category}', [CourseCategoryController::class, 'update']);
+    Route::delete('/course-categories/{category}', [CourseCategoryController::class, 'destroy']);
 });

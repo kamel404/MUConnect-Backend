@@ -68,7 +68,7 @@ class AuthController extends Controller
         }
 
         // Create token with abilities based on role
-        $token = $user->createToken('auth_token', $user->getRoleNames()->toArray())->plainTextToken;
+        $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 
         // Load relationships for response
         $user->load(['faculty', 'major', 'roles']);
@@ -111,7 +111,7 @@ class AuthController extends Controller
         
         $user->tokens()->delete();
         
-        $token = $user->createToken('auth_token', $user->getRoleNames()->toArray())->plainTextToken;
+        $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 
         return response()->json([
             'message' => 'Login Successful',

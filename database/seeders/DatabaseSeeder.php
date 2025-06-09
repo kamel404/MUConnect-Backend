@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Events\RoleAttached;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             AssignPermissionsSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

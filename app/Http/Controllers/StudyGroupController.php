@@ -10,108 +10,115 @@ class StudyGroupController extends Controller
 {
     public function index(Request $request)
     {
-        $query = StudyGroup::with(['leader', 'major', 'course']);
+        $query = StudyGroup::with(['creator', 'major', 'course', 'faculty']);
 
+        // Search by name or description
         if ($request->filled('q')) {
-            $keyword = $request->input('q');
-            $query->where(function ($q) use ($keyword) {
-                $q->where('group_name', 'like', "%$keyword%")
-                    ->orWhere('major', 'like', "%$keyword%")
-                    ->orWhere('course_code', 'like', "%$keyword%")
-                    ->orWhereHas('course', function ($q2) use ($keyword) {
-                        $q2->where('name', 'like', "%$keyword%");
-                    });
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->q . '%')
+                  ->orWhere('description', 'like', '%' . $request->q . '%');
             });
         }
 
+        // Filter by online/offline
         if ($request->has('is_online')) {
             $query->where('is_online', $request->boolean('is_online'));
         }
 
+        // Filter by complete/incomplete
         if ($request->has('is_complete')) {
             $query->where('is_complete', $request->boolean('is_complete'));
         }
 
-        // Add other filters like major_id, course_id, capacity, etc.
+        // Filter by course, major, faculty
+        if ($request->has('course_id')) {
+            $query->where('course_id', $request->course_id);
+        }
 
+        if ($request->has('major_id')) {
+            $query->where('major_id', $request->major_id);
+        }
+
+        if ($request->has('faculty_id')) {
+            $query->where('faculty_id', $request->faculty_id);
+        }
+
+        // Pagination
         $perPage = $request->input('per_page', 10);
         return response()->json($query->paginate($perPage));
     }
 
     public function show($id)
     {
-        $group = StudyGroup::with(['leader', 'major', 'course'])->findOrFail($id);
+        $group = StudyGroup::with(['creator', 'major', 'course', 'faculty', 'members'])
+                          ->findOrFail($id);
         return response()->json($group);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'group_name' => 'required|string|max:255',
-            'major' => 'required|string',
-            'course_code' => 'required|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'members' => 'nullable|integer|min:0',
-            'capacity' => 'nullable|integer|min:1',
+            'capacity' => 'nullable|integer|min:2',
             'location' => 'nullable|string|required_if:is_online,false',
-            'is_online' => 'required|boolean',
-            'is_complete' => 'boolean',
+            'is_online' => 'boolean',
             'meeting_time' => 'required|date',
-            'leader_id' => 'required|exists:users,id',
-            'major_id' => 'required|exists:majors,id',
             'course_id' => 'required|exists:courses,id',
+            'major_id' => 'required|exists:majors,id',
+            'faculty_id' => 'required|exists:faculties,id',
         ]);
 
+        // Set creator to current user
+        $validated['creator_id'] = Auth::id();
+        $validated['is_complete'] = false;
+
+        // Create the study group
         $group = StudyGroup::create($validated);
-        return response()->json($group, 201);
+        
+        // Add creator as member and admin
+        $group->members()->attach(Auth::id(), ['is_admin' => true]);
+
+        return response()->json($group->load('creator', 'course', 'major', 'faculty'), 201);
     }
 
     public function update(Request $request, $id)
     {
         $group = StudyGroup::findOrFail($id);
+        
+        // Check if user is admin of the group
+        if (!$group->admins->contains(Auth::id())) {
+            return response()->json(['message' => 'Unauthorized. Only group admins can update the group.'], 403);
+        }
 
         $validated = $request->validate([
-            'group_name' => 'sometimes|required|string|max:255',
-            'major' => 'sometimes|required|string',
-            'course_code' => 'sometimes|required|string',
+            'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'members' => 'nullable|integer|min:0',
-            'capacity' => 'nullable|integer|min:1',
+            'capacity' => 'nullable|integer|min:2',
             'location' => 'nullable|string|required_if:is_online,false',
-            'is_online' => 'sometimes|required|boolean',
-            'is_complete' => 'sometimes|boolean',
+            'is_online' => 'boolean',
+            'is_complete' => 'boolean',
             'meeting_time' => 'sometimes|required|date',
-            'leader_id' => 'sometimes|required|exists:users,id',
-            'major_id' => 'sometimes|required|exists:majors,id',
             'course_id' => 'sometimes|required|exists:courses,id',
+            'major_id' => 'sometimes|required|exists:majors,id',
+            'faculty_id' => 'sometimes|required|exists:faculties,id',
         ]);
 
         $group->update($validated);
-        return response()->json($group);
+        return response()->json($group->load('creator', 'course', 'major', 'faculty'));
     }
 
     public function destroy($id)
     {
         $group = StudyGroup::findOrFail($id);
+        
+        // Check if user is the creator
+        if ($group->creator_id !== Auth::id() && !Auth::user()->hasRole('admin')) {
+            return response()->json(['message' => 'Unauthorized. Only the creator can delete the group.'], 403);
+        }
+
         $group->delete();
-
         return response()->json(['message' => 'Study group deleted.']);
-    }
-
-    public function search(Request $request)
-    {
-        $keyword = $request->input('q');
-
-        $results = StudyGroup::where('group_name', 'like', "%$keyword%")
-            ->orWhere('major', 'like', "%$keyword%")
-            ->orWhere('course_code', 'like', "%$keyword%")
-            ->orWhereHas('course', function ($query) use ($keyword) {
-                $query->where('name', 'like', "%$keyword%");
-            })
-            ->with(['leader', 'major', 'course']) // Include relationships
-            ->get();
-
-        return response()->json($results);
     }
 
     // Join study group
@@ -120,18 +127,25 @@ class StudyGroupController extends Controller
         $user = Auth::user();
         $group = StudyGroup::findOrFail($groupId);
 
-        if ($group->members()->where('user_id', $user->id)->exists()) {
-            return response()->json(['message' => 'Already a member of this group'], 400);
+        // Check if already a member
+        if ($group->members->contains($user->id)) {
+            return response()->json(['message' => 'You are already a member of this group.'], 422);
         }
 
-        if ($group->capacity !== null && $group->members()->count() >= $group->capacity) {
-            return response()->json(['message' => 'Group is full'], 400);
+        // Check if group is full
+        if ($group->isFull()) {
+            return response()->json(['message' => 'This group is full.'], 422);
         }
 
+        // Check if group is complete
+        if ($group->is_complete) {
+            return response()->json(['message' => 'This group is marked as complete and not accepting new members.'], 422);
+        }
+
+        // Add user to group
         $group->members()->attach($user->id);
-        $group->increment('members'); // Update members count if you want to keep it in the table
-
-        return response()->json(['message' => 'Joined group successfully']);
+        
+        return response()->json(['message' => 'Successfully joined the study group.']);
     }
 
     // Leave study group
@@ -140,13 +154,57 @@ class StudyGroupController extends Controller
         $user = Auth::user();
         $group = StudyGroup::findOrFail($groupId);
 
-        if (! $group->members()->where('user_id', $user->id)->exists()) {
-            return response()->json(['message' => 'You are not a member of this group'], 400);
+        // Check if a member
+        if (!$group->members->contains($user->id)) {
+            return response()->json(['message' => 'You are not a member of this group.'], 422);
         }
 
-        $group->members()->detach($user->id);
-        $group->decrement('members'); // Update members count
+        // Check if the creator is trying to leave
+        if ($group->creator_id === $user->id) {
+            // If creator, check if there are other admins
+            $otherAdmins = $group->admins()->where('user_id', '!=', $user->id)->count();
+            
+            if ($otherAdmins === 0) {
+                return response()->json(['message' => 'As the creator, you must promote another member to admin before leaving.'], 422);
+            }
+        }
 
-        return response()->json(['message' => 'Left group successfully']);
+        // Remove user from group
+        $group->members()->detach($user->id);
+        
+        return response()->json(['message' => 'Successfully left the study group.']);
+    }
+
+    // Make a member an admin
+    public function makeAdmin(Request $request, $groupId)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $group = StudyGroup::findOrFail($groupId);
+        
+        // Check if current user is admin
+        if (!$group->admins->contains(Auth::id())) {
+            return response()->json(['message' => 'Unauthorized. Only admins can promote members.'], 403);
+        }
+
+        // Check if target user is a member
+        if (!$group->members->contains($validated['user_id'])) {
+            return response()->json(['message' => 'User is not a member of this group.'], 422);
+        }
+
+        // Update pivot to make the user an admin
+        $group->members()->updateExistingPivot($validated['user_id'], ['is_admin' => true]);
+        
+        return response()->json(['message' => 'User has been promoted to admin.']);
+    }
+
+    // Get all study groups where the authenticated user is a member
+    public function myGroups(Request $request)
+    {
+        $user = $request->user();
+        $groups = $user->studyGroups()->with(['creator', 'major', 'course', 'faculty'])->get();
+        return response()->json($groups);
     }
 }

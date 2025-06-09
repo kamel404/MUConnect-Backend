@@ -14,7 +14,6 @@ class Faculty extends Model
     protected $fillable =
     [
         'name',
-        'description', 
         'abbreviation'
     ];
 
@@ -28,5 +27,11 @@ class Faculty extends Model
     public function majors()
     {
         return $this->hasMany(Major::class);
+    }
+
+    // Courses that belong to the faculty
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
     }
 }

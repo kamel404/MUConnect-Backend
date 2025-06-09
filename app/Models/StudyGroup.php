@@ -4,26 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Post;
 
 class StudyGroup extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'group_name',
-        'major',
-        'course_code',
+        'name',
         'description',
-        'members',
         'capacity',
         'location',
         'is_online',
         'is_complete',
         'meeting_time',
-        'leader_id',
-        'major_id',
+        'creator_id',
         'course_id',
+        'major_id',
+        'faculty_id',
     ];
 
     protected $casts = [
@@ -32,39 +29,55 @@ class StudyGroup extends Model
         'meeting_time' => 'datetime',
     ];
 
-    // 🔗 Leader of the group
-    public function leader()
+    // Creator of the group
+    public function creator()
     {
-        return $this->belongsTo(User::class, 'leader_id');
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
-    // 🔗 Users who joined this group
+    // Members of the group (including creator)
     public function members()
     {
-        return $this->belongsToMany(User::class, 'study_group_user')->withTimestamps();
+        return $this->belongsToMany(User::class, 'study_group_user')
+                    ->withPivot('is_admin')
+                    ->withTimestamps();
     }
 
-    // 🔗 Related major
+    // Admins of the group (includes creator)
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'study_group_user')
+                    ->wherePivot('is_admin', true)
+                    ->withTimestamps();
+    }
+
+    // Related major
     public function major()
     {
         return $this->belongsTo(Major::class);
     }
 
-    // 🔗 Related course
+    // Related faculty
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
+    }
+
+    // Related course
     public function course()
     {
         return $this->belongsTo(Course::class);
     }
 
-    // ✅ Check if group is full
+    // Check if group is full
     public function isFull(): bool
     {
         return $this->capacity !== null && $this->members()->count() >= $this->capacity;
     }
 
-    // ✅ Check if the group is online
-    public function isOnline(): bool
+    // Get current member count
+    public function getMemberCountAttribute(): int
     {
-        return $this->is_online === true;
+        return $this->members()->count();
     }
 }

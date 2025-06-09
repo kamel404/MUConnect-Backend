@@ -78,9 +78,17 @@ class User extends Authenticatable
         return $this->roles->first()?->name;
     }
 
-    public function getRoleNamesAttribute(): array
+    public function getRoleNames(): array
     {
         return $this->roles->pluck('name')->toArray();
+    }
+
+    /**
+     * Get the role_names attribute for JSON serialization
+     */
+    public function getRoleNamesAttribute(): array
+    {
+        return $this->getRoleNames();
     }
 
     // Convenience methods (same performance as boolean columns)
