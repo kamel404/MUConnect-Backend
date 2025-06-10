@@ -106,4 +106,9 @@ class User extends Authenticatable
     {
         return $this->hasRole('student');
     }
+
+    public function savedItems()
+    {
+        return $this->hasMany(SavedItem::class);
+    }
 }

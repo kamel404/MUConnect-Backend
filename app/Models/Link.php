@@ -4,14 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Attachment extends Model
+class Link extends Model
 {
     protected $fillable = [
         'resource_id',
-        'file_path',
-        'file_name',
-        'mime_type',
-        'file_size',
+        'url',
     ];
 
     public function resource()

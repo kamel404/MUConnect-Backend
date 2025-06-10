@@ -4,21 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('attachments', function (Blueprint $table) {
+        Schema::create('hashtags', function (Blueprint $table) {
             $table->id();
-            $table->string('file_path');
-            $table->string('checksum')->unique(); // Added checksum column
-            $table->string('mime_type')->nullable();
-            $table->string('size')->nullable(); // Added size column
+            $table->string('tag_name')->unique();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -26,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('attachments');
+        Schema::dropIfExists('hashtags');
     }
 };

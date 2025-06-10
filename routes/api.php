@@ -64,7 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
     // Post routes (protected)
-    Route::apiResource('/posts', PostController::class)->except('create', 'edit');
 
     // Study Groups routes
     Route::get('/study-groups', [StudyGroupController::class, 'index']);

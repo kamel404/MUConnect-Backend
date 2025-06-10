@@ -39,7 +39,7 @@ class StudyGroupController extends Controller
             $query->where('faculty_id', $request->faculty_id);
         }
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 4);
         return response()->json($query->paginate($perPage));
     }
 
