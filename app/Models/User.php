@@ -111,4 +111,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(SavedItem::class);
     }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function registeredEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_registrations');
+    }
+
 }

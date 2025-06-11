@@ -10,10 +10,15 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Event::latest()->get();
+        $perPage = $request->get('per_page', 8);
+    
+        $events = Event::latest()->paginate($perPage);
+    
+        return response()->json($events);
     }
+    
 
     public function myEvents(Request $request)
     {
@@ -29,9 +34,6 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
@@ -67,10 +69,6 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'category' => 'sometimes|required|string|max:255',
@@ -94,14 +92,54 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy(Request $request, Event $event)
     {
-        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }   
+    
         $event->delete();
-        return response()->json([
-            'message' => 'Event deleted successfully'
-        ], 204);
+    
+        return response()->json(['message' => 'Event deleted successfully'], 200);
     }
+
+    public function register(Request $request, Event $event)
+    {
+        $user = $request->user();
+
+        $alreadyRegistered = EventRegistration::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if ($alreadyRegistered) {
+            return response()->json(['message' => 'Already registered'], 400);
+        }
+
+        EventRegistration::create([
+            'event_id' => $event->id,
+            'user_id' => $user->id,
+        ]);
+
+        $event->increment('attendees_count');
+
+        return response()->json(['message' => 'Registered successfully']);
+    }
+
+    public function unregister(Request $request, Event $event)
+    {
+        $user = $request->user();
+
+        $registration = EventRegistration::where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+    if (!$registration) {
+        return response()->json(['message' => 'Not registered'], 400);
+    }
+
+    $registration->delete();
+    $event->decrement('attendees_count');
+
+    return response()->json(['message' => 'Unregistered successfully']);
+}
+
+
+    
 }

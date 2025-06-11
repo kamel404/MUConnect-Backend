@@ -109,8 +109,7 @@ class AuthController extends Controller
 
         $user = User::where($loginField, $loginInput)->firstOrFail();
         
-        $user->tokens()->delete();
-        
+        // No token deletion here, so multiple tokens can exist per user
         $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 
         return response()->json([
@@ -127,8 +126,8 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Revoke the token that was used to authenticate the current request
-        $request->user()->tokens()->delete();
+        // Revoke only the current access token
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Successfully logged out']);
     }

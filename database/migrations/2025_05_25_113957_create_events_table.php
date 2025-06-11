@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('organizer');
             $table->text('description')->nullable();
             $table->string('speaker_names')->nullable();
+            $table->unsignedInteger('attendees_count')->default(0);
             $table->string('image_path')->nullable();
             $table->timestamps();
         });

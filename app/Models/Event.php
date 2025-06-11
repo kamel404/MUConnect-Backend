@@ -30,4 +30,14 @@ class Event extends Model
     {
         return $this->morphMany(SavedItem::class, 'saveable');
     }
+
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
+public function attendees()
+    {
+        return $this->belongsToMany(User::class, 'event_registrations');
+    }
 }

@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
+    
 });
 
 
@@ -68,8 +69,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
-    // Post routes (protected)
-
     // Study Groups routes
     Route::get('/study-groups', [StudyGroupController::class, 'index']);
     Route::post('/study-groups', [StudyGroupController::class, 'store']);
@@ -88,7 +87,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events', [EventController::class, 'index']);
     Route::get('/events/my-events', [EventController::class, 'myEvents']);
     Route::get('/events/{event}', [EventController::class, 'show']);
-
+    Route::post('/events/{event}/register', [EventController::class, 'register']);
+    Route::post('/events/{event}/unregister', [EventController::class, 'unregister']);
 
     // Course routes
     Route::get('/courses', [CourseController::class, 'index']);
