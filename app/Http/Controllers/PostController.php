@@ -1,27 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\StorePostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Attachment;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+
 class PostController extends Controller
 {
-
     public function index()
     {
-        $posts = Post::with('attachment')->latest()->get();
-
+        $posts = Post::with('attachments')->latest()->get();
         return response()->json($posts);
     }
 
-    // GET /api/posts/{id}
     public function show($id)
     {
-        $post = Post::with('attachment')->find($id);
+        $post = Post::with('attachments')->find($id);
 
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
@@ -30,63 +28,64 @@ class PostController extends Controller
         return response()->json($post);
     }
 
+
     public function store(StorePostRequest $request)
     {
-        //
-
         DB::beginTransaction();
 
         try {
-            $attachment = null;
+            $attachments = [];
 
-            if ($request->hasFile('attachment')) {
-                $file = $request->file('attachment');
-                $checksum = hash_file('sha256', $file->getRealPath());
+            if ($request->hasFile('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    $checksum = hash_file('sha256', $file->getRealPath());
 
-                $attachment = Attachment::where('checksum', $checksum)->first();
-                if (!$attachment) {
+                    $existing = Attachment::where('checksum', $checksum)->first();
+
+                    if ($existing) {
+                        $attachments[] = $existing;
+                        continue;
+                    }
 
                     $mimeType = $file->getMimeType();
-
                     $type = explode('/', $mimeType)[0];
 
                     $categoryFolder = match ($type) {
                         'image' => 'images',
                         'video' => 'videos',
-                        'document' => 'documents',
+                        'application' => 'documents',
                         default => 'others',
                     };
 
                     $storagePath = "attachments/{$categoryFolder}";
                     $path = $file->store($storagePath, 'public');
 
-                    $attachment = Attachment::create([
+                    $newAttachment = Attachment::create([
                         'original_name' => $file->getClientOriginalName(),
                         'file_path' => $path,
-                        'mime_type' => $file->getMimeType(),
+                        'mime_type' => $mimeType,
                         'checksum' => $checksum,
                     ]);
+
+                    $attachments[] = $newAttachment;
                 }
             }
 
             $post = Post::create([
-                //todo highly imprtant to use auth()->id() instead of hardcoding user_id I just placed it here for testing
-                //'user_id' => auth()->id(), // inside create() during store()
-                'user_id' => 1,
+                'user_id' => auth()->id() ?? 1,
                 'title' => $request->input('title'),
                 'content' => $request->input('content'),
-
             ]);
 
-            if ($attachment) {
-                $post->attachment()->attach($attachment);
+            if (!empty($attachments)) {
+                $post->attachments()->attach(collect($attachments)->pluck('id')->toArray());
             }
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Post created successfully',
-                'post' => $post->load('attachment'),
+                'post' => $post->load('attachments'),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -96,82 +95,42 @@ class PostController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-
     }
-    //Delete a post and its attachments
+
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
-        // //auth that this users own the post 
-        // if (!$post) {
-        //     return response()->json(['message' => 'Post not found'], 404);
-        // }
-        // if ($post->user_id !== auth()->id()) {
-        //     return response()->json(['message' => 'Unauthorized'], 403);
-        // }
-        //here it is giving a warning that the $post maybe collection but it is impossible. false alarm 
-        return $this->deletePostWithCleanup($post);
-    }
-    //todo this can be moved to a service class for better separation of concerns but for now I will keep it here
-    // private function deletePostWithCleanup(Post $post)
-    // {
-    //     $post->load('attachment');
-    //     $attachment = $post->attachment;
+        DB::beginTransaction();
 
-    //     foreach ($post->attachments as $attachment) {
-    //         $post->attachments()->detach($attachment->id);
+        try {
+            $post = Post::with('attachments')->findOrFail($id);
 
-    //         if ($attachment->posts()->count() === 0) {
-    //             if (Storage::exists($attachment->path)) {
-    //                 Storage::delete($attachment->path);
-    //             }
-    //             $attachment->delete();
-    //         }
-    //     }
+            $attachments = $post->attachments;
 
-    //     $post->delete();
-    // }
-    private function deletePostWithCleanup(Post $post)
-    {
-        $post->load('attachment');
+            // Detach all attachments (pivot cleanup)
+            $post->attachments()->detach();
 
-        $attachment = $post->attachment;
+            // Delete the post
+            $post->delete();
 
-        $post->delete(); // delete the post first
-        if ($attachment && $attachment->posts()->count() === 0) {
-            if (Storage::exists($attachment->file_path)) {
-                Storage::delete($attachment->file_path);
+            // Delete orphaned attachments and files
+            foreach ($attachments as $attachment) {
+                if ($attachment->posts()->count() === 0) {
+                    if (Storage::disk('public')->exists($attachment->file_path)) {
+                        Storage::disk('public')->delete($attachment->file_path);
+                    }
+                    $attachment->delete();
+                }
             }
 
-            $attachment->delete(); // delete the orphaned attachment
-        }
+            DB::commit();
 
-        return response()->json(['message' => 'Post and orphaned attachment deleted successfully.']);
+            return response()->json(['message' => 'Post and orphaned attachments deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json(['message' => 'Error deleting post', 'error' => $e->getMessage()], 500);
+        }
     }
 
+    // Old / unused methods commented out for reference...
 }
-
-
-//I keep old functions here for reference, but they are not used in the current implementation.
-// public function store(StorePostRequest $request)
-// {
-
-//     $post = Post::create([
-//         'user_id' => auth()->id(),
-//         'title' => $request->input('title'),
-//         'content' => $request->input('content')
-//     ]);
-
-//     if ($request->hasFile('attachments')) {
-//         foreach ($request->file('attachments') as $file) {
-//             $path = $file->store('attachments', 'public');
-//             Attachment::create([
-//                 'post_id' => $post->id,
-//                 'file_path' => $path,
-//                 'mime_type' => $file->getClientMimeType()
-//             ]);
-//         }
-//     }
-
-//     return response()->json(['message' => 'Post created successfully!', 'post' => $post], 201);
-// }

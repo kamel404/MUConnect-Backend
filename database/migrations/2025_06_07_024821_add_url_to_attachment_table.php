@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
-            $table->id();
-            $table->string('topic');
-            $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
-            $table->date('event_date');
-            $table->string('location');
-            $table->timestamps();
+        Schema::table('attachments', function (Blueprint $table) {
+            $table->string('url')->nullable();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::table('attachments', function (Blueprint $table) {
+            //
+        });
     }
 };

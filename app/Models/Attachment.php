@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 class Attachment extends Model
 {
@@ -15,10 +16,14 @@ class Attachment extends Model
         'mime_type',
         'size',
         'checksum',
-
+        'url',
     ];
+    public function getUrlAttribute()
+    {
+        return Storage::url($this->file_path);
+    }
 
-    public function post()
+    public function posts()
     {
         return $this->belongsToMany(Post::class);
     }

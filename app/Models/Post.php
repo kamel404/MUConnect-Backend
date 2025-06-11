@@ -25,7 +25,7 @@ class Post extends Model
         'published_at' => 'datetime',
     ];
 
-    public function attachment()
+    public function attachments()
     {
         return $this->belongsToMany(Attachment::class);
         }
