@@ -9,16 +9,16 @@ class Event extends Model
 {
     use HasFactory;
 
-    //todo switch category to enum
     protected $fillable = [
         'user_id',
         'title',
         'category',
-        'date',
-        'time',
+        'event_datetime',
         'location',
         'organizer',
         'description',
+        'speaker_names',
+        'image_path',
     ];
 
     public function user()

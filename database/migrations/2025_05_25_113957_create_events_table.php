@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('user_id');
             $table->string('title');
             $table->string('category');
@@ -20,6 +19,8 @@ return new class extends Migration {
             $table->string('location');
             $table->string('organizer');
             $table->text('description')->nullable();
+            $table->string('speaker_names')->nullable();
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }

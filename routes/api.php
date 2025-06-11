@@ -43,6 +43,11 @@ Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
     // User roles management (protected)
     Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
     Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
+
+    // Events routes (protected)
+    Route::post('/events', [EventController::class, 'store']);
+    Route::put('/events/{event}', [EventController::class, 'update']);
+    Route::delete('/events/{event}', [EventController::class, 'destroy']);
 });
 
 
@@ -80,7 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Events routes
-    Route::apiResource('/events', EventController::class)->except('create', 'edit');
+    Route::get('/events', [EventController::class, 'index']);
+    Route::get('/events/my-events', [EventController::class, 'myEvents']);
+    Route::get('/events/{event}', [EventController::class, 'show']);
+
 
     // Course routes
     Route::get('/courses', [CourseController::class, 'index']);

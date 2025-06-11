@@ -12,8 +12,16 @@ class EventController extends Controller
      */
     public function index()
     {
-        return Event::all();
+        return Event::latest()->get();
     }
+
+    public function myEvents(Request $request)
+    {
+        $user = $request->user();
+
+        return Event::where('user_id', $user->id)->latest()->get();
+    }
+
 
 
     /**
@@ -21,21 +29,28 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'event_datetime' => 'required|date',
             'location' => 'required|string|max:255',
             'organizer' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'speaker_names' => 'nullable|string',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $validated['user_id'] = Auth::id();
+        if ($request->hasFile('image_path')) {
+            $validated['image_path'] = $request->file('image_path')->store('events', 'public');
+        }
 
         $event = Event::create($validated);
 
         return response()->json($event, 201);
-
     }
 
     /**
@@ -52,8 +67,7 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        
-        if ($event->user_id !== Auth::id()) {
+        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -64,7 +78,13 @@ class EventController extends Controller
             'location' => 'sometimes|required|string|max:255',
             'organizer' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'speaker_names' => 'nullable|string',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
+
+        if ($request->hasFile('image_path')) {
+            $validated['image_path'] = $request->file('image_path')->store('events', 'public');
+        }
 
         $event->update($validated);
 
@@ -76,8 +96,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        
-        if ($event->user_id !== Auth::id()) {
+        if (!$request->user()->hasAnyRole(['admin', 'moderator'])) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }   
         $event->delete();
