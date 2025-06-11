@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Link extends Model
 {
     protected $fillable = [
-        'resource_id',
         'url',
     ];
 
-    public function resource()
+    public function resourceContent()
     {
-        return $this->belongsTo(Resource::class);
+        return $this->morphOne(ResourceContent::class, 'contentable');
     }
 }

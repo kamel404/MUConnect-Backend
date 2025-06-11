@@ -11,7 +11,6 @@ class Resource extends Model
         'user_id',
         'title',
         'description',
-        'type',
     ];
 
     public function user()
@@ -21,12 +20,12 @@ class Resource extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function upvotes()
     {
-        return $this->hasMany(Upvote::class);
+        return $this->morphMany(Upvote::class, 'upvoteable');
     }
 
     public function polls()
@@ -49,13 +48,17 @@ class Resource extends Model
         return $this->hasMany(Media::class);
     }
 
-    public function hashtags()
-    {
-        return $this->belongsToMany(Hashtag::class);
+    public function hashtags() {
+        return $this->belongsToMany(Hashtag::class, 'hashtag_resource');
     }
 
     public function savedBy()
     {
         return $this->morphMany(SavedItem::class, 'saveable');
+    }
+
+    public function contents()
+    {
+        return $this->hasMany(ResourceContent::class)->orderBy('position');
     }
 }

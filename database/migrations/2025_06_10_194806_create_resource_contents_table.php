@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('resource_media', function (Blueprint $table) {
+        Schema::create('resource_contents', function (Blueprint $table) {
             $table->id();
-            $table->string('file_path');
-            $table->enum('media_type', ['image', 'video']);
+            $table->foreignId('resource_id')->constrained()->onDelete('cascade');
+            $table->morphs('contentable'); // contentable_type + contentable_id
+            $table->unsignedInteger('position')->default(0); // for order
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('resource_media');
+        Schema::dropIfExists('resource_contents');
     }
 };

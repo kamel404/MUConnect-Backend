@@ -8,7 +8,6 @@ class Upvote extends Model
 {
     protected $fillable = [
         'user_id',
-        'resource_id',
         'upvoteable_type',
         'upvoteable_id',
     ];

@@ -11,7 +11,6 @@ class Media extends Model
     protected $table = 'resource_media';
 
     protected $fillable = [
-        'resource_id',
         'file_path',
         'media_type',
     ];
@@ -46,5 +45,10 @@ class Media extends Model
     public function scopeVideos($query)
     {
         return $query->where('media_type', 'video');
+    }
+
+    public function resourceContent()
+    {
+        return $this->morphOne(ResourceContent::class, 'contentable');
     }
 }

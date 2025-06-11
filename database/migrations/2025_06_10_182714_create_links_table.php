@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('links', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('resource_id')->constrained()->onDelete('cascade');
             $table->string('url');
-            $table->string('title')->nullable();       // optional link title
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }

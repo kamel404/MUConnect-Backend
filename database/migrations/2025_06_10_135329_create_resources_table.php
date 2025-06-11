@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title')->nullable();
-            $table->string('description')->nullable();
-            $table->enum('type', ['poll', 'link', 'attachment', 'media']);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('polls', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('resource_id')->constrained('resources')->onDelete('cascade');
             $table->string('question')->nullable();
             $table->timestamps();
         });

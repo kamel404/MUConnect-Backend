@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Poll extends Model
 {
     protected $fillable = [
-        'poll_id',
-        'option_text',
+        'question',
     ];
 
-    public function poll()
+    public function resourceContent()
     {
-        return $this->belongsTo(Poll::class);
+        return $this->morphOne(ResourceContent::class, 'contentable');
     }
 
     public function options()

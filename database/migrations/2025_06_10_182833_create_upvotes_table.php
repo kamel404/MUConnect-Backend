@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('upvotes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('resource_id')->constrained()->onDelete('cascade');
             $table->morphs('upvoteable'); // upvoteable_type, upvoteable_id
             $table->timestamps();
 

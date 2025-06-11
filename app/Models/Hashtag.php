@@ -10,8 +10,7 @@ class Hashtag extends Model
         'tag_name',
     ];
 
-    public function resources()
-    {
+    public function resources() {
         return $this->belongsToMany(Resource::class, 'hashtag_resource');
     }
 
