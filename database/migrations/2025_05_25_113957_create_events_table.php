@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('title');
-            $table->string('category');
+            // $table->string('category'); Removed by other migration
             $table->dateTime('event_datetime');
             $table->string('location');
             $table->string('organizer');

@@ -54,6 +54,14 @@ Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
 
 // Protected Routes for all authenticated users
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Saved Items routes 
+    Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
+
+    // Save/Unsave for Resources
+    Route::post('/resources/{id}/save', [\App\Http\Controllers\ResourceController::class, 'save']);
+    Route::delete('/resources/{id}/unsave', [\App\Http\Controllers\ResourceController::class, 'unsave']);
+
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
 
@@ -81,14 +89,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/study-groups/{group}/leave', [StudyGroupController::class, 'leaveGroup']);
     Route::post('/study-groups/{group}/make-admin', [StudyGroupController::class, 'makeAdmin']);
     Route::get('/study-groups/filters', [StudyGroupController::class, 'applyFilters']);
+    Route::post('/study-groups/{group}/save', [StudyGroupController::class, 'save']);
+    Route::post('/study-groups/{group}/unsave', [StudyGroupController::class, 'unsave']);
 
 
     // Events routes
     Route::get('/events', [EventController::class, 'index']);
-    Route::get('/events/my-events', [EventController::class, 'myEvents']);
+    Route::get('/events/my-events', [EventController::class, 'myRegisteredEvents']);
     Route::get('/events/{event}', [EventController::class, 'show']);
     Route::post('/events/{event}/register', [EventController::class, 'register']);
     Route::post('/events/{event}/unregister', [EventController::class, 'unregister']);
+    Route::post('/events/{event}/save', [EventController::class, 'save']);
+    Route::post('/events/{event}/unsave', [EventController::class, 'unsave']);
 
     // Course routes
     Route::get('/courses', [CourseController::class, 'index']);

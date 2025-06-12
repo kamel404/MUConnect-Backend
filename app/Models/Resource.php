@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Resource extends Model
 {
+    public function savedBy()
+    {
+        return $this->morphMany(\App\Models\SavedItem::class, 'saveable');
+    }
+
     protected $fillable = [
         'user_id',
         'title',
@@ -50,11 +55,6 @@ class Resource extends Model
 
     public function hashtags() {
         return $this->belongsToMany(Hashtag::class, 'hashtag_resource');
-    }
-
-    public function savedBy()
-    {
-        return $this->morphMany(SavedItem::class, 'saveable');
     }
 
     public function contents()

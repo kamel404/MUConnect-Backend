@@ -8,6 +8,36 @@ use Illuminate\Support\Facades\Auth;
 
 class StudyGroupController extends Controller
 {
+    // Save a study group for the authenticated user
+    public function save($id)
+    {
+        $user = auth()->user();
+        $group = \App\Models\StudyGroup::findOrFail($id);
+
+        $saved = \App\Models\SavedItem::firstOrCreate([
+            'user_id' => $user->id,
+            'saveable_id' => $group->id,
+            'saveable_type' => \App\Models\StudyGroup::class,
+        ]);
+
+        return response()->json(['saved' => true, 'item' => $saved], 201);
+    }
+
+    // Unsave a study group for the authenticated user
+    public function unsave($id)
+    {
+        $user = auth()->user();
+        $group = \App\Models\StudyGroup::findOrFail($id);
+
+        $deleted = \App\Models\SavedItem::where([
+            'user_id' => $user->id,
+            'saveable_id' => $group->id,
+            'saveable_type' => \App\Models\StudyGroup::class,
+        ])->delete();
+
+        return response()->json(['deleted' => $deleted > 0]);
+    }
+
     public function index(Request $request)
     {
         $query = StudyGroup::with(['creator', 'major', 'course', 'faculty'])

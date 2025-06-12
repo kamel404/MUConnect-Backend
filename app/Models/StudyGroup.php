@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudyGroup extends Model
 {
+
+
     use HasFactory;
 
     protected $fillable = [
@@ -79,5 +81,10 @@ class StudyGroup extends Model
     public function getMemberCountAttribute(): int
     {
         return $this->members()->count();
+    }
+
+    public function savedBy()
+    {
+        return $this->morphMany(\App\Models\SavedItem::class, 'saveable');
     }
 }

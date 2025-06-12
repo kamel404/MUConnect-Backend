@@ -15,6 +15,11 @@ class SavedItem extends Model
         'saveable_type'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function saveable()
     {
         return $this->morphTo();

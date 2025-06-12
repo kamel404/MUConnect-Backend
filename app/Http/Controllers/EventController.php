@@ -5,27 +5,140 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\EventRegistration;
+
 class EventController extends Controller
 {
+    // Save an event for the authenticated user
+    public function save($id)
+    {
+        $user = auth()->user();
+        $event = \App\Models\Event::findOrFail($id);
+
+        $saved = \App\Models\SavedItem::firstOrCreate([
+            'user_id' => $user->id,
+            'saveable_id' => $event->id,
+            'saveable_type' => \App\Models\Event::class,
+        ]);
+
+        return response()->json(['saved' => true, 'item' => $saved], 201);
+    }
+
+    // Unsave an event for the authenticated user
+    public function unsave($id)
+    {
+        $user = auth()->user();
+        $event = \App\Models\Event::findOrFail($id);
+
+        $deleted = \App\Models\SavedItem::where([
+            'user_id' => $user->id,
+            'saveable_id' => $event->id,
+            'saveable_type' => \App\Models\Event::class,
+        ])->delete();
+
+        return response()->json(['deleted' => $deleted > 0]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 8);
-    
-        $events = Event::latest()->paginate($perPage);
-    
+        $query = Event::query();
+
+        // Handle time_filter (today, this_week, this_month)
+        if ($request->filled('time_filter') && !$request->filled('start_date') && !$request->filled('end_date')) {
+            $now = now();
+            switch ($request->time_filter) {
+                case 'today':
+                    $start = $now->copy()->startOfDay();
+                    $end = $now->copy()->endOfDay();
+                    break;
+                case 'this_week':
+                    $start = $now->copy()->startOfWeek();
+                    $end = $now->copy()->endOfWeek();
+                    break;
+                case 'this_month':
+                    $start = $now->copy()->startOfMonth();
+                    $end = $now->copy()->endOfMonth();
+                    break;
+                default:
+                    $start = null;
+                    $end = null;
+            }
+            if ($start && $end) {
+                $query->whereBetween('event_datetime', [$start, $end]);
+            }
+        }
+
+        // Search by title
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('event_datetime', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('event_datetime', '<=', $request->end_date);
+        }
+
+        $events = $query->latest()->paginate($perPage);
         return response()->json($events);
     }
     
-
-    public function myEvents(Request $request)
+    public function myRegisteredEvents(Request $request)
     {
         $user = $request->user();
+        $query = Event::whereHas('registrations', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        });
 
-        return Event::where('user_id', $user->id)->latest()->get();
+        // Handle time_filter (today, this_week, this_month)
+        if ($request->filled('time_filter') && !$request->filled('start_date') && !$request->filled('end_date')) {
+            $now = now();
+            switch ($request->time_filter) {
+                case 'today':
+                    $start = $now->copy()->startOfDay();
+                    $end = $now->copy()->endOfDay();
+                    break;
+                case 'this_week':
+                    $start = $now->copy()->startOfWeek();
+                    $end = $now->copy()->endOfWeek();
+                    break;
+                case 'this_month':
+                    $start = $now->copy()->startOfMonth();
+                    $end = $now->copy()->endOfMonth();
+                    break;
+                default:
+                    $start = null;
+                    $end = null;
+            }
+            if ($start && $end) {
+                $query->whereBetween('event_datetime', [$start, $end]);
+            }
+        }
+
+        // Search by title
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('event_datetime', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('event_datetime', '<=', $request->end_date);
+        }
+
+        $perPage = $request->get('per_page', 10);
+        $events = $query->latest()->paginate($perPage);
+        return response()->json($events);
     }
+    
 
 
 
@@ -37,7 +150,6 @@ class EventController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
             'event_datetime' => 'required|date',
             'location' => 'required|string|max:255',
             'organizer' => 'required|string|max:255',
@@ -71,7 +183,6 @@ class EventController extends Controller
     {
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
-            'category' => 'sometimes|required|string|max:255',
             'event_datetime' => 'sometimes|required|date',
             'location' => 'sometimes|required|string|max:255',
             'organizer' => 'sometimes|required|string|max:255',

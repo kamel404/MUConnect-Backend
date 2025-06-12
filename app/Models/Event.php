@@ -12,7 +12,6 @@ class Event extends Model
     protected $fillable = [
         'user_id',
         'title',
-        'category',
         'event_datetime',
         'location',
         'organizer',
@@ -35,8 +34,8 @@ class Event extends Model
     {
         return $this->hasMany(EventRegistration::class);
     }
-
-public function attendees()
+    
+    public function attendees()
     {
         return $this->belongsToMany(User::class, 'event_registrations');
     }
