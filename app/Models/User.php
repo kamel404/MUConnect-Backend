@@ -122,4 +122,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class, 'event_registrations');
     }
 
+    public function resources()
+    {
+        return $this->hasMany(Resource::class);
+    }
+
+
 }

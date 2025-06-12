@@ -3,21 +3,38 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
     protected $fillable = [
         'file_path',
         'file_type',
+        'mime_type',
+        'size',
+        'checksum',
+        'url',
     ];
 
-    public function resource()
+    /**
+     * Get the parent attachable model (Resource, etc.)
+     */
+    public function attachable()
     {
-        return $this->belongsTo(Resource::class);
+        return $this->morphTo();
     }
 
-    public function resourceContent()
+    /**
+     * Accessor for full URL (auto-used with $attachment->url)
+     */
+    public function getUrlAttribute($value)
     {
-        return $this->morphOne(ResourceContent::class, 'contentable');
+        // If it's already a full URL (e.g., from S3), use it
+        if ($value && str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        return Storage::url($this->file_path);
     }
+
 }

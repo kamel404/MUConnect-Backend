@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Resource;
+use App\Models\Attachment;
 use App\Models\SavedItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ResourceController extends Controller
 {
-    // ... other methods ...
-
     // Save a resource for the authenticated user
     public function save($id)
     {
@@ -39,5 +39,150 @@ class ResourceController extends Controller
         ])->delete();
 
         return response()->json(['deleted' => $deleted > 0]);
+    }
+
+    // Create a new resource with optional attachments
+    public function store(Request $request)
+    {
+        $user = Auth::user();
+        $maxAttachments = 10; // Set your limit here
+
+        $data = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'attachments' => 'sometimes',
+            'attachments.*' => 'file|max:10240',
+        ]);
+
+        // Normalize attachments to always be an array
+        $files = $request->file('attachments');
+        if (!$files) {
+            $files = [];
+        } elseif ($files instanceof \Illuminate\Http\UploadedFile) {
+            $files = [$files];
+        }
+        $newCount = count($files);
+        if ($newCount > $maxAttachments) {
+            return response()->json([
+                'error' => "You can only attach up to $maxAttachments files per resource."
+            ], 422);
+        }
+
+        $resource = Resource::create([
+            'user_id' => $user->id,
+            'title' => $data['title'] ?? null,
+            'description' => $data['description'] ?? null,
+        ]);
+
+        if ($files) {
+            foreach ($files as $uploadedFile) {
+                $path = $uploadedFile->store('attachments', 'public');
+
+                $resource->attachments()->create([
+                    'file_path' => $path,
+                    'file_type' => $this->guessFileType($uploadedFile),
+                    'mime_type' => $uploadedFile->getClientMimeType(),
+                    'checksum' => md5_file($uploadedFile->getRealPath()),
+                ]);
+            }
+        }
+
+        return response()->json(['resource' => $resource->load('attachments')], 201);
+    }
+
+    // This update method is not working
+    // public function update(Request $request, $id)
+    // {
+    //     $user = Auth::user();
+    //     $maxAttachments = 10;
+
+    //     $resource = Resource::where('user_id', $user->id)->findOrFail($id);
+
+    //     $data = $request->validate([
+    //         'title' => 'nullable|string',
+    //         'description' => 'nullable|string',
+    //         'attachments' => 'sometimes',
+    //         'attachments.*' => 'file|max:10240',
+    //     ]);
+
+    //     // Only update fields that are present in the request
+    //     $updateData = [];
+    //     if ($request->has('title')) {
+    //         $updateData['title'] = $request->input('title');
+    //     }
+    //     if ($request->has('description')) {
+    //         $updateData['description'] = $request->input('description');
+    //     }
+    //     if (!empty($updateData)) {
+    //         $resource->update($updateData);
+    //     }
+
+    //     // Normalize files to array (robust, Postman compatible)
+    //     $files = [];
+    //     if ($request->hasFile('attachments')) {
+    //         $rawFiles = $request->file('attachments');
+    //         if (is_array($rawFiles)) {
+    //             $files = $rawFiles;
+    //         } elseif ($rawFiles instanceof \Illuminate\Http\UploadedFile) {
+    //             $files = [$rawFiles];
+    //         }
+    //     }
+
+    //     if (count($files)) {
+    //         if (count($files) > $maxAttachments) {
+    //             return response()->json([
+    //                 'error' => "You can only attach up to $maxAttachments files per resource."
+    //             ], 422);
+    //         }
+    //         // Delete old attachments (DB + storage)
+    //         foreach ($resource->attachments as $attachment) {
+    //             \Illuminate\Support\Facades\Storage::disk('public')->delete($attachment->file_path);
+    //             $attachment->delete();
+    //         }
+    //         // Add new attachments
+    //         foreach ($files as $uploadedFile) {
+    //             $path = $uploadedFile->store('attachments', 'public');
+    //             $resource->attachments()->create([
+    //                 'file_path' => $path,
+    //                 'file_type' => $this->guessFileType($uploadedFile),
+    //                 'mime_type' => $uploadedFile->getClientMimeType(),
+    //                 'checksum' => md5_file($uploadedFile->getRealPath()),
+    //             ]);
+    //         }
+    //         $resource->touch();
+    //     }
+
+    //     return response()->json(['resource' => $resource->load('attachments')]);
+    // }
+    
+
+    // Delete a resource (and cascade attachments via DB)
+    public function destroy($id)
+    {
+        $user = Auth::user();
+        $resource = Resource::where('user_id', $user->id)->findOrFail($id);
+
+        // Delete attached files from storage
+        foreach ($resource->attachments as $attachment) {
+            Storage::disk('public')->delete($attachment->file_path);
+        }
+
+        $resource->delete();
+
+        return response()->json(['deleted' => true]);
+    }
+
+    // Helper to guess file type from MIME
+    protected function guessFileType($file)
+    {
+        $mime = $file->getMimeType();
+
+        if (str_starts_with($mime, 'image/')) {
+            return 'image';
+        }
+        if (str_starts_with($mime, 'video/')) {
+            return 'video';
+        }
+        return 'document';
     }
 }

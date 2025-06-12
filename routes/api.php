@@ -13,6 +13,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\PrerequisiteController;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\AttachmentController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -58,7 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Saved Items routes 
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
 
-    // Save/Unsave for Resources
+    // Resource routes (protected)
+    Route::post('/resources', [\App\Http\Controllers\ResourceController::class, 'store']);
+    Route::put('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'update']);
+    Route::delete('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'destroy']);
     Route::post('/resources/{id}/save', [\App\Http\Controllers\ResourceController::class, 'save']);
     Route::delete('/resources/{id}/unsave', [\App\Http\Controllers\ResourceController::class, 'unsave']);
 

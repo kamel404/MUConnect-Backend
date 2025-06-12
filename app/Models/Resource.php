@@ -35,30 +35,16 @@ class Resource extends Model
 
     public function polls()
     {
-        return $this->hasMany(Poll::class);
-    }
-
-    public function links()
-    {
-        return $this->hasMany(Link::class);
+        return $this->hasOne(Poll::class);
     }
 
     public function attachments()
     {
-        return $this->hasMany(Attachment::class);
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
-    public function media()
-    {
-        return $this->hasMany(Media::class);
-    }
 
     public function hashtags() {
         return $this->belongsToMany(Hashtag::class, 'hashtag_resource');
-    }
-
-    public function contents()
-    {
-        return $this->hasMany(ResourceContent::class)->orderBy('position');
     }
 }

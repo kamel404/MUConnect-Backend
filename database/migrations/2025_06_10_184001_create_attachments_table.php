@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
+
             $table->string('file_path');
-            $table->string('file_type');
+            $table->enum('file_type', ['image', 'video', 'document']); // required for filteringhat
+            $table->string('mime_type')->nullable();
+            $table->string('checksum')->nullable();
+            $table->string('url')->nullable();
+
+            $table->morphs('attachable'); // adds unsignedBigInteger attachable_id and string attachable_type + index
+
             $table->timestamps();
         });
     }

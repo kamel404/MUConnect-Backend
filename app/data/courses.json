@@ -1,0 +1,3982 @@
+[
+    {
+        "#": "1",
+        "Course": "APR360 - Persuasion And Influence Texts And Audiences",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "2",
+        "Course": "APR380 - Seminar In Advertising And Public Relations",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "3",
+        "Course": "APR210 - Essentials Of Public Relations",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "4",
+        "Course": "APR497 - Professional Placement",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "5",
+        "Course": "APR210 - Essentials Of Public Relations",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "6",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "7",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "8",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "9",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "10",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "11",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "12",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "13",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "14",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "15",
+        "Course": "ARB201 - Arabic Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "16",
+        "Course": "ARB202 - Arabic Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "17",
+        "Course": "ARB202 - Arabic Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "18",
+        "Course": "ARB202 - Arabic Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "19",
+        "Course": "ARB202 - Arabic Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "20",
+        "Course": "ARB202 - Arabic Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "21",
+        "Course": "ARB100 - Arabic remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "22",
+        "Course": "ARB100 - Arabic remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "23",
+        "Course": "ARB100 - Arabic remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "24",
+        "Course": "ARB300 - تقنيات الكتابة والتأليف",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "25",
+        "Course": "RTV220 - Television And Radio Broadcasting",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "26",
+        "Course": "RTV220 - Television And Radio Broadcasting",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "27",
+        "Course": "RTV220 - Television And Radio Broadcasting",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "28",
+        "Course": "RTV220 - Television And Radio Broadcasting",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "29",
+        "Course": "COM212 - Introduction To Photography And Cinematography",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "30",
+        "Course": "RTV300 - TV Production I",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "31",
+        "Course": "RTV300 - TV Production I",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "32",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "33",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "34",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "35",
+        "Course": "CIE550 - Environmental Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "36",
+        "Course": "ENG204 - Public Speaking",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "37",
+        "Course": "CIE430 - Geotechnical Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "38",
+        "Course": "EEE330 - Electromagnetic Fields",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "39",
+        "Course": "COM350 - Media Ethics And Law",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "40",
+        "Course": "COM350 - Media Ethics And Law",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "41",
+        "Course": "FOE201 - Intro to Computing",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "42",
+        "Course": "CSC456 - Image Processing",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "43",
+        "Course": "FOE201 - Intro to Computing",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "44",
+        "Course": "CSC210 - C++ Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "45",
+        "Course": "CSC210 - C++ Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "46",
+        "Course": "CSC450 - Operating Systems",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "47",
+        "Course": "CSC310 - Object Oriented Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "48",
+        "Course": "CSC310 - Object Oriented Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "49",
+        "Course": "CSC320 - Data Structures",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "50",
+        "Course": "CSC330 - Database Systems",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "51",
+        "Course": "CSC310 - Object Oriented Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "52",
+        "Course": "CSC340 - Theory of Computation",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "53",
+        "Course": "CSC400 - Web Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "54",
+        "Course": "CSC340 - Theory of Computation",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "55",
+        "Course": "CSC420 - Algorithms",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "56",
+        "Course": "CSC497 - Practical Training",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "57",
+        "Course": "CSC498 - Capstone Project Proposal",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "58",
+        "Course": "CSC499 - Capstone Project",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "59",
+        "Course": "JDM220 - Reporting Practices",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "60",
+        "Course": "JDM220 - Reporting Practices",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "61",
+        "Course": "RTV230 - Broadcast News: Reporting And Editing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "62",
+        "Course": "RTV230 - Broadcast News: Reporting And Editing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "63",
+        "Course": "CSC456 - Image Processing",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "64",
+        "Course": "JDM290 - Newspaper Editing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "65",
+        "Course": "RTV250 - Broadcast Writing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "66",
+        "Course": "CSC310 - Object Oriented Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "67",
+        "Course": "CSC320 - Data Structures",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "68",
+        "Course": "CSC400 - Web Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "69",
+        "Course": "RTV250 - Broadcast Writing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "70",
+        "Course": "CSC420 - Algorithms",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "71",
+        "Course": "CSC210 - C++ Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "72",
+        "Course": "CSC210 - C++ Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "73",
+        "Course": "CSC320 - Data Structures",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "74",
+        "Course": "COM214 - Digital Applications Skills",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "75",
+        "Course": "CSC330 - Database Systems",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "76",
+        "Course": "CSC415 - Mobile Application Development",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "77",
+        "Course": "COM214 - Digital Applications Skills",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "78",
+        "Course": "CSC470 - Software Engineering",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "79",
+        "Course": "CSC450 - Operating Systems",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "80",
+        "Course": "CSC470 - Software Engineering",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "81",
+        "Course": "CSC415 - Mobile Application Development",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "82",
+        "Course": "CSC310L - Object Oriented Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "83",
+        "Course": "COM214 - Digital Applications Skills",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "84",
+        "Course": "CSC330L - Database Systems Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "85",
+        "Course": "CSC320L - Data Structure Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "86",
+        "Course": "CSC330L - Database Systems Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "87",
+        "Course": "CSC310L - Object Oriented Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "88",
+        "Course": "CSC210L - C++ Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "89",
+        "Course": "CSC210L - C++ Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "90",
+        "Course": "CSC310L - Object Oriented Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "91",
+        "Course": "CSC330L - Database Systems Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "92",
+        "Course": "CSC210L - C++ Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "93",
+        "Course": "CSC320L - Data Structure Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "94",
+        "Course": "CSC310L - Object Oriented Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "95",
+        "Course": "CSC210L - C++ Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "96",
+        "Course": "CSC320L - Data Structure Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "97",
+        "Course": "RTV494 - Seminar In Television/Audio/Video: After Effect and Stop Motion",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "98",
+        "Course": "APR320 - Digital Design And Graphics For Mass Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "99",
+        "Course": "MAT213 - Calculus III",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "100",
+        "Course": "MAT320 - Linear Algebra",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "101",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "102",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "103",
+        "Course": "MAT200A - Basic Math",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "104",
+        "Course": "MAT250 - Discrete Mathematics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "105",
+        "Course": "MAT213 - Calculus III",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "106",
+        "Course": "APR320 - Digital Design And Graphics For Mass Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "107",
+        "Course": "MAT203 - Remedial Calculus",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "108",
+        "Course": "JDM250 - Editorial And Feature Writing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "109",
+        "Course": "JDM260 - Multimedia Journalism",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "110",
+        "Course": "MAT203 - Remedial Calculus",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "111",
+        "Course": "MAT213 - Calculus III",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "112",
+        "Course": "MAT250 - Discrete Mathematics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "113",
+        "Course": "MAT225 - Probability and Statistics for Science",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "114",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "115",
+        "Course": "MAT213 - Calculus III",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "116",
+        "Course": "MAT200B - Math remedial course",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "117",
+        "Course": "MAT250 - Discrete Mathematics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "118",
+        "Course": "MAT220 - Math for Liberal Arts",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "119",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "120",
+        "Course": "MAT340 - Differential Equations",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "121",
+        "Course": "MAT345 - Calculus IV",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "122",
+        "Course": "MAT225 - Probability and Statistics for Science",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "123",
+        "Course": "MAT320 - Linear Algebra",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "124",
+        "Course": "MAT340 - Differential Equations",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "125",
+        "Course": "MAT220 - Math for Liberal Arts",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "126",
+        "Course": "MAT345 - Calculus IV",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "127",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "128",
+        "Course": "MAT200B - Math remedial course",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "129",
+        "Course": "CHE205 - General Chemistry",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "130",
+        "Course": "CHE205 - General Chemistry",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "131",
+        "Course": "COM300 - New Media Communications",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "132",
+        "Course": "COM300 - New Media Communications",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "133",
+        "Course": "COM230 - Research Methods In Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "134",
+        "Course": "COM230 - Research Methods In Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "135",
+        "Course": "JDM345 - Web Design for Journalists",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "136",
+        "Course": "PHY220 - Electricity and Magnetism",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "137",
+        "Course": "COM216 - Mediated Performance Theory And Practice",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "138",
+        "Course": "COM216 - Mediated Performance Theory And Practice",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "139",
+        "Course": "COM216 - Mediated Performance Theory And Practice",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "140",
+        "Course": "EEE460 - Linear Control Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "141",
+        "Course": "COM212 - Introduction To Photography And Cinematography",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "142",
+        "Course": "EEE460 - Linear Control Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "143",
+        "Course": "EEE210 - Circuits I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "144",
+        "Course": "FOE430 - Engineering Economics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "145",
+        "Course": "CIE510 - Bridges",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "146",
+        "Course": "CIE545L - Wind and Earthquake Engineering Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "147",
+        "Course": "CIE210 - Engineering Drawings",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "148",
+        "Course": "MEE210 - Engineering Graphics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "149",
+        "Course": "CIE460 - CIE Design Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "150",
+        "Course": "CIE470 - Steel Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "151",
+        "Course": "EEE350 - Electronics II",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "152",
+        "Course": "EEE240 - Linear Systems and Signals",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "153",
+        "Course": "CIE545 - Wind and Earthquake Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "154",
+        "Course": "EEE205 - Circuits",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "155",
+        "Course": "FOE200 - Intro to Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "156",
+        "Course": "ENG215 - Technical English",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "157",
+        "Course": "CIE290 - Construction Materials",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "158",
+        "Course": "CIE450 - Reinforced Concrete II",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "159",
+        "Course": "EEE310 - Electronics I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "160",
+        "Course": "EEE519 - Power Electronics Analysis and Applications",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "161",
+        "Course": "EEE225 - Digital Logic Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "162",
+        "Course": "EEE430 - Antenna Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "163",
+        "Course": "EEE220 - Circuits II",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "164",
+        "Course": "CIE440 - Structural Analysis II",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "165",
+        "Course": "FOE200 - Intro to Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "166",
+        "Course": "EEE470 - Embedded Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "167",
+        "Course": "CIE290L - Construction Materials Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "168",
+        "Course": "EEE225 - Digital Logic Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "169",
+        "Course": "EEE225 - Digital Logic Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "170",
+        "Course": "ENG204 - Public Speaking",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "171",
+        "Course": "ENG204 - Public Speaking",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "172",
+        "Course": "COM360 - Intercultural Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "173",
+        "Course": "COM360 - Intercultural Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "174",
+        "Course": "PHY220 - Electricity and Magnetism",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "175",
+        "Course": "PHY203 - Remedial physics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "176",
+        "Course": "PHY220 - Electricity and Magnetism",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "177",
+        "Course": "PHY220L - Electricity and Magnetism Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "178",
+        "Course": "PHY220L - Electricity and Magnetism Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "179",
+        "Course": "RTV410 - Multimedia Operations Management",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "180",
+        "Course": "JDM460 - Newsroom Management",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "181",
+        "Course": "RTV360 - TV Production II",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "182",
+        "Course": "RTV360 - TV Production II",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "183",
+        "Course": "APR345 - Corporate Video Production",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "184",
+        "Course": "RTV320 - Sound Production I",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "185",
+        "Course": "RTV320 - Sound Production I",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "186",
+        "Course": "JDM440 - Journalism And Society : The Lebanese Case",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "187",
+        "Course": "COM240 - Fundamentals Of Speech Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "188",
+        "Course": "JDM220 - Reporting Practices",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "189",
+        "Course": "JDM497 - Professional Placement",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "190",
+        "Course": "RTV497 - Professional Placement",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "191",
+        "Course": "APR499 - Advertising/Public Relations Capstone Project",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "192",
+        "Course": "JDM499 - Journalism And Digital Media Capstone Project",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "193",
+        "Course": "RTV499 - Radio And Television Capstone Project",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "194",
+        "Course": "JDM380 - Seminar In Journalism And Digital Media",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "195",
+        "Course": "APR240 - Advertising And Public Relations As Social Marketing",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "196",
+        "Course": "COM240 - Fundamentals Of Speech Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "197",
+        "Course": "COM240 - Fundamentals Of Speech Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "198",
+        "Course": "APR430 - Researching Advertising And Public Relations",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "199",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "200",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "201",
+        "Course": "FRN050 - French remedial II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "202",
+        "Course": "ENG220 - English for translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "203",
+        "Course": "TRL200 - History Of Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "204",
+        "Course": "TRL320 - Theory & Practice for B-A Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "205",
+        "Course": "TRL320 - Theory & Practice for B-A Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "206",
+        "Course": "TRL330 - Theory & Practice for A-B Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "207",
+        "Course": "TRL330 - Theory & Practice for A-B Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "208",
+        "Course": "TRL340 - Theory & Practice for C-A Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "209",
+        "Course": "TRL340 - Theory & Practice for C-A Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "210",
+        "Course": "TRL350 - Theory & Practice for A-C Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "211",
+        "Course": "TRL350 - Theory & Practice for A-C Translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "212",
+        "Course": "TRL405 - Legal & Official Translation (C-A/A-C)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "213",
+        "Course": "TRL430 - Religious & Literary Translation (B-A/A-B)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "214",
+        "Course": "TRL430 - Religious & Literary Translation (B-A/A-B)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "215",
+        "Course": "TRL440 - Proofreading & Editing for B-A/A-B",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "216",
+        "Course": "TRL440 - Proofreading & Editing for B-A/A-B",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "217",
+        "Course": "TRL460 - Introduction to Research in Translation Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "218",
+        "Course": "TRL460 - Introduction to Research in Translation Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "219",
+        "Course": "TRL450 - Proofreading & Editing for C-A/A-C",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "220",
+        "Course": "TRL460 - Introduction to Research in Translation Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "221",
+        "Course": "TRL499 - Senior Study",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "222",
+        "Course": "TRL497 - Translation Practicum",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "223",
+        "Course": "BUS320 - Business Quantitative Methods",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "224",
+        "Course": "ECO350 - Managerial Economics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "225",
+        "Course": "BUS310 - Business Law & Legal Processes",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "226",
+        "Course": "BUS310 - Business Law & Legal Processes",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "227",
+        "Course": "MAT210 - Business Math",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "228",
+        "Course": "STP210 - Business Statistics & Probability",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "229",
+        "Course": "STP210 - Business Statistics & Probability",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "230",
+        "Course": "ECO201 - Microeconomics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "231",
+        "Course": "ECO330 - Economics And Human Development",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "232",
+        "Course": "HRM340 - Human Resources Development",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "233",
+        "Course": "HRM410 - Training And Development",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "234",
+        "Course": "MGT320 - Quality Management Systems",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "235",
+        "Course": "ECO201 - Microeconomics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "236",
+        "Course": "ECO202 - Macroeconomics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "237",
+        "Course": "HRM320 - Human Resources Management",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "238",
+        "Course": "MGT330 - Human Resources Management",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "239",
+        "Course": "HRM420 - Human Resources Planning",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "240",
+        "Course": "ACC210 - Financial Accounting I",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "241",
+        "Course": "ACC210 - Financial Accounting I",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "242",
+        "Course": "ACC210 - Financial Accounting I",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "243",
+        "Course": "ACC212 - Financial Accounting II",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "244",
+        "Course": "ACC212 - Financial Accounting II",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "245",
+        "Course": "ACC212 - Financial Accounting II",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "246",
+        "Course": "ACC320 - Accounting Information Systems",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "247",
+        "Course": "ACC330 - Intermediate Accounting",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "248",
+        "Course": "TDIP210 - طرائق التعليم والتعلّم",
+        "Faculty": "FED"
+    },
+    {
+        "#": "249",
+        "Course": "TDIP340 - تكنولوجيا التعليم",
+        "Faculty": "FED"
+    },
+    {
+        "#": "250",
+        "Course": "ACC350 - Managerial Accounting",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "251",
+        "Course": "ACC420 - Auditing",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "252",
+        "Course": "TDIP330 - الإدارة الصفيّة",
+        "Faculty": "FED"
+    },
+    {
+        "#": "253",
+        "Course": "TDIP430 - تدريب (مشاهدة وممارسة)",
+        "Faculty": "FED"
+    },
+    {
+        "#": "254",
+        "Course": "COE325 - Microprocessors",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "255",
+        "Course": "COE430 - Integrated Circuits",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "256",
+        "Course": "COE380 - Computer Organization",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "257",
+        "Course": "COE360 - Computer Networks",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "258",
+        "Course": "COE360 - Computer Networks",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "259",
+        "Course": "MAT225 - Probability and Statistics for Science",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "260",
+        "Course": "FIN310 - Fundamentals Of Finance",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "261",
+        "Course": "FIN310 - Fundamentals Of Finance",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "262",
+        "Course": "ACC499 - Accounting Final Project",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "263",
+        "Course": "MGT201 - Management Principles",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "264",
+        "Course": "SPTE420 - اتقاء الإصابات الرياضية",
+        "Faculty": "FED"
+    },
+    {
+        "#": "265",
+        "Course": "CHED280 - Children’s Literature",
+        "Faculty": "FED"
+    },
+    {
+        "#": "266",
+        "Course": "MGT201 - Management Principles",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "267",
+        "Course": "HRM310 - Organizational Effectiveness",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "268",
+        "Course": "MGT390 - Managing Change",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "269",
+        "Course": "MKT201 - Marketing Principles",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "270",
+        "Course": "MIT200 - Business Software Applications",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "271",
+        "Course": "MIT200 - Business Software Applications",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "272",
+        "Course": "MIT200 - Business Software Applications",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "273",
+        "Course": "MIT200 - Business Software Applications",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "274",
+        "Course": "MIT210 - Computer Programming I",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "275",
+        "Course": "MIT340 - Systems Analysis & Design",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "276",
+        "Course": "MIT200 - Business Software Applications",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "277",
+        "Course": "MIT210 - Computer Programming I",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "278",
+        "Course": "CHED250 - Emotional-social Education",
+        "Faculty": "FED"
+    },
+    {
+        "#": "279",
+        "Course": "MIT440 - Enterprise Resource Planning",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "280",
+        "Course": "MIT410 - Database Management & Design",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "281",
+        "Course": "MIT320 - Information Systems Development",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "282",
+        "Course": "MIT310 - Fundamentals Of Systems Technology",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "283",
+        "Course": "MIT300 - Information Systems & Technology",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "284",
+        "Course": "MIT300 - Information Systems & Technology",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "285",
+        "Course": "MAT201 - Analytical calculus",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "286",
+        "Course": "CSC458 - Artificial Intelligence",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "287",
+        "Course": "MEE280 - Fluid Mechanics I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "288",
+        "Course": "MEE405 - Mechanical Vibrations",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "289",
+        "Course": "MEE322 - Mechanics of Materials I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "290",
+        "Course": "MEE510 - Heating, Ventilating and Air conditioning",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "291",
+        "Course": "COE360 - Computer Networks",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "292",
+        "Course": "COE480 - Computer Architecture",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "293",
+        "Course": "MEE350 - Kinematics and Dynamics of Linkages",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "294",
+        "Course": "MEE420 - Fluid mechanics II",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "295",
+        "Course": "MEE322 - Mechanics of Materials I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "296",
+        "Course": "MEE502 - Mechanical Engineering Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "297",
+        "Course": "MEE205 - Statics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "298",
+        "Course": "MEE207 - Dynamics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "299",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "300",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "301",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "302",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "303",
+        "Course": "ECO201 - Microeconomics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "304",
+        "Course": "ECO202 - Macroeconomics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "305",
+        "Course": "COE360 - Computer Networks",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "306",
+        "Course": "MAT210 - Business Math",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "307",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "308",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "309",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "310",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "311",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "312",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "313",
+        "Course": "TEO450 - مباحث في علم الكلام",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "314",
+        "Course": "TEO400 - علم الكلام (3): الكلام المُقارن",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "315",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "316",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "317",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "318",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "319",
+        "Course": "PHL415 - نظرية المعرفة",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "320",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "321",
+        "Course": "ENG201 - English Communication Skills I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "322",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "323",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "324",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "325",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "326",
+        "Course": "PHL440 - فلسفة غربية (2)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "327",
+        "Course": "ISS470 - الفقه المقارن",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "328",
+        "Course": "ISS200 - Introduction to Islamic Jurisprudence",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "329",
+        "Course": "ADY260 - الديانة الإسلامية: تاريخاً وعقيدة",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "330",
+        "Course": "ISS390 - مواضيع خاصة في العلوم الإسلامية",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "331",
+        "Course": "ISS250 - مدخل إلى التشريع الإسلامي",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "332",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "333",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "334",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "335",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "336",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "337",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "338",
+        "Course": "ENG001 - English remedial course I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "339",
+        "Course": "STP310 - Intermediate Business Statistics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "340",
+        "Course": "STP310 - Intermediate Business Statistics",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "341",
+        "Course": "STP210 - Business Statistics & Probability",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "342",
+        "Course": "HRM499 - HR Final Project",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "343",
+        "Course": "MGT499 - Management Final Project",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "344",
+        "Course": "BUS320 - Business Quantitative Methods",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "345",
+        "Course": "ECO499 - Economics Final Project",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "346",
+        "Course": "QRN260 - مبادئ التفسير القرآني وقواعده",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "347",
+        "Course": "PHL221 - مدخل إلى علم الفلسفة",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "348",
+        "Course": "COM214 - Digital Applications Skills",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "349",
+        "Course": "RTV340 - Sound Production II",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "350",
+        "Course": "COM214 - Digital Applications Skills",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "351",
+        "Course": "PHL210 - Introduction to Philosophy: Islamic Philosophy Schools",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "352",
+        "Course": "ISS330 - علم أصول الفقه (2)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "353",
+        "Course": "QRN215 - تاريخ الحديث ومصادره",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "354",
+        "Course": "ISS320 - مدخل إلى علم الحديث",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "355",
+        "Course": "SPTE210 - علم التشريح والفيزيولوجيا العامة",
+        "Faculty": "FED"
+    },
+    {
+        "#": "356",
+        "Course": "QRN440 - نصوص أجنبية في الدراسات القرآنية (2)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "357",
+        "Course": "PHL460 - نصوص أجنبية فلسفية (2)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "358",
+        "Course": "ADY460 - لغة أجنبية في دراسات الأديان (2)",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "359",
+        "Course": "PHL250 - فلسفة الأخلاق",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "360",
+        "Course": "PHL220 - Community Morals: Theoretical and Basic Practices",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "361",
+        "Course": "EEE412 - Power Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "362",
+        "Course": "ADY220 - الديانة اليهودية: تاريخاً وعقيدة",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "363",
+        "Course": "ADY420 - أديان (3): الإسلام وأهل الكتاب",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "364",
+        "Course": "ADY470 - الأديان في الفكرين الحديث والإلحاد",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "365",
+        "Course": "MEE210 - Engineering Graphics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "366",
+        "Course": "MEE250 - Computer Aided Design",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "367",
+        "Course": "MEE322L - Mechanics of Materials I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "368",
+        "Course": "MEE280L - Fluid Mechanics I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "369",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "370",
+        "Course": "MEE280L - Fluid Mechanics I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "371",
+        "Course": "COE325L - Microprocessor Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "372",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "373",
+        "Course": "ERG230 - Analysis of religious texts",
+        "Faculty": "FED"
+    },
+    {
+        "#": "374",
+        "Course": "SOC200 - Introduction to the Sociology",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "375",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "376",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "377",
+        "Course": "ERG270 - Islamic Jurisprudence",
+        "Faculty": "FED"
+    },
+    {
+        "#": "378",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "379",
+        "Course": "PSY200 - Educational Psychology",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "380",
+        "Course": "HIS200 - Introduction to History",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "381",
+        "Course": "HIS201 - The Contemporary History of Lebanon",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "382",
+        "Course": "HIS201 - The Contemporary History of Lebanon",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "383",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "384",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "385",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "386",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "387",
+        "Course": "CST202 - Introduction to Cultural Studies III: Contemporary Issues",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "388",
+        "Course": "CST202 - Introduction to Cultural Studies III: Contemporary Issues",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "389",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "390",
+        "Course": "CST200 - Cultural Studies",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "391",
+        "Course": "CST202 - Introduction to Cultural Studies III: Contemporary Issues",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "392",
+        "Course": "CST202 - Introduction to Cultural Studies III: Contemporary Issues",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "393",
+        "Course": "CST202 - Introduction to Cultural Studies III: Contemporary Issues",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "394",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "395",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "396",
+        "Course": "MGT410 - Leadership",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "397",
+        "Course": "COE325LL - Microprocessor Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "398",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "399",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "400",
+        "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "401",
+        "Course": "COM200 - Introduction To Communication Studies",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "402",
+        "Course": "COM200 - Introduction To Communication Studies",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "403",
+        "Course": "COM300 - New Media Communications",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "404",
+        "Course": "MEE405L - Mechanical Vibrations Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "405",
+        "Course": "MEE420L - Fluid mechanics II Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "406",
+        "Course": "MIT499 - MIT Final Project",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "407",
+        "Course": "MEE420L - Fluid mechanics II Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "408",
+        "Course": "MEE322L - Mechanics of Materials I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "409",
+        "Course": "MAT320 - Linear Algebra",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "410",
+        "Course": "REM200 - Scientific Research Methodology",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "411",
+        "Course": "MAT380 - Partial Differential Equations",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "412",
+        "Course": "MIT290 - Computer Programming II",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "413",
+        "Course": "MIT290 - Computer Programming II",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "414",
+        "Course": "CHE205L - General Chemistry Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "415",
+        "Course": "CHE205L - General Chemistry Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "416",
+        "Course": "CHE205L - General Chemistry Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "417",
+        "Course": "PHY220L - Electricity and Magnetism Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "418",
+        "Course": "PHY220L - Electricity and Magnetism Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "419",
+        "Course": "CHE205L - General Chemistry Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "420",
+        "Course": "COE380 - Computer Organization",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "421",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "422",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "423",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "424",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "425",
+        "Course": "ENG001 - English remedial course I",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "426",
+        "Course": "EDUC250 - Fundamentals of Teaching & Learning Curricula",
+        "Faculty": "FED"
+    },
+    {
+        "#": "427",
+        "Course": "EEE225L - Digital Logic Design Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "428",
+        "Course": "EEE210L - Circuits I Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "429",
+        "Course": "EEE350L - Electronics II Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "430",
+        "Course": "EEE310L - Electronics I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "431",
+        "Course": "EEE210L - Circuits I Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "432",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "433",
+        "Course": "SPTE300 - تربية صحية",
+        "Faculty": "FED"
+    },
+    {
+        "#": "434",
+        "Course": "PRS200 - Persian Language",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "435",
+        "Course": "MEE405L - Mechanical Vibrations Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "436",
+        "Course": "COM200 - Introduction To Communication Studies",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "437",
+        "Course": "PHY240 - General Physics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "438",
+        "Course": "PHY203 - Remedial physics",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "439",
+        "Course": "PHY240L - General Physics Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "440",
+        "Course": "RTV300 - TV Production I",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "441",
+        "Course": "QRN410 - تفسير القرآن (3): أبحاث في التفسير الترتيبي",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "442",
+        "Course": "ITHS200 - Information Technology and Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "443",
+        "Course": "ITHS200 - Information Technology and Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "444",
+        "Course": "HUMM205 - Law and Legislation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "445",
+        "Course": "HUMM350 - Research in Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "446",
+        "Course": "HUMM350 - Research in Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "447",
+        "Course": "HUMM250 - Group Process and Dynamics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "448",
+        "Course": "HUMM250 - Group Process and Dynamics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "449",
+        "Course": "HUMM250 - Group Process and Dynamics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "450",
+        "Course": "ARAB200 - Arabic Language and Literature",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "451",
+        "Course": "ARAB200 - Arabic Language and Literature",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "452",
+        "Course": "CHEM001 - Remedial Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "453",
+        "Course": "BIOL002 - Remedial Biology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "454",
+        "Course": "PHYS003 - Remedial Physics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "455",
+        "Course": "CHEM200 - Basic Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "456",
+        "Course": "CHEM200 - Basic Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "457",
+        "Course": "CHEM201 - Basic Chemistry Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "458",
+        "Course": "CHEM305 - Basic Organic Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "459",
+        "Course": "BIOL200 - Introduction to Biology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "460",
+        "Course": "BIOL200 - Introduction to Biology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "461",
+        "Course": "BIOL201 - Introduction to Biology (lab)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "462",
+        "Course": "BIOL201 - Introduction to Biology (lab)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "463",
+        "Course": "BIOL235 - Principles of Epidemiology and Biostatistics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "464",
+        "Course": "BIOL235 - Principles of Epidemiology and Biostatistics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "465",
+        "Course": "BIOL260 - Human Anatomy and Physiology I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "466",
+        "Course": "BIOL260 - Human Anatomy and Physiology I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "467",
+        "Course": "BIOL270 - Human Anatomy & Physiology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "468",
+        "Course": "BIOL270 - Human Anatomy & Physiology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "469",
+        "Course": "BIOL250 - Microbiology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "470",
+        "Course": "BIOL250 - Microbiology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "471",
+        "Course": "BIOL251 - Microbiology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "472",
+        "Course": "BIOL251 - Microbiology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "473",
+        "Course": "MLAB210 - Phlebotomy and Sample Collection",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "474",
+        "Course": "CHEM260 - Analytical Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "475",
+        "Course": "CHEM315 - Medical Biochemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "476",
+        "Course": "PHYS300 - Medical Technology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "477",
+        "Course": "MLAB320 - Clinical Chemistry I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "478",
+        "Course": "MLAB320 - Clinical Chemistry I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "479",
+        "Course": "MLAB345 - Laboratory Safety",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "480",
+        "Course": "MLAB350 - Blood Banking",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "481",
+        "Course": "MLAB355 - Clinical Immunology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "482",
+        "Course": "MLAB355 - Clinical Immunology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "483",
+        "Course": "MLAB360 - Histopathology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "484",
+        "Course": "BUS360 - International Business",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "485",
+        "Course": "HRM430 - Human Resources Information Systems",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "486",
+        "Course": "MLAB335 - Hematology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "487",
+        "Course": "MLAB335 - Hematology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "488",
+        "Course": "MLAB330 - Basic Hematology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "489",
+        "Course": "CHEM310 - Basic Organic Chemistry Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "490",
+        "Course": "MLAB455 - Cell and Molecular Biology Of Cancer",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "491",
+        "Course": "MLAB455 - Cell and Molecular Biology Of Cancer",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "492",
+        "Course": "MLAB375 - Laboratory Organization Managment",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "493",
+        "Course": "MLAB375 - Laboratory Organization Managment",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "494",
+        "Course": "MLAB450 - Clinical Hematology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "495",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "496",
+        "Course": "MLAB450 - Clinical Hematology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "497",
+        "Course": "MLAB410 - Clinical Bacteriology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "498",
+        "Course": "MLAB410 - Clinical Bacteriology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "499",
+        "Course": "MLAB430 - Diagnostic Serology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "500",
+        "Course": "MLAB435 - Serology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "501",
+        "Course": "MLAB435 - Serology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "502",
+        "Course": "MEDI400 - First Aid and Emergency Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "503",
+        "Course": "MEDI400 - First Aid and Emergency Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "504",
+        "Course": "CHEM215 - Basic Nutrition and Diet therapy",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "505",
+        "Course": "CHEM215 - Basic Nutrition and Diet therapy",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "506",
+        "Course": "PHYS215 - Introduction to Imaging Physics I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "507",
+        "Course": "PHYS220 - College Physics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "508",
+        "Course": "PHYS225 - College Physics Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "509",
+        "Course": "PHYS225 - College Physics Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "510",
+        "Course": "PHYS325 - Imaging Physics for CT",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "511",
+        "Course": "PRAC203 - Radiology Practicum I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "512",
+        "Course": "PRAC306 - Radiology Practicum IV",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "513",
+        "Course": "PRAC409 - Radiology Practicum VII",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "514",
+        "Course": "RADI208 - Imaging Physics for x-ray film & Image production",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "515",
+        "Course": "RADI214 - Radiographic Technique III (Spine, Ribs, Abdomen)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "516",
+        "Course": "RADI216 - Radiographic technique IV (skull, trauma)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "517",
+        "Course": "RADI325 - Radiation Biology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "518",
+        "Course": "RADI330 - Pathology for Medical Radiology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "519",
+        "Course": "RADI335 - Interventional Radiography",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "520",
+        "Course": "RADI340 - Echo & Doppler II (normal & pathology)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "521",
+        "Course": "RADI220 - Radiographic Technique Flour I ( Urinary System )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "522",
+        "Course": "RADI345 - Conventional Radiology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "523",
+        "Course": "RADI225 - Radio graphic technique flour III (cholangiography)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "524",
+        "Course": "RADI355 - Radiographic technique flour III (cholangiography)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "525",
+        "Course": "RADI440 - Radiotherapy Techniques I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "526",
+        "Course": "RADI450 - Radiotherapy Techniques II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "527",
+        "Course": "RADI460 - Nuclear Medicine & Pet Scan",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "528",
+        "Course": "RADI485 - CT & MRI normal & pathology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "529",
+        "Course": "CHEM400 - Pharmacology and Drug Calculation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "530",
+        "Course": "CHEM400 - Pharmacology and Drug Calculation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "531",
+        "Course": "NURS350 - Nursing Care Adult II - Orthopedic System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "532",
+        "Course": "NURS350 - Nursing Care Adult II - Orthopedic System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "533",
+        "Course": "NURS350 - Nursing Care Adult II - Orthopedic System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "534",
+        "Course": "NURS355 - Nursing Care Adult II - Digestive System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "535",
+        "Course": "NURS355 - Nursing Care Adult II - Digestive System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "536",
+        "Course": "NURS355 - Nursing Care Adult II - Digestive System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "537",
+        "Course": "NURS360 - Nursing Care Adult II - Biliary System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "538",
+        "Course": "NURS360 - Nursing Care Adult II - Biliary System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "539",
+        "Course": "NURS360 - Nursing Care Adult II - Biliary System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "540",
+        "Course": "NURS365 - Nursing Care Adult II - Endocrine System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "541",
+        "Course": "NURS365 - Nursing Care Adult II - Endocrine System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "542",
+        "Course": "NURS365 - Nursing Care Adult II - Endocrine System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "543",
+        "Course": "NURS370 - Nursing Care Adult II - Urinary and Nephrology System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "544",
+        "Course": "NURS370 - Nursing Care Adult II - Urinary and Nephrology System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "545",
+        "Course": "NURS370 - Nursing Care Adult II - Urinary and Nephrology System",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "546",
+        "Course": "NURS380 - Diagnostic Studies",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "547",
+        "Course": "NURS380 - Diagnostic Studies",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "548",
+        "Course": "NURS375 - Nursing Care of Adults II Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "549",
+        "Course": "NURS345 - Nursing Care in Perinatology and Gynaecology Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "550",
+        "Course": "NURS440 - Family and community Health Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "551",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "552",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "553",
+        "Course": "NURS440 - Family and community Health Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "554",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "555",
+        "Course": "NURS445 - Family and community Health Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "556",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "557",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "558",
+        "Course": "ENGL210 - Academic English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "559",
+        "Course": "JDM300 - Digital Journalism: The Convergent Storytelling",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "560",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "561",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "562",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "563",
+        "Course": "ENG210 - English For Business",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "564",
+        "Course": "ENG210 - English For Business",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "565",
+        "Course": "NURS450 - Leadership and Management in Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "566",
+        "Course": "NURS450 - Leadership and Management in Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "567",
+        "Course": "NURS455 - Leadership and Management in Nursing Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "568",
+        "Course": "BIOL380 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "569",
+        "Course": "BIOL380 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "570",
+        "Course": "BIOL380 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "571",
+        "Course": "NURS435 - Psychiatric and Geriatric Nursing Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "572",
+        "Course": "NURS405 - Nursing Critical Care Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "573",
+        "Course": "NURS415 - Nursing Care of Children Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "574",
+        "Course": "NURS215 - Fundamentals of Nursing I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "575",
+        "Course": "NURS215 - Fundamentals of Nursing I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "576",
+        "Course": "NURS216 - Fundamentals of Nursing II (theory & Lab)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "577",
+        "Course": "NURS216 - Fundamentals of Nursing II (theory & Lab)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "578",
+        "Course": "NURS205 - Introduction to Professional Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "579",
+        "Course": "NURS205 - Introduction to Professional Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "580",
+        "Course": "PSYC220 - Human Growth and Development Psychology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "581",
+        "Course": "PSYC220 - Human Growth and Development Psychology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "582",
+        "Course": "PSYC220 - Human Growth and Development Psychology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "583",
+        "Course": "ADMN400 - Quality Management and Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "584",
+        "Course": "ADMN400 - Quality Management and Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "585",
+        "Course": "ADMN400 - Quality Management and Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "586",
+        "Course": "HUMM220 - Islamic Education and Culture",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "587",
+        "Course": "HUMM220 - Islamic Education and Culture",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "588",
+        "Course": "HUMM200 - Medical Language and Terminology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "589",
+        "Course": "HUMM200 - Medical Language and Terminology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "590",
+        "Course": "PHYS200 - Biophysics and Medical Technology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "591",
+        "Course": "NURS400 - Nursing Critical Care",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "592",
+        "Course": "HUMM205 - Law and Legislation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "593",
+        "Course": "CHEM200 - Basic Chemistry",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "594",
+        "Course": "CHEM201 - Basic Chemistry Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "595",
+        "Course": "NURS215 - Fundamentals of Nursing I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "596",
+        "Course": "NURS216 - Fundamentals of Nursing II (theory & Lab)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "597",
+        "Course": "ADMN400 - Quality Management and Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "598",
+        "Course": "HUMM200 - Medical Language and Terminology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "599",
+        "Course": "PRS200 - Persian Language",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "600",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "601",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "602",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "603",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "604",
+        "Course": "EEE225L - Digital Logic Design Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "605",
+        "Course": "EEE225L - Digital Logic Design Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "606",
+        "Course": "EEE225L - Digital Logic Design Laboratory",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "607",
+        "Course": "CHE205 - General Chemistry",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "608",
+        "Course": "CHE205 - General Chemistry",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "609",
+        "Course": "MAT203 - Remedial Calculus",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "610",
+        "Course": "COE340 - Digital Communication Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "611",
+        "Course": "EEE310L - Electronics I Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "612",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "613",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "614",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "615",
+        "Course": "ENGL220 - Advanced English for Academic Purposes",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "616",
+        "Course": "COE460 - Cryptography and network security",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "617",
+        "Course": "PHY230 - Thermodynamics I",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "618",
+        "Course": "EDUC280 - Lebanese Educational System",
+        "Faculty": "FED"
+    },
+    {
+        "#": "619",
+        "Course": "CIE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "620",
+        "Course": "CIE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "621",
+        "Course": "MEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "622",
+        "Course": "MEE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "623",
+        "Course": "EEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "624",
+        "Course": "EEE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "625",
+        "Course": "COE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "626",
+        "Course": "COE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "627",
+        "Course": "COE380 - Computer Organization",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "628",
+        "Course": "CSC400L - Web programming lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "629",
+        "Course": "CSC400L - Web programming lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "630",
+        "Course": "COE360L - Computer Networks Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "631",
+        "Course": "CSC320LL - Data Structures Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "632",
+        "Course": "CSC420 - Algorithms",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "633",
+        "Course": "EEE460L - Linear Control Systems Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "634",
+        "Course": "EEE460L - Linear Control Systems Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "635",
+        "Course": "EEE500 - Special Topics in Electrical & Electronics Engineering",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "636",
+        "Course": "EDUC235 - Educational Assessment",
+        "Faculty": "FED"
+    },
+    {
+        "#": "637",
+        "Course": "MLAB242 - Clinical Hematology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "638",
+        "Course": "JDM460 - Newsroom Management",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "639",
+        "Course": "MLAB226 - Blood Banking",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "640",
+        "Course": "MLAB225 - Clinical Bacteriology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "641",
+        "Course": "MLAB224 - Clinical Immunology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "642",
+        "Course": "RTV410 - Multimedia Operations Management",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "643",
+        "Course": "MATH004 - Remedial Mathematics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "644",
+        "Course": "MLAB241 - Cell & Molecular Biology of Cancer",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "645",
+        "Course": "MLAB236 - Diagnostic Serology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "646",
+        "Course": "MLAB237 - Serology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "647",
+        "Course": "EEE460L - Linear Control Systems Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "648",
+        "Course": "COE325L - Microprocessor Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "649",
+        "Course": "COE325LL - Microprocessor Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "650",
+        "Course": "MAT350 - Numerical Analysis",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "651",
+        "Course": "APR460 - Promotion And Campaigning Management",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "652",
+        "Course": "NURS222(O) - Orthopedic",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "653",
+        "Course": "EEE330 - Electromagnetic Fields",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "654",
+        "Course": "NURS222(D) - Digestive",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "655",
+        "Course": "NURS222(B) - Biliary",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "656",
+        "Course": "NURS222(E) - Endocrine",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "657",
+        "Course": "NURS222(U) - Urinary",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "658",
+        "Course": "NURS030 - Diagnostic Studies",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "659",
+        "Course": "BIOL203 - General Microbiology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "660",
+        "Course": "RADI237 - CT & MRI normal & pathology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "661",
+        "Course": "RADI236 - Nuclear Medicine & Pet Scan",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "662",
+        "Course": "RADI232 - Radiotherapy techniques I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "663",
+        "Course": "RADI238 - Radiotherapy techniques II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "664",
+        "Course": "RADI229 - Conventional Radiology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "665",
+        "Course": "RADI228 - Echo & Doppler II (normal & pathology)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "666",
+        "Course": "NURS222(E) - Endocrine",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "667",
+        "Course": "MEE460 - Control Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "668",
+        "Course": "EDUC330 - Classroom Managemen",
+        "Faculty": "FED"
+    },
+    {
+        "#": "669",
+        "Course": "PHYS207 - Introduction to Imaging Physics I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "670",
+        "Course": "EDUC210 - Learning & Educational Objectives",
+        "Faculty": "FED"
+    },
+    {
+        "#": "671",
+        "Course": "RADI227 - Interventional Radiography",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "672",
+        "Course": "CSC450 - Operating Systems",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "673",
+        "Course": "NURS375 - Nursing Care of Adults II Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "674",
+        "Course": "NURS375 - Nursing Care of Adults II Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "675",
+        "Course": "ITHS208 - Information Technology & Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "676",
+        "Course": "MLAB370 - Medical Laboratory Practical Training II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "677",
+        "Course": "HUMM244 - Principles of Epidemiology & Biostatistics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "678",
+        "Course": "HUMM244 - Principles of Epidemiology & Biostatistics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "679",
+        "Course": "NURS010 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "680",
+        "Course": "CHEM206 - Basic Nutrition and Diet Therapy",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "681",
+        "Course": "CHEM208 - Pharmacology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "682",
+        "Course": "ENG202 - English Communication Skills II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "683",
+        "Course": "NURS335 - Nursing Care of Adult I Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "684",
+        "Course": "NURS240 - Nursing Practicum I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "685",
+        "Course": "NURS385 - Nursing Practicum II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "686",
+        "Course": "ENG220 - English for translation",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "687",
+        "Course": "NURS385 - Nursing Practicum II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "688",
+        "Course": "ARB100 - Arabic remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "689",
+        "Course": "MLAB221 - Clinical Chemistry I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "690",
+        "Course": "MLAB238 - Laboratory Organization Management",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "691",
+        "Course": "MLAB241 - Cell & Molecular Biology of Cancer",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "692",
+        "Course": "PRAC209 - Practicum VII",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "693",
+        "Course": "PSYC240 - General Psychology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "694",
+        "Course": "PRAC408 - Radiology Practicum VI",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "695",
+        "Course": "COM230 - Research Methods In Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "696",
+        "Course": "MLAB242 - Clinical Hematology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "697",
+        "Course": "ADMN230 - Leadership & Management in Nursing Theory",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "698",
+        "Course": "ADMN231 - Leadership & Management in Nursing (P)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "699",
+        "Course": "NURS234 - Family & Community Health Nursing ( Th )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "700",
+        "Course": "NURS235 - Family & Community Health (P V)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "701",
+        "Course": "ADMN232 - Quality Management & Hospital Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "702",
+        "Course": "MLAB210 - Phlebotomy and Sample Collection",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "703",
+        "Course": "ENG100 - English remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "704",
+        "Course": "ADMN232 - Quality Management & Hospital Accreditation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "705",
+        "Course": "NURS232 - Critical Care Nursing (Theory)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "706",
+        "Course": "NURS010 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "707",
+        "Course": "NURS231 - Nursing Care of Children Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "708",
+        "Course": "NURS233 - Critical Care Nursing (P IV)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "709",
+        "Course": "HUMM249 - Research in Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "710",
+        "Course": "PSYC242 - Human Growth & Development Psychology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "711",
+        "Course": "HUMM020 - Group Process & Dynamic",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "712",
+        "Course": "HUMM020 - Group Process & Dynamic",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "713",
+        "Course": "NURS010 - Infectious Disease",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "714",
+        "Course": "NURS222(O) - Orthopedic",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "715",
+        "Course": "CHEM206 - Basic Nutrition and Diet Therapy",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "716",
+        "Course": "HUMM246 - Islamic Education Culture",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "717",
+        "Course": "HUMM246 - Islamic Education Culture",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "718",
+        "Course": "NURS223 - Nursing Care of Adult II ( p )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "719",
+        "Course": "COM360 - Intercultural Communication",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "720",
+        "Course": "APR210 - Essentials Of Public Relations",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "721",
+        "Course": "PSYC248 - Mental Health and Psychiatric Nursing Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "722",
+        "Course": "NURS228 - Nursing Care of Elderly (Practicum)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "723",
+        "Course": "NURS229 - First Aid",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "724",
+        "Course": "PHL490 - Senior Project",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "725",
+        "Course": "QRN490 - Senior Project",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "726",
+        "Course": "ADY490 - Senior Project",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "727",
+        "Course": "NURS234 - Family & Community Health Nursing ( Th )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "728",
+        "Course": "ADMN230 - Leadership & Management in Nursing Theory",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "729",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "730",
+        "Course": "PRAC208 - Practicum VI",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "731",
+        "Course": "PHYS225 - College Physics Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "732",
+        "Course": "NURS222(D) - Digestive",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "733",
+        "Course": "MAT210 - Business Math",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "734",
+        "Course": "PHL470 - الفلسفة الإسلامية (2): دروس في بداية الحكمة",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "735",
+        "Course": "MAT213 - Calculus III",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "736",
+        "Course": "CSC340 - Theory of Computation",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "737",
+        "Course": "CSC465 - Computer Security",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "738",
+        "Course": "HUMM249 - Research in Health Sciences",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "739",
+        "Course": "EEE350L - Electronics II Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "740",
+        "Course": "PRAC204 - Radiology Practicum II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "741",
+        "Course": "PRAC211 - Practical training V",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "742",
+        "Course": "PRAC212 - Practical training VI",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "743",
+        "Course": "PHYS210 - Imaging Physics for CT",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "744",
+        "Course": "BIOL251 - Microbiology Lab",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "745",
+        "Course": "RTV340 - Sound Production II",
+        "Faculty": "MCFA"
+    },
+    {
+        "#": "746",
+        "Course": "HIS350 - تاريخ لبنان من العصر الوسيط حتى المعاصر",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "747",
+        "Course": "NURS205 - Introduction to Professional Nursing",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "748",
+        "Course": "CHED210 - Early Childhood Care",
+        "Faculty": "FED"
+    },
+    {
+        "#": "749",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "750",
+        "Course": "CSC210 - C++ Programming",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "751",
+        "Course": "NURS030 - Diagnostic Studies",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "752",
+        "Course": "HUMM241 - Law & Legislation",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "753",
+        "Course": "NURS222(O) - Orthopedic",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "754",
+        "Course": "NURS222(U) - Urinary",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "755",
+        "Course": "MEE460 - Control Systems",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "756",
+        "Course": "ARB100 - Arabic remedial course III",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "757",
+        "Course": "BIOL200 - Introduction to Biology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "758",
+        "Course": "EEE205 - Circuits",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "759",
+        "Course": "BIOL203 - General Microbiology",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "760",
+        "Course": "ENG051 - English remedial course II",
+        "Faculty": "FRH"
+    },
+    {
+        "#": "761",
+        "Course": "MLAB370 - Medical Laboratory Practical Training II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "762",
+        "Course": "MLAB238 - Laboratory Organization Management",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "763",
+        "Course": "ARAB201 - Arabic Grammar & Compos I",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "764",
+        "Course": "NURS230 - Nursing Care of Children (Theory)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "765",
+        "Course": "CSC210L - C++ Programming Lab",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "766",
+        "Course": "MEE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "767",
+        "Course": "MEE499 - Capstone Project",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "768",
+        "Course": "EEE305 - Electronics",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "769",
+        "Course": "EEE305L - Electronics Lab",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "770",
+        "Course": "PHYS220 - College Physics",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "771",
+        "Course": "NURS221 - Nursing Care of Adult I ( P )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "772",
+        "Course": "NURS229 - First Aid",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "773",
+        "Course": "NURS222(B) - Biliary",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "774",
+        "Course": "NURS226 - Nursing Care in Perinatology & Gyn ( P )",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "775",
+        "Course": "NURS410 - Nursing Care of Children",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "776",
+        "Course": "NURS212 - Practicum 1(N)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "777",
+        "Course": "RADI219 - Introduction of Radiation Protection",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "778",
+        "Course": "MLAB425 - Special Topics in Laboratory Medicine",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "779",
+        "Course": "RADI226 - Echo & Doppler I (normal & pathology)",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "780",
+        "Course": "NURS401 - Radiographic Nursing Procedure",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "781",
+        "Course": "BIOL206 - Human Anatomy & Physiology II",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "782",
+        "Course": "MAT101 - Freshman Math",
+        "Faculty": "FoS"
+    },
+    {
+        "#": "783",
+        "Course": "NURS455 - Leadership and Management in Nursing Practicum",
+        "Faculty": "FHS"
+    },
+    {
+        "#": "784",
+        "Course": "MEE330 - Production Processes and Machinery",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "785",
+        "Course": "MIT497 - Professional Training Practice",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "786",
+        "Course": "MGT440 - Strategic Management",
+        "Faculty": "FBA"
+    },
+    {
+        "#": "787",
+        "Course": "CIE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "788",
+        "Course": "MEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "789",
+        "Course": "MEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "790",
+        "Course": "MEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "791",
+        "Course": "COE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "792",
+        "Course": "COE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "793",
+        "Course": "COE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "794",
+        "Course": "EEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "795",
+        "Course": "EEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    },
+    {
+        "#": "796",
+        "Course": "EEE498 - Capstone Project Proposal",
+        "Faculty": "FoE"
+    }
+]
