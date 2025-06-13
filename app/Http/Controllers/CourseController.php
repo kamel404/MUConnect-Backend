@@ -11,7 +11,7 @@ class CourseController extends Controller
     public function index()
     {
         // List all courses, with pagination and filters
-        $courses = Course::with(['faculty', 'categories'])->paginate(15);
+        $courses = Course::with(['faculty', 'categories'])->paginate(5);
         return response()->json($courses);
     }
 

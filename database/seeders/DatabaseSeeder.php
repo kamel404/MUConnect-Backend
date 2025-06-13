@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             AssignPermissionsSeeder::class,
             UserSeeder::class,
+            CourseSeeder::class,
+            // FacultySeeder::class,
+            // MajorSeeder::class,
         ]);
     }
 }

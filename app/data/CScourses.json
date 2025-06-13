@@ -1,0 +1,346 @@
+[
+  {
+    "code": "CSC 210",
+    "title": "C++ Programming",
+    "credits": 3,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 210L",
+    "title": "C++ Lab",
+    "credits": 0,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "MAT 213",
+    "title": "Calculus III",
+    "credits": 3,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "FOE 201",
+    "title": "Intro to Computing",
+    "credits": 3,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "ENG 201",
+    "title": "English Communication Skills I",
+    "credits": 3,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 5,
+    "major_id": 1
+  },
+  {
+    "code": "CST 200",
+    "title": "Cultural Studies I",
+    "credits": 3,
+    "year": 1,
+    "semester": "Fall",
+    "faculty_id": 4,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 310",
+    "title": "Object Oriented Programming",
+    "credits": 3,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 310L",
+    "title": "Object Oriented Programming Lab",
+    "credits": 0,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "EEE 225",
+    "title": "Digital Logic Design",
+    "credits": 3,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 2,
+    "major_id": 1
+  },
+  {
+    "code": "EEE 225L",
+    "title": "Digital Logic Design Lab",
+    "credits": 0,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 2,
+    "major_id": 1
+  },
+  {
+    "code": "MAT 250",
+    "title": "Discrete Mathematics",
+    "credits": 3,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "ENG 202",
+    "title": "English Communication Skills II",
+    "credits": 3,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 5,
+    "major_id": 1
+  },
+  {
+    "code": "CST 201",
+    "title": "Cultural Studies II",
+    "credits": 3,
+    "year": 1,
+    "semester": "Spring",
+    "faculty_id": 4,
+    "major_id": 1
+  },
+  {
+    "code": "MAT 225",
+    "title": "Probability & Statistics for Science",
+    "credits": 3,
+    "year": 1,
+    "semester": "Summer",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 320",
+    "title": "Data Structures",
+    "credits": 3,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 320L",
+    "title": "Data Structures Lab",
+    "credits": 0,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "COE 360",
+    "title": "Computer Networks",
+    "credits": 3,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 2,
+    "major_id": 1
+  },
+  {
+    "code": "COE 360L",
+    "title": "Computer Networks Lab",
+    "credits": 1,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 2,
+    "major_id": 1
+  },
+  {
+    "code": "COE 380",
+    "title": "Computer Organization",
+    "credits": 3,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 2,
+    "major_id": 1
+  },
+  {
+    "code": "MAT 320",
+    "title": "Linear Algebra",
+    "credits": 3,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CST 202",
+    "title": "Cultural Studies III",
+    "credits": 3,
+    "year": 2,
+    "semester": "Fall",
+    "faculty_id": 4,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 330",
+    "title": "Database Systems",
+    "credits": 3,
+    "year": 2,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 330L",
+    "title": "Database Systems Lab",
+    "credits": 1,
+    "year": 2,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 340",
+    "title": "Theory of Computation",
+    "credits": 3,
+    "year": 2,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "MAT 350",
+    "title": "Numerical Analysis",
+    "credits": 3,
+    "year": 2,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "ENG 204",
+    "title": "Public Speaking",
+    "credits": 3,
+    "year": 2,
+    "semester": "Spring",
+    "faculty_id": 5,
+    "major_id": 1
+  },
+  {
+    "code": "ARB 201",
+    "title": "Arabic Communication Skills I",
+    "credits": 3,
+    "year": 2,
+    "semester": "Summer",
+    "faculty_id": 7,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 400",
+    "title": "Web Programming",
+    "credits": 3,
+    "year": 3,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 470",
+    "title": "Software Engineering",
+    "credits": 3,
+    "year": 3,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 498",
+    "title": "Capstone Project Proposal",
+    "credits": 3,
+    "year": 3,
+    "semester": "Fall",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 420",
+    "title": "Algorithms",
+    "credits": 3,
+    "year": 3,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 450",
+    "title": "Operating Systems",
+    "credits": 3,
+    "year": 3,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 499",
+    "title": "Capstone Project",
+    "credits": 3,
+    "year": 3,
+    "semester": "Spring",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+  {
+    "code": "CSC 497",
+    "title": "Practical Training",
+    "credits": 1,
+    "year": 3,
+    "semester": "Summer",
+    "faculty_id": 1,
+    "major_id": 1
+  },
+
+    {
+        "code": "CSC",
+        "title": "Technical Elective I",
+        "credits": 3,
+        "year": 2,
+        "semester": "Spring",
+        "faculty_id": 1,
+        "major_id": 1
+    },
+    {
+        "code": "CSC",
+        "title": "Technical Elective II",
+        "credits": 3,
+        "year": 3,
+        "semester": "Fall",
+        "faculty_id": 1,
+        "major_id": 1
+    },
+    {
+        "code": "CHEM 101",
+        "title": "Chemistry",
+        "credits": 3,
+        "year": 3,
+        "semester": "Fall",
+        "faculty_id": 1,
+        "major_id": 1
+    },
+    {
+        "code": "GE",
+        "title": "General Elective",
+        "credits": 1,
+        "year": 1,
+        "semester": "Summer",
+        "faculty_id": 1,
+        "major_id": 1
+    }
+
+]

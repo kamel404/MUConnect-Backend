@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\User;
 use App\Models\StudyGroup;
-use App\Models\Post;
+use App\Models\Resource;
 use App\Models\Major;
 use App\Models\CourseCategory;
 
@@ -38,9 +38,9 @@ class Course extends Model
         return $this->hasMany(StudyGroup::class);
     }
 
-    public function posts()
+    public function resources()
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Resource::class);
     }
 
     public function majors()

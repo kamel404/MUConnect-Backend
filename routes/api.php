@@ -15,6 +15,8 @@ use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\PrerequisiteController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\SectionRequestController;
+use App\Http\Controllers\ApplicationController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -125,4 +127,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/course-categories/{category}', [CourseCategoryController::class, 'show']);
     Route::put('/course-categories/{category}', [CourseCategoryController::class, 'update']);
     Route::delete('/course-categories/{category}', [CourseCategoryController::class, 'destroy']);
+
+    // Requests routes
+    Route::get('/requests', [SectionRequestController::class, 'index']);
+    Route::get('/my-requests', [SectionRequestController::class, 'myRequests']);
+    Route::post('/requests', [SectionRequestController::class, 'store']);
+    Route::get('/requests/{request}', [SectionRequestController::class, 'show']);
+    Route::put('/requests/{request}', [SectionRequestController::class, 'update']);
+    Route::delete('/requests/{request}', [SectionRequestController::class, 'destroy']);
+
+    // Applications routes
+    Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::get('/applications/{application}', [ApplicationController::class, 'show']);
+    Route::post('/requests/{request}/apply', [ApplicationController::class, 'store']);
+    Route::put('/applications/{application}', [ApplicationController::class, 'update']);
+    Route::get('/requests/{request}/applications', [ApplicationController::class, 'forRequest']);
 });
