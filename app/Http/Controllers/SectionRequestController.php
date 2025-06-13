@@ -22,7 +22,7 @@ class SectionRequestController extends Controller
     public function myRequests(Request $request)
     {
         $userId = $request->user()->id;
-        return SectionRequest::with('applications')
+        return SectionRequest::with(['applications.user']) // eager load applications and their user
             ->where('requester_id', $userId)
             ->get();
     }
@@ -47,6 +47,7 @@ class SectionRequestController extends Controller
             'reason' => 'nullable|string'
         ]);
         $data['requester_id'] = $request->user()->id;
+        \Log::info('Current user:', ['user' => $request->user()]);
         return SectionRequest::create($data);
     }
 

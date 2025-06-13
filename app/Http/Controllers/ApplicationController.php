@@ -9,6 +9,7 @@ use App\Models\SectionRequest;
 
 class ApplicationController extends Controller
 {
+
  // List all applications for a request (for the owner)
     public function forRequest(Request $request, $requestId)
     {
@@ -26,32 +27,32 @@ class ApplicationController extends Controller
     }
 
     // Apply to a request
-public function store(Request $request, $requestId)
-{
-    $userId = $request->user()->id;
-    $sectionRequest = SectionRequest::findOrFail($requestId);
+    public function store(Request $request, $requestId)
+    {
+        $userId = $request->user()->id;
+        $sectionRequest = SectionRequest::findOrFail($requestId);
 
-    if ($sectionRequest->requester_id == $userId) {
-        return response()->json(['message' => 'Cannot apply to your own request'], 400);
+        if ($sectionRequest->requester_id == $userId) {
+            return response()->json(['message' => 'Cannot apply to your own request'], 400);
+        }
+
+        $existing = Application::where('request_id', $requestId)->where('user_id', $userId)->first();
+        if ($existing) {
+            return response()->json(['message' => 'Already applied'], 400);
+        }
+
+        $data = $request->validate([
+            'reason' => 'nullable|string'
+        ]);
+
+        $application = Application::create([
+            'request_id' => $requestId,
+            'user_id' => $userId,
+            'status' => 'pending',
+            'reason' => $data['reason'] ?? null
+        ]);
+        return $application;
     }
-
-    $existing = Application::where('request_id', $requestId)->where('user_id', $userId)->first();
-    if ($existing) {
-        return response()->json(['message' => 'Already applied'], 400);
-    }
-
-    $data = $request->validate([
-        'reason' => 'nullable|string'
-    ]);
-
-    $application = Application::create([
-        'request_id' => $requestId,
-        'user_id' => $userId,
-        'status' => 'pending',
-        'reason' => $data['reason'] ?? null
-    ]);
-    return $application;
-}
 
     // Update an application (approve/decline by owner, or withdraw by applicant)
     public function update(Request $request, $id)
@@ -61,8 +62,8 @@ public function store(Request $request, $requestId)
         $userId = $request->user()->id;
 
         if (!$sectionRequest) {
-    return response()->json(['message' => 'Parent request not found'], 404);
-}
+            return response()->json(['message' => 'Parent request not found'], 404);
+        }
         
         $data = $request->validate([
             'status' => 'required|in:pending,accepted,declined,cancelled'
@@ -90,6 +91,13 @@ public function store(Request $request, $requestId)
             return $application;
         }
 
+        \Log::info('Update attempt', [
+            'userId' => $userId,
+            'requester_id' => $sectionRequest ? $sectionRequest->requester_id : null,
+            'application_user_id' => $application->user_id,
+            'status' => $data['status']
+        ]);
+
         return response()->json(['message' => 'Unauthorized'], 403);
     }
 
@@ -103,4 +111,29 @@ public function store(Request $request, $requestId)
         $application->delete();
         return response()->json(['message' => 'Application deleted']);
     }
+
+    // List applications for a request (for the owner)
+    public function myApplications(Request $request)
+    {
+        $userId = $request->user()->id;
+        return Application::with('user')->where('user_id', $userId)->get();
+    }
+
+    public function withdraw(Request $request, $id)
+    {
+        $application = Application::findOrFail($id);
+        $userId = $request->user()->id;
+
+        // Only the applicant can withdraw
+        if ($application->user_id !== $userId) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Update the status to 'cancelled' (or 'withdrawn', if you prefer)
+        $application->status = 'cancelled';
+        $application->save();
+
+        return response()->json(['message' => 'Application withdrawn', 'application' => $application]);
+    }
+    
 }

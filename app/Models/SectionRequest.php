@@ -15,7 +15,8 @@ class SectionRequest extends Model
         return $this->belongsTo(User::class, 'requester_id');
     }
 
-    public function applications() {
-        return $this->hasMany(Application::class);
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'request_id');
     }
 }

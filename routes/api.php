@@ -142,4 +142,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/requests/{request}/apply', [ApplicationController::class, 'store']);
     Route::put('/applications/{application}', [ApplicationController::class, 'update']);
     Route::get('/requests/{request}/applications', [ApplicationController::class, 'forRequest']);
+    Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
+    Route::put('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw']);
 });

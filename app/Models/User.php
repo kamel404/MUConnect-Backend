@@ -127,5 +127,14 @@ class User extends Authenticatable
         return $this->hasMany(Resource::class);
     }
 
+    public function SectionRequests()
+    {
+        return $this->hasMany(SectionRequest::class);
+    }
 
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
+    
 }
