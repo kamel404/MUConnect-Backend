@@ -51,6 +51,8 @@ class ApplicationController extends Controller
             'status' => 'pending',
             'reason' => $data['reason'] ?? null
         ]);
+        // Notify the requester
+        $sectionRequest->requester->notify(new \App\Notifications\NewApplicationReceived($application));
         return $application;
     }
 
@@ -90,13 +92,6 @@ class ApplicationController extends Controller
             $application->save();
             return $application;
         }
-
-        \Log::info('Update attempt', [
-            'userId' => $userId,
-            'requester_id' => $sectionRequest ? $sectionRequest->requester_id : null,
-            'application_user_id' => $application->user_id,
-            'status' => $data['status']
-        ]);
 
         return response()->json(['message' => 'Unauthorized'], 403);
     }

@@ -131,7 +131,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Requests routes
     Route::get('/requests', [SectionRequestController::class, 'index']);
     Route::get('/my-requests', [SectionRequestController::class, 'myRequests']);
-    Route::post('/requests', [SectionRequestController::class, 'store']);
+    Route::post('/requests', [SectionRequestController::class, 'store'])->middleware('throttle:5,60,section-requests');
     Route::get('/requests/{request}', [SectionRequestController::class, 'show']);
     Route::put('/requests/{request}', [SectionRequestController::class, 'update']);
     Route::delete('/requests/{request}', [SectionRequestController::class, 'destroy']);
