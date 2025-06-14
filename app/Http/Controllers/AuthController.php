@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
+use App\Models\Notification;
 
 class AuthController extends Controller
 {
@@ -70,6 +71,17 @@ class AuthController extends Controller
         // Create token with abilities based on role
         $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 
+        // Send welcome notification
+        $notification = Notification::create([
+            'user_id' => $user->id,
+            'sender_id' => null,
+            'type' => 'welcome',
+            'data' => [
+                'message' => 'Welcome to the community, ' . $user->first_name . '!'
+            ],
+        ]);
+        logger($notification);
+
         // Load relationships for response
         $user->load(['faculty', 'major', 'roles']);
 
@@ -108,7 +120,7 @@ class AuthController extends Controller
         }
 
         $user = User::where($loginField, $loginInput)->firstOrFail();
-        
+
         // No token deletion here, so multiple tokens can exist per user
         $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 

@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Faculty;
+use App\Models\Major;
+use App\Models\StudyGroup;
+use App\Models\SavedItem;
+use App\Models\Event;
+use App\Models\Resource;
+use App\Models\SectionRequest;
+use App\Models\Application;
+use App\Models\Notification;
 
 class User extends Authenticatable
 {
@@ -136,5 +144,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Application::class);
     }
-    
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }
