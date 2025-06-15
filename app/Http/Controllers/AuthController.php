@@ -74,7 +74,7 @@ class AuthController extends Controller
         // Send welcome notification
         $notification = Notification::create([
             'user_id' => $user->id,
-            'sender_id' => null,
+            'sender_id' => User::where('email', 'system@mu.edu.lb')->first()->id,
             'type' => 'welcome',
             'data' => [
                 'message' => 'Welcome to the community, ' . $user->first_name . '!'

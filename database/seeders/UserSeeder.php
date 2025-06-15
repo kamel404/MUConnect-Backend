@@ -13,6 +13,24 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
+        // Create System Admin User 
+        $systemAdmin = User::firstOrCreate(
+            ['email' => 'system@mu.edu.lb'],
+            [
+                'username' => 'system',
+                'first_name' => 'System',
+                'last_name' => 'Admin',
+                'password' => Hash::make('system'),
+                'is_active' => true,
+                'is_verified' => true,
+                'faculty_id' => null,
+                'major_id' => null,
+                'bio' => 'System Administrator',
+            ]
+        );
+        $systemAdmin->assignRole('admin');
+        
         // Create admin user
         $admin = User::firstOrCreate(
             ['email' => 'admin@mu.edu.lb'],

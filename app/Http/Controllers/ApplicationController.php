@@ -79,6 +79,9 @@ class ApplicationController extends Controller
             $application->status = $data['status'];
             $application->save();
 
+            // Notify the applicant
+            $application->user->notify(new \App\Notifications\ApplicationStatusChanged($application));
+
             if ($data['status'] === 'accepted') {
                 $sectionRequest->status = 'accepted';
                 $sectionRequest->save();
@@ -90,6 +93,7 @@ class ApplicationController extends Controller
         if ($application->user_id == $userId && $data['status'] === 'cancelled') {
             $application->status = 'cancelled';
             $application->save();
+            
             return $application;
         }
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SectionRequest;
 use App\Models\Application;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class SectionRequestController extends Controller
 {
@@ -106,7 +108,6 @@ class SectionRequestController extends Controller
             'reason' => 'nullable|string'
         ]);
         $data['requester_id'] = $request->user()->id;
-        \Log::info('Current user:', ['user' => $request->user()]);
         return SectionRequest::create($data);
     }
 
@@ -128,9 +129,6 @@ class SectionRequestController extends Controller
         ]);
         $oldStatus = $sectionRequest->status;
         $sectionRequest->update($data);
-        if (isset($data['status']) && $data['status'] !== $oldStatus) {
-            $sectionRequest->requester->notify(new \App\Notifications\RequestStatusChanged($sectionRequest));
-        }
         return $sectionRequest;
     }
 

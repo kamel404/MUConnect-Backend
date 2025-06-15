@@ -17,6 +17,7 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\SectionRequestController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\NotificationController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -52,7 +53,6 @@ Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
-    
 });
 
 
@@ -131,7 +131,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Requests routes
     Route::get('/requests', [SectionRequestController::class, 'index']);
     Route::get('/my-requests', [SectionRequestController::class, 'myRequests']);
-    Route::post('/requests', [SectionRequestController::class, 'store'])->middleware('throttle:5,60,section-requests');
+    // User can only create 2 requests per day
+    Route::post('/requests', [SectionRequestController::class, 'store'])->middleware('throttle:2,1440,section-requests');
     Route::get('/requests/{request}', [SectionRequestController::class, 'show']);
     Route::put('/requests/{request}', [SectionRequestController::class, 'update']);
     Route::delete('/requests/{request}', [SectionRequestController::class, 'destroy']);
@@ -144,4 +145,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/requests/{request}/applications', [ApplicationController::class, 'forRequest']);
     Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
     Route::put('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw']);
+
+    // Notifications routes
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
