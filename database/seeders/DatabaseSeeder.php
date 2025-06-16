@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             // FacultySeeder::class,
             // MajorSeeder::class,
+            VotingStatusSeeder::class,
         ]);
     }
 }

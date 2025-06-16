@@ -14,11 +14,19 @@ class ClubController extends Controller
     /**
      * Display a listing of clubs
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clubs = Club::paginate(10);
+        $query = $request->input('query');
+
+        $clubs = Club::when($query, function ($q) use ($query) {
+            $q->where('name', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%');
+        })
+            ->paginate(10);
+
         return response()->json($clubs);
     }
+
     /**
      * Display a specific club
      */
@@ -54,19 +62,7 @@ class ClubController extends Controller
 
         return response()->json($club, 201);
     }
-
-    /**
-     * Search clubs by name
-     */
-    public function search(Request $request)
-    {
-        $query = $request->input('query');
-        $clubs = Club::where('name', 'like', '%' . $query . '%')
-            ->orWhere('description', 'like', '%' . $query . '%')
-            ->paginate(10);
-
-        return response()->json($clubs);
-    }
+    
     /**
      * Display the members of a specific club
      */

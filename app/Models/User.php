@@ -155,4 +155,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Club::class, 'club_members', 'user_id', 'club_id');
     }
+
+    public function votes()
+    {
+        return $this->hasMany(Vote::class);
+    }
 }

@@ -28,6 +28,11 @@ class Club extends Model
         return $this->belongsToMany(User::class, 'club_members', 'club_id', 'user_id');
     }
 
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
+
     public function upcomingEvent()
     {
         return $this->events()

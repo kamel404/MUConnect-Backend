@@ -19,6 +19,7 @@ use App\Http\Controllers\SectionRequestController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\VotingController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -62,6 +63,10 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
 
     // Club Events routes (protected)
     Route::post('/clubs/{club}/events', [ClubController::class, 'createClubEvent']);
+
+    // Votes routes (protected)
+    Route::post('clubs/{club}/candidates', [App\Http\Controllers\VotingController::class, 'addCandidate']);
+    Route::post('/voting-status', [App\Http\Controllers\VotingController::class, 'toggleSystemVoting']);
 });
 
 
@@ -72,11 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
 
     // Resource routes (protected)
-    Route::post('/resources', [\App\Http\Controllers\ResourceController::class, 'store']);
-    Route::put('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'update']);
-    Route::delete('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'destroy']);
-    Route::post('/resources/{id}/save', [\App\Http\Controllers\ResourceController::class, 'save']);
-    Route::delete('/resources/{id}/unsave', [\App\Http\Controllers\ResourceController::class, 'unsave']);
+    Route::apiResource('events.registrations', App\Http\Controllers\EventRegistrationController::class)->shallow();
+
+    // Voting routes
+    Route::get('clubs/{club}/candidates', [App\Http\Controllers\VotingController::class, 'getCandidates']);
+    Route::post('clubs/{club}/vote', [App\Http\Controllers\VotingController::class, 'vote']);
+    Route::get('clubs/{club}/results', [App\Http\Controllers\VotingController::class, 'results']);
+    Route::get('clubs/{club}/vote-status', [App\Http\Controllers\VotingController::class, 'getVoteStatus']);
+    Route::get('/voting-status', [App\Http\Controllers\VotingController::class, 'getVotingStatus']);
 
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
@@ -166,7 +174,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/clubs/{club}', [ClubController::class, 'show']);
     Route::get('/my-clubs', [ClubController::class, 'myClubs']);
     // search clubs by name or description
-    Route::get('/clubs/search', [ClubController::class, 'search']);
     Route::post('/clubs/{club}/join', [ClubController::class, 'joinClub']);
     Route::post('/clubs/{club}/leave', [ClubController::class, 'leaveClub']);
 });

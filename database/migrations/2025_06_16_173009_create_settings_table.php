@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clubs', function (Blueprint $table) {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description');
-            $table->integer('members')->default(0);
-            $table->string('logo')->nullable();
-            $table->string('upcoming_event')->nullable();
-            $table->enum('voting_status', ['open', 'closed'])->default('closed');
+            $table->string('key')->unique();
+            $table->string('value');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clubs');
+        Schema::dropIfExists('settings');
     }
 };
