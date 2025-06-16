@@ -18,6 +18,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\SectionRequestController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ClubController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -29,7 +30,7 @@ Route::get('/registration/faculties/{id}/majors', [FacultyController::class, 'ge
 
 
 // Moderator Routes
-Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     // Faculty routes (protected)
     Route::get('/faculties', [FacultyController::class, 'index']);
     Route::post('/faculties', [FacultyController::class, 'store']);
@@ -53,6 +54,14 @@ Route::middleware(['auth:sanctum', 'role:moderator'])->group(function () {
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
+
+    // Clubs routes (protected)
+    Route::get('/clubs/{club}/members', [ClubController::class, 'members']);
+    Route::post('/clubs', [ClubController::class, 'store']);
+
+
+    // Club Events routes (protected)
+    Route::post('/clubs/{club}/events', [ClubController::class, 'createClubEvent']);
 });
 
 
@@ -108,6 +117,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/events/{event}/unregister', [EventController::class, 'unregister']);
     Route::post('/events/{event}/save', [EventController::class, 'save']);
     Route::post('/events/{event}/unsave', [EventController::class, 'unsave']);
+    // Club Events routes
+    Route::get('/clubs/{club}/events', [ClubController::class, 'clubEvents']);
 
     // Course routes
     Route::get('/courses', [CourseController::class, 'index']);
@@ -149,4 +160,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Notifications routes
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
+    // Clubs routes
+    Route::get('/clubs', [ClubController::class, 'index']);
+    Route::get('/clubs/{club}', [ClubController::class, 'show']);
+    Route::get('/my-clubs', [ClubController::class, 'myClubs']);
+    // search clubs by name or description
+    Route::get('/clubs/search', [ClubController::class, 'search']);
+    Route::post('/clubs/{club}/join', [ClubController::class, 'joinClub']);
+    Route::post('/clubs/{club}/leave', [ClubController::class, 'leaveClub']);
 });

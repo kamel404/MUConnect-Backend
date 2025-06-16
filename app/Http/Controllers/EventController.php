@@ -6,6 +6,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\EventRegistration;
+use App\Models\User;
 
 class EventController extends Controller
 {
@@ -47,6 +48,10 @@ class EventController extends Controller
         $perPage = $request->get('per_page', 8);
         $query = Event::query();
 
+        // Filter by club_id if provided
+        if ($request->filled('club_id')) {
+            $query->where('club_id', $request->club_id);
+        }
         // Handle time_filter (today, this_week, this_month)
         if ($request->filled('time_filter') && !$request->filled('start_date') && !$request->filled('end_date')) {
             $now = now();
@@ -88,7 +93,7 @@ class EventController extends Controller
         $events = $query->latest()->paginate($perPage);
         return response()->json($events);
     }
-    
+
     public function myRegisteredEvents(Request $request)
     {
         $user = $request->user();
@@ -138,7 +143,7 @@ class EventController extends Controller
         $events = $query->latest()->paginate($perPage);
         return response()->json($events);
     }
-    
+
 
 
 
@@ -156,6 +161,8 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'speaker_names' => 'nullable|string',
             'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'club_id' => 'nullable|exists:clubs,id',
+            'is_club_event' => 'boolean',
         ]);
 
         if ($request->hasFile('image_path')) {
@@ -205,9 +212,9 @@ class EventController extends Controller
      */
     public function destroy(Request $request, Event $event)
     {
-    
+
         $event->delete();
-    
+
         return response()->json(['message' => 'Event deleted successfully'], 200);
     }
 
@@ -241,16 +248,13 @@ class EventController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-    if (!$registration) {
-        return response()->json(['message' => 'Not registered'], 400);
+        if (!$registration) {
+            return response()->json(['message' => 'Not registered'], 400);
+        }
+
+        $registration->delete();
+        $event->decrement('attendees_count');
+
+        return response()->json(['message' => 'Unregistered successfully']);
     }
-
-    $registration->delete();
-    $event->decrement('attendees_count');
-
-    return response()->json(['message' => 'Unregistered successfully']);
-}
-
-
-    
 }

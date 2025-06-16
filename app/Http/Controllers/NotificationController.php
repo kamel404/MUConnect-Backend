@@ -24,7 +24,7 @@ class NotificationController extends Controller
                     'read' => $notification->read,
                     'created_at' => $notification->created_at,
                     'sender_id' => $notification->sender_id,
-                    'sender_name' => $notification->sender->first_name . ' ' . $notification->sender->last_name,
+                    'sender_name' => $notification->sender ? $notification->sender->first_name . ' ' . $notification->sender->last_name : 'System',
                 ];
             });
 

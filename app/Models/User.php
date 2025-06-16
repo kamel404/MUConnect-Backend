@@ -17,6 +17,7 @@ use App\Models\Resource;
 use App\Models\SectionRequest;
 use App\Models\Application;
 use App\Models\Notification;
+use App\Models\Club;
 
 class User extends Authenticatable
 {
@@ -148,5 +149,10 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function clubs()
+    {
+        return $this->belongsToMany(Club::class, 'club_members', 'user_id', 'club_id');
     }
 }

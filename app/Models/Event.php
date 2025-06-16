@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,8 @@ class Event extends Model
         'description',
         'speaker_names',
         'image_path',
+        'club_id',
+        'is_club_event'
     ];
 
     public function user()
@@ -34,9 +37,14 @@ class Event extends Model
     {
         return $this->hasMany(EventRegistration::class);
     }
-    
+
     public function attendees()
     {
         return $this->belongsToMany(User::class, 'event_registrations');
+    }
+
+    public function club()
+    {
+        return $this->belongsTo(Club::class);
     }
 }
