@@ -21,14 +21,23 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\VotingController;
 use App\Http\Controllers\EventRegistrationController;
+use App\Http\Controllers\GoogleAuthController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Auth routes (protected)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/google/logout', [GoogleAuthController::class, 'logout']);
+});
+
 // Public routes for registration form
 Route::get('/registration/faculties', [FacultyController::class, 'index']);
 Route::get('/registration/faculties/{id}/majors', [FacultyController::class, 'getFacultyMajors']);
+
+// Google OAuth authentication completion route
+Route::post('/auth/google/complete-registration', [GoogleAuthController::class, 'completeRegistration'])->name('auth.google.complete');
 
 
 // Moderator Routes
