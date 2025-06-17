@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -17,7 +18,7 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-       public function me(Request $request)
+    public function me(Request $request)
     {
         $user = $request->user()->load('roles', 'faculty', 'major');
         return response()->json([
@@ -56,23 +57,37 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $validated = $request->validate([
-            'username'   => 'sometimes|required|unique:users,username,'.$id,
+            'username'   => 'sometimes|required|unique:users,username,' . $id,
             'first_name' => 'sometimes|required|string',
             'last_name'  => 'sometimes|required|string',
             'email'      => [
                 'sometimes',
-                'unique:users,email,'.$id,
+                'unique:users,email,' . $id,
                 'email',
                 function ($attribute, $value, $fail) {
                     if (!str_ends_with($value, '@mu.edu.lb')) {
-                        $fail('The '.$attribute.' must be an email address with the domain @mu.edu.lb.');
+                        $fail('The ' . $attribute . ' must be an email address with the domain @mu.edu.lb.');
                     }
                 },
             ],
             'password'   => 'sometimes|required|min:6',
-            'avatar'     => 'sometimes|nullable|string',
+            'avatar'     => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'bio'        => 'sometimes|nullable|string',
         ]);
+
+        // Handle avatar upload if provided
+        if ($request->hasFile('avatar')) {
+            // Store the uploaded file
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            // Get just the filename without the path
+            $avatarFileName = basename($avatarPath);
+            $validated['avatar'] = $avatarFileName;
+        }
+
+        // Remove fields that should be handled separately
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        }
 
         $user->update($validated);
         return response()->json(['message' => 'User updated successfully', 'user' => $user]);
@@ -87,7 +102,7 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User deleted successfully']);
     }
-    
+
     // get user role
     // not working, change it 
     public function getUserRole($id)
@@ -136,7 +151,7 @@ class UserController extends Controller
                 'email',
                 function ($attribute, $value, $fail) {
                     if (!str_ends_with($value, '@mu.edu.lb')) {
-                        $fail('The '.$attribute.' must be an email address with the domain @mu.edu.lb.');
+                        $fail('The ' . $attribute . ' must be an email address with the domain @mu.edu.lb.');
                     }
                 },
             ],
@@ -146,9 +161,119 @@ class UserController extends Controller
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
-        
+
         $user = User::create($validated);
-        
+
         return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
     }
+
+    /**
+     * Get user profile with analytics
+     */
+    public function profile($id = null)
+    {
+        // If no ID provided, use authenticated user
+        $userId = $id ?? auth()->id();
+        $user = User::with(['faculty', 'major', 'roles', 'studyGroups', 'registeredEvents'])
+            ->findOrFail($userId);
+            
+        // Gather analytics data (without section requests)
+        $analytics = [
+            'study_groups' => [
+                'total' => $user->studyGroups()->count(),
+                'leading' => $user->ledStudyGroups()->count(),
+            ],
+            'events' => [
+                'created' => $user->events()->count(),
+                'registered' => $user->registeredEvents()->count(),
+                'upcoming' => $user->registeredEvents()->where('event_datetime', '>', now())->count(),
+            ],
+            'clubs' => [
+                'joined' => $user->clubs()->count(),
+            ],
+            'resources' => [
+                'shared' => $user->resources()->count(),
+                // Comment out if resources has similar issues
+                // 'popular' => $user->resources()->orderBy('views', 'desc')->take(3)->get(),
+            ],
+            // Comment out section_requests
+            /* 
+            'section_requests' => [
+                'total' => $user->sectionRequests()->count(),
+                'pending' => $user->sectionRequests()->where('status', 'pending')->count(),
+                'accepted' => $user->sectionRequests()->where('status', 'accepted')->count(),
+            ],
+            */
+            'applications' => [
+                'total' => $user->applications()->count(),
+                'pending' => $user->applications()->where('status', 'pending')->count(),
+                'accepted' => $user->applications()->where('status', 'accepted')->count(),
+            ],
+            // Modify activity to exclude section requests
+            'activity' => $this->getRecentActivityWithoutSectionRequests($user),
+        ];
+        
+        return response()->json([
+            'user' => $user,
+            'analytics' => $analytics
+        ]);
+    }
+
+    /**
+     * Get recent user activity without section requests
+     */
+    private function getRecentActivityWithoutSectionRequests($user)
+    {
+        // Combine recent activity from different sources
+        $activity = collect();
+        
+        // Add recent study group joins
+        $user->studyGroups()
+            ->withPivot('created_at')
+            ->orderBy('pivot_created_at', 'desc')
+            ->take(5)
+            ->get()
+            ->each(function($group) use (&$activity) {
+                $activity->push([
+                    'type' => 'study_group_join',
+                    'date' => $group->pivot->created_at,
+                    'data' => [
+                        'group_id' => $group->id,
+                        'group_name' => $group->name
+                    ]
+                ]);
+            });
+        
+        // Add recent event registrations
+        $user->registeredEvents()
+            ->withPivot('created_at')
+            ->orderBy('pivot_created_at', 'desc')
+            ->take(5)
+            ->get()
+            ->each(function($event) use (&$activity) {
+                $activity->push([
+                    'type' => 'event_registration',
+                    'date' => $event->pivot->created_at,
+                    'data' => [
+                        'event_id' => $event->id,
+                        'event_name' => $event->name
+                    ]
+                ]);
+            });
+        
+        // Sort combined activity by date
+        return $activity->sortByDesc('date')->values()->all();
+    }
+
+    /**
+     * Get recent activity for the authenticated user
+     */
+    public function recentActivity()
+    {
+        $user = Auth::user();
+        $activity = $this->getRecentActivity($user);
+
+        return response()->json(['activity' => $activity]);
+    }
+    
 }

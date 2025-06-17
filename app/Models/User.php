@@ -53,11 +53,14 @@ class User extends Authenticatable
     protected $with = ['roles'];
 
     // Add computed attributes to JSON responses
-    protected $appends = ['primary_role', 'role_names'];
+    protected $appends = ['primary_role', 'role_names', 'avatar_url'];
 
     public function getAvatarUrlAttribute()
     {
-        return asset('storage/avatars/' . ($this->avatar ?? 'default.png'));
+        if ($this->avatar) {
+            return asset('storage/avatars/' . $this->avatar);
+        }
+        return asset('storage/avatars/default.png');
     }
 
 
@@ -78,7 +81,7 @@ class User extends Authenticatable
 
     public function ledStudyGroups()
     {
-        return $this->hasMany(StudyGroup::class, 'leader_id');
+        return $this->hasMany(StudyGroup::class, 'creator_id');
     }
 
     // Computed attributes
@@ -136,9 +139,9 @@ class User extends Authenticatable
         return $this->hasMany(Resource::class);
     }
 
-    public function SectionRequests()
+    public function sectionRequests()
     {
-        return $this->hasMany(SectionRequest::class);
+        return $this->hasMany(SectionRequest::class, 'student_id');
     }
 
     public function applications()

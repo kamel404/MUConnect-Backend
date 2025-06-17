@@ -20,6 +20,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\VotingController;
+use App\Http\Controllers\EventRegistrationController;
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
@@ -72,6 +73,15 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
 
 // Protected Routes for all authenticated users
 Route::middleware('auth:sanctum')->group(function () {
+
+    // View own profile
+    Route::get('/my-profile', [UserController::class, 'profile']);
+    // View someone else's profile
+    Route::get('/profile/{id}', [UserController::class, 'profile']);
+    // Get recent activity
+    Route::get('/profile/activity', [UserController::class, 'recentActivity']);
+    // update profile
+    Route::put('/user/{id}', [UserController::class, 'update']);
 
     // Saved Items routes 
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
