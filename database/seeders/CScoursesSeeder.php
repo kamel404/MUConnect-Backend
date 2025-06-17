@@ -20,14 +20,14 @@ class CScoursesSeeder extends Seeder
         DB::table('courses')->truncate();
         
         // Get the JSON file path
-        $json = File::get(base_path('app/data/CScourses.json'));
+        $json = File::get(base_path('storage/app/data/CScourses.json'));
         
         // Convert JSON to array
         $courses = json_decode($json, true);
         
         // Insert each course into the database
         foreach ($courses as $course) {
-            Course::create([
+            Course::updateOrCreate([
                 'code' => $course['code'],
                 'title' => $course['title'],
                 'credits' => $course['credits'],

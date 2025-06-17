@@ -11,7 +11,7 @@ class MajorSeeder extends Seeder
     public function run()
     {
         DB::table('majors')->truncate();
-        $jsonPath = base_path('app/data/majors.json');
+        $jsonPath = base_path('storage/app/data/majors.json');
         if (!File::exists($jsonPath)) {
             $this->command->error("majors.json file not found at $jsonPath");
             return;

@@ -63,11 +63,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
 
     // Resource routes (protected)
-    Route::post('/resources', [\App\Http\Controllers\ResourceController::class, 'store']);
-    Route::put('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'update']);
-    Route::delete('/resources/{id}', [\App\Http\Controllers\ResourceController::class, 'destroy']);
-    Route::post('/resources/{id}/save', [\App\Http\Controllers\ResourceController::class, 'save']);
-    Route::delete('/resources/{id}/unsave', [\App\Http\Controllers\ResourceController::class, 'unsave']);
+    Route::get('/resources', [ResourceController::class, 'index']);
+    Route::get('/resources/{id}', [ResourceController::class, 'show']);
+    Route::post('/resources', [ResourceController::class, 'storeTest']);
+    Route::put('/resources/{id}', [ResourceController::class, 'updateTest']);
+    Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
+    Route::post('/resources/{id}/save', [ResourceController::class, 'save']);
+    Route::delete('/resources/{id}/unsave', [ResourceController::class, 'unsave']);
 
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);

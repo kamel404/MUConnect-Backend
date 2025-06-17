@@ -12,12 +12,12 @@ class StudyGroupController extends Controller
     public function save($id)
     {
         $user = auth()->user();
-        $group = \App\Models\StudyGroup::findOrFail($id);
+        $group = StudyGroup::findOrFail($id);
 
         $saved = \App\Models\SavedItem::firstOrCreate([
             'user_id' => $user->id,
             'saveable_id' => $group->id,
-            'saveable_type' => \App\Models\StudyGroup::class,
+            'saveable_type' => StudyGroup::class,
         ]);
 
         return response()->json(['saved' => true, 'item' => $saved], 201);
@@ -27,12 +27,12 @@ class StudyGroupController extends Controller
     public function unsave($id)
     {
         $user = auth()->user();
-        $group = \App\Models\StudyGroup::findOrFail($id);
+        $group = StudyGroup::findOrFail($id);
 
         $deleted = \App\Models\SavedItem::where([
             'user_id' => $user->id,
             'saveable_id' => $group->id,
-            'saveable_type' => \App\Models\StudyGroup::class,
+            'saveable_type' => StudyGroup::class,
         ])->delete();
 
         return response()->json(['deleted' => $deleted > 0]);

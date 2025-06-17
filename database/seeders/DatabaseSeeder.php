@@ -16,12 +16,15 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RoleSeeder::class,
+            FacultySeeder::class,
+            MajorSeeder::class,
+            CScoursesSeeder::class,
+//        CourseSeeder::class,
             PermissionSeeder::class,
             AssignPermissionsSeeder::class,
             UserSeeder::class,
-            CourseSeeder::class,
-            // FacultySeeder::class,
-            // MajorSeeder::class,
+
         ]);
     }
 }
+    

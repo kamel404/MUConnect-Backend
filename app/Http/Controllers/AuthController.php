@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 use App\Models\Notification;
+use App\Models\Faculty;
+use App\Models\Major;
 
 class AuthController extends Controller
 {
@@ -43,7 +45,7 @@ class AuthController extends Controller
                 'required',
                 'exists:majors,id',
                 function ($attribute, $value, $fail) use ($request) {
-                    $major = \App\Models\Major::find($value);
+                    $major = Major::find($value);
                     if ($major && $major->faculty_id != $request->faculty_id) {
                         $fail('The selected major does not belong to the selected faculty.');
                     }

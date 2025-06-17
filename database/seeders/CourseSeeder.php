@@ -15,7 +15,7 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = file_get_contents(storage_path('app\data\courses.json'));
+    $json = file_get_contents(storage_path('app\data\courses.json'));
         $courses = json_decode($json, true);
 
         foreach ($courses as $item) {
