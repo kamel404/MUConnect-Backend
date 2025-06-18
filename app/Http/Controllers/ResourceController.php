@@ -232,10 +232,15 @@ class ResourceController extends Controller
 
         DB::beginTransaction();
         try {
-            // Find the resource and check ownership
-            $resource = Resource::where('id', $id)
-                ->where('user_id', $user->id)
-                ->firstOrFail();
+            // Find the resource
+            $resource = Resource::where('id', $id);
+
+            // If user is not admin or moderator, restrict to own resources
+            if (!$user->hasRole(['admin', 'moderator'])) {
+                $resource = $resource->where('user_id', $user->id);
+            }
+
+            $resource = $resource->firstOrFail();
 
             $attachments = [];
             if ($request->hasFile('attachments')) {
@@ -333,7 +338,9 @@ class ResourceController extends Controller
             return response()->json(['message' => 'Resource not found'], 404);
         }
 
-        if ($resource->user_id !== $user->id) {
+        // Check if the user is authorized to delete this resource
+        // Allow if user is the resource owner OR has admin/moderator role
+        if ($resource->user_id !== $user->id && !$user->hasRole(['admin', 'moderator'])) {
             return response()->json(['message' => 'Unauthorized to delete this resource'], 403);
         }
 
