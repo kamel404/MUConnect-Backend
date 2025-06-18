@@ -15,13 +15,10 @@ class Attachment extends Model
         'checksum',
         'url',
     ];
-
-    /**
-     * Get the parent attachable model (Resource, etc.)
-     */
-    public function attachable()
+ 
+    public function resources()
     {
-        return $this->morphTo();
+        return $this->belongsToMany(Resource::class);
     }
 
     /**

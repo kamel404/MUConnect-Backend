@@ -40,7 +40,7 @@ class Resource extends Model
 
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachable');
+        return $this->belongsToMany(Attachment::class);
     }
 
 

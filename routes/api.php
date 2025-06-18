@@ -23,6 +23,7 @@ use App\Http\Controllers\VotingController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 
+
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -82,6 +83,15 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
 
 // Protected Routes for all authenticated users
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Resource routes (protected)
+    Route::get('/resources', [ResourceController::class, 'index']);
+    Route::get('/resources/{id}', [ResourceController::class, 'show']);
+    Route::post('/resources', [ResourceController::class, 'storeTest']);
+    Route::put('/resources/{id}', [ResourceController::class, 'updateTest']);
+    Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
+    Route::post('/resources/{id}/save', [ResourceController::class, 'save']);
+    Route::delete('/resources/{id}/unsave', [ResourceController::class, 'unsave']);
 
     // View own profile
     Route::get('/my-profile', [UserController::class, 'profile']);
