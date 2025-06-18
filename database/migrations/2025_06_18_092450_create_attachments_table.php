@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('file_type', ['image', 'video', 'document']); // required for filteringhat
             $table->string('mime_type')->nullable();
             $table->string('checksum')->nullable();
+            $table->string('original_name')->nullable();
             $table->string('url')->nullable();
             $table->timestamps();
         });

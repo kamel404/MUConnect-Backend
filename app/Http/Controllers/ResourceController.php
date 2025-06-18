@@ -17,98 +17,131 @@ class ResourceController extends Controller
 
     public function index()
     {
-        $resource = Resource::with('attachments')->latest()->get();
-        return response()->json($resource);
+        $user = Auth::user();
+        $resources = Resource::with(['attachments', 'user'])->latest()->get();
+        
+        $resources = $resources->map(function ($resource) use ($user) {
+            // Add upvote information
+            $resource->upvote_count = $resource->upvotes()->count();
+            $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
+            
+            // Add comment count
+            $resource->comment_count = $resource->comments()->count();
+            
+            return $resource;
+        });
+        
+        return response()->json($resources);
     }
 
 
     public function show($id)
     {
-        $resource = Resource::with('attachments')->find($id);
+        $user = Auth::user();
+        $resource = Resource::with(['attachments', 'user', 'comments.user'])->find($id);
 
         if (!$resource) {
             return response()->json(['message' => 'Resource not found'], 404);
         }
+        
+        // Add upvote information
+        $resource->upvote_count = $resource->upvotes()->count();
+        $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
+        
+        // Add comment count
+        $resource->comment_count = $resource->comments()->count();
 
         return response()->json($resource);
     }
-    // Save a resource for the authenticated user
-    public function save($id)
+
+    /**
+     * Toggle save status for a resource
+     * 
+     * If the resource is already saved, it will be unsaved
+     * If the resource is not saved, it will be saved
+     * 
+     * @param int $id The resource ID
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleSave($id)
     {
         $user = Auth::user();
         $resource = Resource::findOrFail($id);
 
-        $saved = SavedItem::firstOrCreate([
+        // Check if the resource is already saved by this user
+        $savedItem = SavedItem::where([
             'user_id' => $user->id,
             'saveable_id' => $resource->id,
             'saveable_type' => Resource::class,
-        ]);
-
-        return response()->json(['saved' => true, 'item' => $saved], 201);
-    }
-
-    // Unsave a resource for the authenticated user
-    public function unsave($id)
-    {
-        $user = Auth::user();
-        $resource = Resource::findOrFail($id);
-
-        $deleted = SavedItem::where([
-            'user_id' => $user->id,
-            'saveable_id' => $resource->id,
-            'saveable_type' => Resource::class,
-        ])->delete();
-
-        return response()->json(['deleted' => $deleted > 0]);
-    }
-
-    // Create a new resource with optional attachments
-    public function store(Request $request)
-    {
-        $user = Auth::user();
-        $maxAttachments = 10; // Set your limit here
-
-        $data = $request->validate([
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'attachments' => 'sometimes',
-            'attachments.*' => 'file|max:10240',
-        ]);
-
-        // Normalize attachments to always be an array
-        $files = $request->file('attachments');
-        if (!$files) {
-            $files = [];
-        } elseif ($files instanceof \Illuminate\Http\UploadedFile) {
-            $files = [$files];
-        }
-        $newCount = count($files);
-        if ($newCount > $maxAttachments) {
+        ])->first();
+        
+        // If already saved, unsave it
+        if ($savedItem) {
+            $savedItem->delete();
             return response()->json([
-                'error' => "You can only attach up to $maxAttachments files per resource."
-            ], 422);
+                'message' => 'Resource unsaved successfully',
+                'saved' => false
+            ]);
+        } 
+        // If not saved, save it
+        else {
+            $saved = SavedItem::create([
+                'user_id' => $user->id,
+                'saveable_id' => $resource->id,
+                'saveable_type' => Resource::class,
+            ]);
+            
+            return response()->json([
+                'message' => 'Resource saved successfully',
+                'saved' => true,
+                'item' => $saved
+            ], 201);
         }
-
-        $resource = Resource::create([
+    }
+    
+    /**
+     * Toggle upvote for a resource
+     * 
+     * If the user has already upvoted the resource, remove the upvote
+     * Otherwise, add an upvote
+     */
+    public function toggleUpvote($id)
+    {
+        $user = Auth::user();
+        $resource = Resource::findOrFail($id);
+        
+        // Check if the user has already upvoted this resource
+        $existingUpvote = \App\Models\Upvote::where([
             'user_id' => $user->id,
-            'title' => $data['title'] ?? null,
-            'description' => $data['description'] ?? null,
-        ]);
-
-        if ($files) {
-            foreach ($files as $uploadedFile) {
-                $path = $uploadedFile->store('attachments', 'public');
-
-                $resource->attachments()->create([
-                    'file_path' => $path,
-                    'file_type' => $this->guessFileType($uploadedFile),
-                    'mime_type' => $uploadedFile->getClientMimeType(),
-                    'checksum' => md5_file($uploadedFile->getRealPath()),
-                ]);
-            }
+            'upvoteable_id' => $resource->id,
+            'upvoteable_type' => Resource::class,
+        ])->first();
+        
+        if ($existingUpvote) {
+            // User has already upvoted, so remove the upvote
+            $existingUpvote->delete();
+            
+            return response()->json([
+                'message' => 'Upvote removed successfully',
+                'upvoted' => false,
+                'upvote_count' => $resource->upvotes()->count()
+            ]);
+        } else {
+            // User hasn't upvoted, so add an upvote
+            $upvote = new \App\Models\Upvote([
+                'user_id' => $user->id,
+                'upvoteable_id' => $resource->id,
+                'upvoteable_type' => Resource::class,
+            ]);
+            
+            $upvote->save();
+            
+            return response()->json([
+                'message' => 'Resource upvoted successfully',
+                'upvoted' => true,
+                'upvote_count' => $resource->upvotes()->count()
+            ], 201);
         }
-
-        return response()->json(['resource' => $resource->load('attachments')], 201);
     }
 
 
@@ -171,7 +204,7 @@ class ResourceController extends Controller
 
             return response()->json([
                 'message' => 'Resource created successfully',
-                'resource' => $resource->load('attachments'),
+                'resource' => $resource->load(['attachments', 'user']),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -183,11 +216,6 @@ class ResourceController extends Controller
         }
 
     }
-
-
-
-
-
 
     public function updateTest(Request $request, $id)
     {
@@ -280,87 +308,6 @@ class ResourceController extends Controller
             ], 500);
         }
     }
-    // This update method is not working
-    // public function update(Request $request, $id)
-    // {
-    //     $user = Auth::user();
-    //     $maxAttachments = 10;
-
-    //     $resource = Resource::where('user_id', $user->id)->findOrFail($id);
-
-    //     $data = $request->validate([
-    //         'title' => 'nullable|string',
-    //         'description' => 'nullable|string',
-    //         'attachments' => 'sometimes',
-    //         'attachments.*' => 'file|max:10240',
-    //     ]);
-
-    //     // Only update fields that are present in the request
-    //     $updateData = [];
-    //     if ($request->has('title')) {
-    //         $updateData['title'] = $request->input('title');
-    //     }
-    //     if ($request->has('description')) {
-    //         $updateData['description'] = $request->input('description');
-    //     }
-    //     if (!empty($updateData)) {
-    //         $resource->update($updateData);
-    //     }
-
-    //     // Normalize files to array (robust, Postman compatible)
-    //     $files = [];
-    //     if ($request->hasFile('attachments')) {
-    //         $rawFiles = $request->file('attachments');
-    //         if (is_array($rawFiles)) {
-    //             $files = $rawFiles;
-    //         } elseif ($rawFiles instanceof \Illuminate\Http\UploadedFile) {
-    //             $files = [$rawFiles];
-    //         }
-    //     }
-
-    //     if (count($files)) {
-    //         if (count($files) > $maxAttachments) {
-    //             return response()->json([
-    //                 'error' => "You can only attach up to $maxAttachments files per resource."
-    //             ], 422);
-    //         }
-    //         // Delete old attachments (DB + storage)
-    //         foreach ($resource->attachments as $attachment) {
-    //             \Illuminate\Support\Facades\Storage::disk('public')->delete($attachment->file_path);
-    //             $attachment->delete();
-    //         }
-    //         // Add new attachments
-    //         foreach ($files as $uploadedFile) {
-    //             $path = $uploadedFile->store('attachments', 'public');
-    //             $resource->attachments()->create([
-    //                 'file_path' => $path,
-    //                 'file_type' => $this->guessFileType($uploadedFile),
-    //                 'mime_type' => $uploadedFile->getClientMimeType(),
-    //                 'checksum' => md5_file($uploadedFile->getRealPath()),
-    //             ]);
-    //         }
-    //         $resource->touch();
-    //     }
-
-    //     return response()->json(['resource' => $resource->load('attachments')]);
-    // }
-
-
-    // Delete a resource (and cascade attachments via DB)
-    public function destroy($id)
-    {
-        $user = Auth::user();
-        $resource = Resource::where('user_id', $user->id)->findOrFail($id);
-
-        // Delete attached files from storage
-        foreach ($resource->attachments as $attachment) {
-            Storage::disk('public')->delete($attachment->file_path);
-        }
-
-        $resource->delete();
-
-        return response()->json(['deleted' => true]);
-    }
 
     // Helper to guess file type from MIME
     protected function guessFileType($file)
@@ -386,7 +333,7 @@ class ResourceController extends Controller
             return response()->json(['message' => 'Resource not found'], 404);
         }
 
-        if (!$resource->user_id !== $user->id) {
+        if ($resource->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized to delete this resource'], 403);
         }
 

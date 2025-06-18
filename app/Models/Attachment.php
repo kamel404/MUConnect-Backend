@@ -12,6 +12,7 @@ class Attachment extends Model
         'file_type',
         'mime_type',
         'size',
+        'original_name',
         'checksum',
         'url',
     ];

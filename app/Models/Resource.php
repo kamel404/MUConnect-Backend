@@ -47,4 +47,16 @@ class Resource extends Model
     public function hashtags() {
         return $this->belongsToMany(Hashtag::class, 'hashtag_resource');
     }
+    
+    /**
+     * Check if a user has upvoted this resource
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function isUpvotedByUser($userId)
+    {
+        return $this->upvotes()->where('user_id', $userId)->exists();
+    }
+    
 }

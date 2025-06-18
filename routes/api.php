@@ -22,11 +22,15 @@ use App\Http\Controllers\ClubController;
 use App\Http\Controllers\VotingController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\StorageController;
 
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Storage proxy route to handle CORS for files
+Route::get('/storage/{path}', [StorageController::class, 'proxyFile'])->where('path', '.*');
 
 // Auth routes (protected)
 Route::middleware('auth:sanctum')->group(function () {
@@ -90,8 +94,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/resources', [ResourceController::class, 'storeTest']);
     Route::put('/resources/{id}', [ResourceController::class, 'updateTest']);
     Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
-    Route::post('/resources/{id}/save', [ResourceController::class, 'save']);
-    Route::delete('/resources/{id}/unsave', [ResourceController::class, 'unsave']);
+    Route::post('/resources/{id}/toggleSave', [ResourceController::class, 'toggleSave']);
+    Route::post('/resources/{id}/toggle-upvote', [ResourceController::class, 'toggleUpvote']);
+    
+    // Resource comments routes
+    Route::get('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'getResourceComments']);
+    Route::post('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'addResourceComment']);
+    Route::put('/comments/{id}', [\App\Http\Controllers\CommentController::class, 'updateComment']);
+    Route::delete('/comments/{id}', [\App\Http\Controllers\CommentController::class, 'deleteComment']);
+    Route::post('/comments/{id}/toggle-upvote', [\App\Http\Controllers\CommentController::class, 'toggleUpvote']);
 
     // View own profile
     Route::get('/my-profile', [UserController::class, 'profile']);

@@ -29,4 +29,8 @@ class Comment extends Model
     public function mentions() {
         return $this->hasMany(Mention::class);
     }
+    
+    public function upvotes() {
+        return $this->morphMany(Upvote::class, 'upvoteable');
+    }
 }
