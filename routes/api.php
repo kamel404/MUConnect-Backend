@@ -23,6 +23,7 @@ use App\Http\Controllers\VotingController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\DownloadController;
 
 
 // Auth routes (public)
@@ -216,4 +217,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // search clubs by name or description
     Route::post('/clubs/{club}/join', [ClubController::class, 'joinClub']);
     Route::post('/clubs/{club}/leave', [ClubController::class, 'leaveClub']);
+
+    // Download routes
+    Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);
 });
