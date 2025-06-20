@@ -98,6 +98,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/resources/{id}/toggleSave', [ResourceController::class, 'toggleSave']);
     Route::post('/resources/{id}/toggle-upvote', [ResourceController::class, 'toggleUpvote']);
     
+    // Poll routes (protected)
+    Route::post('/poll-options/{id}/vote', [ResourceController::class, 'votePollOption']);
+    
     // Resource comments routes
     Route::get('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'getResourceComments']);
     Route::post('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'addResourceComment']);

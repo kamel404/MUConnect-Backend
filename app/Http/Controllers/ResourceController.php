@@ -18,7 +18,9 @@ class ResourceController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $resources = Resource::with(['attachments', 'user'])->latest()->get();
+        $resources = Resource::with(['attachments', 'user', 'polls' => function($query) {
+            $query->with('options');
+        }])->latest()->get();
         
         $resources = $resources->map(function ($resource) use ($user) {
             // Add upvote information
@@ -27,6 +29,9 @@ class ResourceController extends Controller
             
             // Add comment count
             $resource->comment_count = $resource->comments()->count();
+            
+            // Add saved status
+            $resource->is_saved = $resource->savedBy()->where('user_id', $user->id)->exists();
             
             return $resource;
         });
@@ -38,7 +43,9 @@ class ResourceController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $resource = Resource::with(['attachments', 'user', 'comments.user'])->find($id);
+        $resource = Resource::with(['attachments', 'user', 'comments.user', 'polls' => function($query) {
+            $query->with('options');
+        }])->find($id);
 
         if (!$resource) {
             return response()->json(['message' => 'Resource not found'], 404);
@@ -50,6 +57,9 @@ class ResourceController extends Controller
         
         // Add comment count
         $resource->comment_count = $resource->comments()->count();
+        
+        // Add saved status
+        $resource->is_saved = $resource->savedBy()->where('user_id', $user->id)->exists();
 
         return response()->json($resource);
     }
@@ -199,12 +209,35 @@ class ResourceController extends Controller
             if (!empty($attachments)) {
                 $resource->attachments()->attach(collect($attachments)->pluck('id')->toArray());
             }
+            
+            // Handle poll creation if poll data is provided
+            if ($request->has('poll') && is_array($request->input('poll'))) {
+                $pollData = $request->input('poll');
+                
+                if (isset($pollData['question']) && isset($pollData['options']) && is_array($pollData['options'])) {
+                    // Create the poll
+                    $poll = new \App\Models\Poll([
+                        'question' => $pollData['question'],
+                    ]);
+                    
+                    // Associate poll with resource
+                    $resource->polls()->save($poll);
+                    
+                    // Create poll options
+                    foreach ($pollData['options'] as $optionText) {
+                        $poll->options()->create([
+                            'option_text' => $optionText,
+                            'vote_count' => 0
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Resource created successfully',
-                'resource' => $resource->load(['attachments', 'user']),
+                'resource' => $resource->load(['attachments', 'user', 'polls.options']),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -294,11 +327,46 @@ class ResourceController extends Controller
             if (!empty($attachments)) {
                 $resource->attachments()->attach(collect($attachments)->pluck('id')->toArray());
             }
+            
+            // Handle poll updates if poll data is provided
+            if ($request->has('poll') && is_array($request->input('poll'))) {
+                $pollData = $request->input('poll');
+                
+                // Get existing poll or create a new one
+                $poll = $resource->polls;
+                
+                if (!$poll && isset($pollData['question'])) {
+                    // Create new poll if it doesn't exist
+                    $poll = new \App\Models\Poll([
+                        'question' => $pollData['question'],
+                    ]);
+                    $resource->polls()->save($poll);
+                } elseif ($poll && isset($pollData['question'])) {
+                    // Update existing poll
+                    $poll->question = $pollData['question'];
+                    $poll->save();
+                    
+                    // Delete existing options if we're replacing them
+                    if (isset($pollData['options']) && is_array($pollData['options'])) {
+                        $poll->options()->delete();
+                    }
+                }
+                
+                // Create or update poll options
+                if ($poll && isset($pollData['options']) && is_array($pollData['options'])) {
+                    foreach ($pollData['options'] as $optionText) {
+                        $poll->options()->create([
+                            'option_text' => $optionText,
+                            'vote_count' => 0
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
             return response()->json([
                 'message' => 'Resource updated successfully',
-                'resource' => $resource->load('attachments'),
+                'resource' => $resource->load(['attachments', 'polls.options']),
             ], 200);
         } catch (ModelNotFoundException $e) {
             DB::rollBack();
@@ -326,6 +394,42 @@ class ResourceController extends Controller
             return 'video';
         }
         return 'document';
+    }
+    
+    /**
+     * Vote on a poll option
+     *
+     * @param int $optionId The poll option ID
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function votePollOption($optionId)
+    {
+        $user = Auth::user();
+        
+        try {
+            $option = \App\Models\PollOption::findOrFail($optionId);
+            $poll = $option->poll;
+            
+            // Check if the poll belongs to a resource
+            if (!$poll || !$poll->resource) {
+                return response()->json([
+                    'message' => 'Invalid poll option'
+                ], 400);
+            }
+            
+            // Increment the vote count
+            $option->increment('vote_count');
+            
+            return response()->json([
+                'message' => 'Vote recorded successfully',
+                'poll' => $poll->load('options')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error recording vote',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroyTest($id)

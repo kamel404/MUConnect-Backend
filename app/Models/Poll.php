@@ -10,9 +10,9 @@ class Poll extends Model
         'question',
     ];
 
-    public function resourceContent()
+    public function resource()
     {
-        return $this->morphOne(ResourceContent::class, 'contentable');
+        return $this->belongsTo(Resource::class);
     }
 
     public function options()

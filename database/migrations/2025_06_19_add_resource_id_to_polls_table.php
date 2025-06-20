@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('polls', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('resource_id')->constrained()->onDelete('cascade');
-            $table->string('question')->nullable();
-            $table->timestamps();
+        Schema::table('polls', function (Blueprint $table) {
+            $table->foreignId('resource_id')->nullable()->constrained()->onDelete('cascade');
         });
     }
 
@@ -24,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('polls');
+        Schema::table('polls', function (Blueprint $table) {
+            $table->dropForeign(['resource_id']);
+            $table->dropColumn('resource_id');
+        });
     }
 };
