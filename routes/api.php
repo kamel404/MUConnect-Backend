@@ -110,6 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // View own profile
     Route::get('/my-profile', [UserController::class, 'profile']);
+    // Dashboard overview
+    Route::get('/overview', [\App\Http\Controllers\OverviewController::class, 'index']);
     // View someone else's profile
     Route::get('/profile/{id}', [UserController::class, 'profile']);
     // Get recent activity
@@ -173,8 +175,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/{event}', [EventController::class, 'show']);
     Route::post('/events/{event}/register', [EventController::class, 'register']);
     Route::post('/events/{event}/unregister', [EventController::class, 'unregister']);
-    Route::post('/events/{event}/save', [EventController::class, 'save']);
-    Route::post('/events/{event}/unsave', [EventController::class, 'unsave']);
+    Route::post('/events/{event}/toggleSave', [EventController::class, 'toggleSave']);
     // Club Events routes
     Route::get('/clubs/{club}/events', [ClubController::class, 'clubEvents']);
 
