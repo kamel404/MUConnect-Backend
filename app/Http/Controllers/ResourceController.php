@@ -24,10 +24,38 @@ class ResourceController extends Controller
         $perPage = $request->input('per_page', 10); // Default 10 items per page
         $page = $request->input('page', 1); // Default to first page
         
-        // Create paginated query
+        // Create base query with relationships
         $resourcesQuery = Resource::with(['attachments', 'user', 'course', 'polls' => function($query) {
             $query->with('options');
-        }])->latest();
+        }]);
+        
+        // Apply filters if provided
+        // Filter by faculty_id
+        if ($request->has('faculty_id')) {
+            $resourcesQuery->where('faculty_id', $request->input('faculty_id'));
+        }
+        
+        // Filter by major_id
+        if ($request->has('major_id')) {
+            $resourcesQuery->where('major_id', $request->input('major_id'));
+        }
+        
+        // Filter by course_id
+        if ($request->has('course_id')) {
+            $resourcesQuery->where('course_id', $request->input('course_id'));
+        }
+        
+        // Search by title
+        if ($request->has('search') && !empty($request->input('search'))) {
+            $searchTerm = $request->input('search');
+            $resourcesQuery->where(function($query) use ($searchTerm) {
+                $query->where('title', 'like', "%{$searchTerm}%")
+                      ->orWhere('description', 'like', "%{$searchTerm}%");
+            });
+        }
+        
+        // Order by latest by default
+        $resourcesQuery->latest();
         
         // Get paginated results
         $paginatedResources = $resourcesQuery->paginate($perPage);

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreResourceRequest extends FormRequest
 {
@@ -34,7 +35,12 @@ class StoreResourceRequest extends FormRequest
             'poll.options' => 'required_with:poll|array|min:2',
             'poll.options.*' => 'required|string|max:255',
             // new relational ids
-            'course_id' => 'nullable|exists:courses,id',
+            'course_id' => [
+                'nullable',
+                Rule::exists('courses', 'id')->where(function ($query) {
+                    return $query->where('major_id', $this->input('major_id'));
+                }),
+            ],
             'major_id'  => 'required|exists:majors,id',
             'faculty_id'=> 'required|exists:faculties,id',
         ];
