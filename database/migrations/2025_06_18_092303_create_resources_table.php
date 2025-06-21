@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title')->nullable();
             $table->text('description')->nullable();
+            $table->foreignId('course_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('major_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('faculty_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

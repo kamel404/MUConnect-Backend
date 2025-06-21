@@ -16,14 +16,24 @@ use App\Http\Requests\UpdateResourceRequest;
 class ResourceController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $resources = Resource::with(['attachments', 'user', 'course','polls' => function($query) {
-            $query->with('options');
-        }])->latest()->get();
         
-        $resources = $resources->map(function ($resource) use ($user) {
+        // Get pagination parameters from request
+        $perPage = $request->input('per_page', 10); // Default 10 items per page
+        $page = $request->input('page', 1); // Default to first page
+        
+        // Create paginated query
+        $resourcesQuery = Resource::with(['attachments', 'user', 'course', 'polls' => function($query) {
+            $query->with('options');
+        }])->latest();
+        
+        // Get paginated results
+        $paginatedResources = $resourcesQuery->paginate($perPage);
+        
+        // Transform resources with additional data
+        $resources = $paginatedResources->getCollection()->map(function ($resource) use ($user) {
             // Add upvote information
             $resource->upvote_count = $resource->upvotes()->count();
             $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
@@ -36,7 +46,7 @@ class ResourceController extends Controller
 
             // Add poll voting information (user's selected option)
             if ($resource->polls) {
-                $poll      = $resource->polls;
+                $poll = $resource->polls;
                 $optionIds = $poll->options->pluck('id');
 
                 $userVote = Upvote::where('user_id', $user->id)
@@ -54,7 +64,20 @@ class ResourceController extends Controller
             return $resource;
         });
         
-        return response()->json($resources);
+        // Create custom response with pagination metadata
+        return response()->json([
+            'data' => $resources,
+            'pagination' => [
+                'total' => $paginatedResources->total(),
+                'per_page' => $paginatedResources->perPage(),
+                'current_page' => $paginatedResources->currentPage(),
+                'last_page' => $paginatedResources->lastPage(),
+                'next_page_url' => $paginatedResources->nextPageUrl(),
+                'prev_page_url' => $paginatedResources->previousPageUrl(),
+                'from' => $paginatedResources->firstItem(),
+                'to' => $paginatedResources->lastItem(),
+            ]
+        ]);
     }
 
 
