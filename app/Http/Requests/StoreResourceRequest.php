@@ -33,6 +33,10 @@ class StoreResourceRequest extends FormRequest
             'poll.question' => 'required_with:poll|string|max:255',
             'poll.options' => 'required_with:poll|array|min:2',
             'poll.options.*' => 'required|string|max:255',
+            // new relational ids
+            'course_id' => 'required|exists:courses,id',
+            'major_id'  => 'required|exists:majors,id',
+            'faculty_id'=> 'required|exists:faculties,id',
         ];
     }
     protected function failedValidation(Validator $validator)

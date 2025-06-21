@@ -15,7 +15,7 @@ class Resource extends Model
     protected $fillable = [
         'user_id',
         'title',
-        'description',
+        'description', 'course_id', 'major_id', 'faculty_id',
     ];
 
     public function user()
@@ -36,6 +36,21 @@ class Resource extends Model
     public function polls()
     {
         return $this->hasOne(Poll::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(\App\Models\Course::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(\App\Models\Major::class);
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(\App\Models\Faculty::class);
     }
 
     public function attachments()

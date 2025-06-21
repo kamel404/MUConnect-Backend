@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Resource;
 use App\Models\Attachment;
 use App\Models\SavedItem;
+use App\Models\Upvote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +19,7 @@ class ResourceController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $resources = Resource::with(['attachments', 'user', 'polls' => function($query) {
+        $resources = Resource::with(['attachments', 'user', 'course','polls' => function($query) {
             $query->with('options');
         }])->latest()->get();
         
@@ -32,6 +33,23 @@ class ResourceController extends Controller
             
             // Add saved status
             $resource->is_saved = $resource->savedBy()->where('user_id', $user->id)->exists();
+
+            // Add poll voting information (user's selected option)
+            if ($resource->polls) {
+                $poll      = $resource->polls;
+                $optionIds = $poll->options->pluck('id');
+
+                $userVote = Upvote::where('user_id', $user->id)
+                    ->where('upvoteable_type', \App\Models\PollOption::class)
+                    ->whereIn('upvoteable_id', $optionIds)
+                    ->first();
+
+                $poll->user_option_id = $userVote?->upvoteable_id;
+                $poll->options = $poll->options->map(function ($opt) use ($userVote) {
+                    $opt->is_selected = $userVote && $userVote->upvoteable_id === $opt->id;
+                    return $opt;
+                });
+            }
             
             return $resource;
         });
@@ -43,7 +61,7 @@ class ResourceController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $resource = Resource::with(['attachments', 'user', 'comments.user', 'polls' => function($query) {
+        $resource = Resource::with(['attachments', 'user', 'course','comments.user', 'polls' => function($query) {
             $query->with('options');
         }])->find($id);
 
@@ -58,8 +76,41 @@ class ResourceController extends Controller
         // Add comment count
         $resource->comment_count = $resource->comments()->count();
         
+        // Add course info
+            $resource->course_info = $resource->course;
+            // Add course title
+        $resource->course_title = optional($resource->course)->title;
         // Add saved status
         $resource->is_saved = $resource->savedBy()->where('user_id', $user->id)->exists();
+
+        // Add poll voting information (user's selected option)
+        if ($resource->polls) {
+            $poll           = $resource->polls;
+            $optionIds      = $poll->options->pluck('id');
+            $userVote       = Upvote::where('user_id', $user->id)
+                ->where('upvoteable_type', \App\Models\PollOption::class)
+                ->whereIn('upvoteable_id', $optionIds)
+                ->first();
+
+            $poll->user_option_id = $userVote?->upvoteable_id;
+
+            // Mark each option with `is_selected`
+            $poll->options = $poll->options->map(function ($opt) use ($userVote) {
+                $opt->is_selected = $userVote && $userVote->upvoteable_id === $opt->id;
+                return $opt;
+            });
+        }
+
+        // Add upvote info to each comment
+        $resource->comments = $resource->comments->map(function ($comment) use ($user) {
+            $comment->upvote_count = $comment->upvotes()->count();
+            $comment->is_upvoted   = Upvote::where([
+                'user_id'        => $user->id,
+                'upvoteable_id'  => $comment->id,
+                'upvoteable_type'=> \App\Models\Comment::class,
+            ])->exists();
+            return $comment;
+        });
 
         return response()->json($resource);
     }
@@ -204,6 +255,9 @@ class ResourceController extends Controller
                 'user_id' => $user->id,
                 'title' => $request->input('title'),
                 'description' => $request->input('description'),
+                'course_id' => $request->input('course_id'),
+                'major_id' => $request->input('major_id'),
+                'faculty_id' => $request->input('faculty_id'),
             ]);
 
             if (!empty($attachments)) {
@@ -405,29 +459,66 @@ class ResourceController extends Controller
     public function votePollOption($optionId)
     {
         $user = Auth::user();
-        
+
         try {
             $option = \App\Models\PollOption::findOrFail($optionId);
-            $poll = $option->poll;
-            
-            // Check if the poll belongs to a resource
+            $poll   = $option->poll;
+
+            // Ensure option belongs to a valid poll & resource
             if (!$poll || !$poll->resource) {
-                return response()->json([
-                    'message' => 'Invalid poll option'
-                ], 400);
+                return response()->json(['message' => 'Invalid poll option'], 400);
             }
-            
-            // Increment the vote count
-            $option->increment('vote_count');
-            
+
+            // Retrieve existing vote (if any) by this user on this poll
+            $existingVote = Upvote::where('user_id', $user->id)
+                ->where('upvoteable_type', \App\Models\PollOption::class)
+                ->whereIn('upvoteable_id', $poll->options()->pluck('id'))
+                ->first();
+
+            $action = 'added';
+
+            DB::transaction(function () use ($existingVote, $option, $user, &$action) {
+                if ($existingVote) {
+                    if ($existingVote->upvoteable_id === $option->id) {
+                        // User clicked same option → remove vote
+                        $option->decrement('vote_count');
+                        $existingVote->delete();
+                        $action = 'removed';
+                    } else {
+                        // Switch vote to another option
+                        \App\Models\PollOption::where('id', $existingVote->upvoteable_id)->decrement('vote_count');
+                        $existingVote->upvoteable_id = $option->id;
+                        $existingVote->save();
+                        $option->increment('vote_count');
+                        $action = 'switched';
+                    }
+                } else {
+                    // Fresh vote
+                    Upvote::create([
+                        'user_id'        => $user->id,
+                        'upvoteable_type'=> \App\Models\PollOption::class,
+                        'upvoteable_id'  => $option->id,
+                    ]);
+                    $option->increment('vote_count');
+                }
+            });
+
+            $message = match($action) {
+                'removed'  => 'Vote removed successfully',
+                'switched' => 'Vote switched successfully',
+                default    => 'Vote recorded successfully',
+            };
+
             return response()->json([
-                'message' => 'Vote recorded successfully',
-                'poll' => $poll->load('options')
-            ]);
+                'message' => $message,
+                'poll'    => $poll->load('options')
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Poll option not found'], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error recording vote',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ], 500);
         }
     }
