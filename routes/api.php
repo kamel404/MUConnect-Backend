@@ -30,6 +30,10 @@ use App\Http\Controllers\DownloadController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Email verification routes
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+Route::post('/email/resend', [\App\Http\Controllers\VerificationController::class, 'resend']);
+
 // Storage proxy route to handle CORS for files
 Route::get('/storage/{path}', [StorageController::class, 'proxyFile'])->where('path', '.*');
 

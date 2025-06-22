@@ -35,6 +35,7 @@ class User extends Authenticatable
         'major_id',    // Add this
         'is_active',
         'status',
+        'is_verified',
     ];
 
     protected $hidden = [
@@ -47,6 +48,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'badges' => 'array',
         'is_active' => 'boolean',
+        'is_verified' => 'boolean',
     ];
 
     // Always eager load roles to prevent N+1 queries
