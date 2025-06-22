@@ -85,7 +85,8 @@ class AuthController extends Controller
             'sender_id' => User::where('email', 'system@mu.edu.lb')->first()->id,
             'type' => 'welcome',
             'data' => [
-                'message' => 'Welcome to the community, ' . $user->first_name . '!'
+                'message' => 'Welcome to the community, ' . $user->first_name . '!',
+                'url'     => url('/dashboard'),
             ],
         ]);
         logger($notification);

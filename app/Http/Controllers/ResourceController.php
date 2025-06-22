@@ -9,6 +9,7 @@ use App\Models\Upvote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notification;
 use App\Http\Requests\StoreResourceRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -247,6 +248,22 @@ class ResourceController extends Controller
             ]);
             
             $upvote->save();
+            // Notify resource owner about the upvote
+            $resource->load('user');
+            $owner = $resource->user;
+            if ($owner && $owner->id !== $user->id) {
+                Notification::create([
+                    'user_id'   => $owner->id,
+                    'sender_id' => $user->id,
+                    'type'      => 'resource_upvote',
+                    'data'      => [
+                        'resource_id'    => $resource->id,
+                        'resource_title' => $resource->title,
+                        'message'        => $user->first_name.' upvoted your resource "'.$resource->title.'"',
+                        'url'            => url('/resources/'.$resource->id),
+                    ],
+                ]);
+            }
             
             return response()->json([
                 'message' => 'Resource upvoted successfully',
