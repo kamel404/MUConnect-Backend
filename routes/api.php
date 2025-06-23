@@ -24,6 +24,7 @@ use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\AIQuizController;
 
 
 // Auth routes (public)
@@ -236,4 +237,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Download routes
     Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);
+
+    // AI Quiz routes
+    Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);
 });

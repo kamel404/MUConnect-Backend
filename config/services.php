@@ -41,4 +41,8 @@ return [
     'redirect' => env('GOOGLE_REDIRECT_URL'),      // Your Google Redirect URL
     ],
 
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+    ],
+
 ];
