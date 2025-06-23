@@ -16,6 +16,66 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\UpdateResourceRequest;
 class ResourceController extends Controller
 {
+    /**
+     * Get top contributors based on resources and upvotes
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function topContributors(Request $request)
+    {
+        // Get pagination parameters from request
+        $limit = $request->input('limit', 10); // Default to top 10
+        
+        // Get users with their resource counts and total upvotes received
+        $topContributors = \App\Models\User::with(['faculty', 'major'])
+            ->select(['users.*'])
+            ->selectRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) as resources_count')
+            ->selectSub(function ($query) {
+                $query->selectRaw('COUNT(*)')
+                    ->from('upvotes')
+                    ->whereColumn('upvotes.upvoteable_id', 'users.id')
+                    ->where('upvoteable_type', \App\Models\User::class);
+            }, 'user_upvote_count')
+            ->selectSub(function ($query) {
+                $query->selectRaw('COUNT(*)')
+                    ->from('resources')
+                    ->join('upvotes', function ($join) {
+                        $join->on('resources.id', '=', 'upvotes.upvoteable_id')
+                            ->where('upvotes.upvoteable_type', \App\Models\Resource::class);
+                    })
+                    ->whereColumn('resources.user_id', 'users.id');
+            }, 'resource_upvote_count')
+            // Add total upvotes received (user upvotes + resource upvotes)
+            ->withCasts([
+                'resources_count' => 'integer',
+                'user_upvote_count' => 'integer',
+                'resource_upvote_count' => 'integer'
+            ])
+            // Get only users with resources
+            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) > 0')
+            // Order by resources count and then by upvotes received
+            ->orderByRaw('resources_count DESC')
+            ->orderByRaw('(user_upvote_count + resource_upvote_count) DESC')
+            ->limit($limit)
+            ->get()
+            ->map(function ($user) {
+                // Add computed fields
+                $user->contribution_score = $user->resources_count + 
+                    intval($user->user_upvote_count) + 
+                    intval($user->resource_upvote_count);
+                    
+                // Add faculty and major names if available
+                $user->faculty_name = optional($user->faculty)->name;
+                $user->major_name = optional($user->major)->name;
+                
+                return $user;
+            });
+            
+        return response()->json([
+            'data' => $topContributors
+        ]);
+    }
 
     public function index(Request $request)
     {

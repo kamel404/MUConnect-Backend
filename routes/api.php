@@ -70,6 +70,8 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     // User roles management (protected)
     Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
     Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
+    Route::patch('/users/{id}/toggle-active', [UserController::class, 'toggleActive']);
+    Route::get('/users', [UserController::class, 'index']);
 
     // Events routes (protected)
     Route::post('/events', [EventController::class, 'store']);
@@ -95,6 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Resource routes (protected)
     Route::get('/resources', [ResourceController::class, 'index']);
+    Route::get('/top-contributors', [ResourceController::class, 'topContributors']);
     Route::get('/resources/{id}', [ResourceController::class, 'show']);
     Route::post('/resources', [ResourceController::class, 'storeTest']);
     Route::put('/resources/{id}', [ResourceController::class, 'updateTest']);
@@ -143,7 +146,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('majors/search/{query}', [MajorController::class, 'search']);
 
     // User routes (protected)
-    Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/me', [UserController::class, 'me']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::post('/users', [UserController::class, 'store']);

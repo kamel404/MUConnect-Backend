@@ -18,6 +18,8 @@ use App\Models\SectionRequest;
 use App\Models\Application;
 use App\Models\Notification;
 use App\Models\Club;
+use App\Models\Comment;
+use App\Models\Upvote;
 
 class User extends Authenticatable
 {
@@ -164,5 +166,21 @@ class User extends Authenticatable
     public function votes()
     {
         return $this->hasMany(Vote::class);
+    }
+
+    /**
+     * Comments made by the user
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Upvotes that the user has given
+     */
+    public function upvotesGiven()
+    {
+        return $this->hasMany(Upvote::class);
     }
 }
