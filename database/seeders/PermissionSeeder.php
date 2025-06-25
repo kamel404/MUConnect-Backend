@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
 class PermissionSeeder extends Seeder
@@ -13,6 +14,8 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('permissions')->truncate();
+
         $permissions = [
             // Faculty 
             'get faculties', // index
@@ -43,8 +46,15 @@ class PermissionSeeder extends Seeder
             'logout',
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        $guards = ['web', 'sanctum'];
+
+        foreach ($guards as $guard) {
+            foreach ($permissions as $permission) {
+                Permission::firstOrCreate([
+                    'name' => $permission,
+                    'guard_name' => $guard,
+                ]);
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Course;
 use App\Models\Faculty;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class CourseSeeder extends Seeder
 {
@@ -15,7 +17,8 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = file_get_contents(storage_path('storage/app/data/courses.json'));
+        // Get the JSON file path
+        $json = File::get(base_path('storage/app/data/courses.json'));
         $courses = json_decode($json, true);
 
         foreach ($courses as $item) {
@@ -40,9 +43,13 @@ class CourseSeeder extends Seeder
 
                 if (!$existing) {
                     Course::create([
-                        'name' => $name,
+                        'title' => $name,
+                        'credits' => 0,
+                        'year' => null,
+                        'semester' => null,
                         'code' => $code,
                         'faculty_id' => $faculty->id,
+                        'major_id' => optional($faculty->majors()->first())->id ?? 1,
                     ]);
                 }
             } else {

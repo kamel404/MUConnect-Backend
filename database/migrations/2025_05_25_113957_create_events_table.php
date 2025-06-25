@@ -14,10 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('title');
-            // Added by other migration
             $table->foreignId('club_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_club_event')->default(false);
-            
             $table->dateTime('event_datetime');
             $table->string('location');
             $table->string('organizer');
