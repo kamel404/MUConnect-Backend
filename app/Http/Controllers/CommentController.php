@@ -8,6 +8,7 @@ use App\Models\Upvote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
 
 class CommentController extends Controller
 {
@@ -68,6 +69,22 @@ class CommentController extends Controller
         ]);
         
         $comment->save();
+        // Notify resource owner about the new comment
+        $resourceOwner = $resource->user;
+        if ($resourceOwner && $resourceOwner->id !== $user->id) {
+            Notification::create([
+                'user_id'   => $resourceOwner->id,
+                'sender_id' => $user->id,
+                'type'      => 'resource_comment',
+                'data'      => [
+                    'resource_id'   => $resource->id,
+                    'comment_id'    => $comment->id,
+                    'resource_title'=> $resource->title,
+                    'message'       => $user->first_name.' commented on your resource "'.$resource->title.'"',
+                    'url'           => url('/resources/'.$resource->id),
+                ],
+            ]);
+        }
         
         // Load the user relationship for the response
         $comment->load('user');

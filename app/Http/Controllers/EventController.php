@@ -257,4 +257,41 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Unregistered successfully']);
     }
+
+    /**
+     * Toggle save status for an event
+     * If the event is already saved, it will be unsaved; otherwise saved.
+     */
+    public function toggleSave($id)
+    {
+        $user = Auth::user();
+        $event = Event::findOrFail($id);
+
+        $savedItem = \App\Models\SavedItem::where([
+            'user_id' => $user->id,
+            'saveable_id' => $event->id,
+            'saveable_type' => Event::class,
+        ])->first();
+
+        if ($savedItem) {
+            $savedItem->delete();
+            return response()->json([
+                'message' => 'Event unsaved successfully',
+                'saved'   => false,
+            ]);
+        }
+
+        $saved = \App\Models\SavedItem::create([
+            'user_id'      => $user->id,
+            'saveable_id'  => $event->id,
+            'saveable_type'=> Event::class,
+        ]);
+
+        return response()->json([
+            'message' => 'Event saved successfully',
+            'saved'   => true,
+            'item'    => $saved,
+        ], 201);
+    
+    }
 }

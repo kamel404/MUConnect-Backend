@@ -71,13 +71,22 @@ class AuthController extends Controller
         // Create token with abilities based on role
         $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;
 
+        // Send verification email
+        $verificationUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+        \Mail::to($user->email)->send(new \App\Mail\VerifyEmail($user, $verificationUrl));
+
         // Send welcome notification
         $notification = Notification::create([
             'user_id' => $user->id,
             'sender_id' => User::where('email', 'system@mu.edu.lb')->first()->id,
             'type' => 'welcome',
             'data' => [
-                'message' => 'Welcome to the community, ' . $user->first_name . '!'
+                'message' => 'Welcome to the community, ' . $user->first_name . '!',
+                'url'     => url('/dashboard'),
             ],
         ]);
         logger($notification);
@@ -120,6 +129,11 @@ class AuthController extends Controller
         }
 
         $user = User::where($loginField, $loginInput)->firstOrFail();
+
+        // Ensure the user has verified their email
+        if (! $user->is_verified) {
+            return response()->json(['message' => 'Please verify your email address before logging in.'], 403);
+        }
 
         // No token deletion here, so multiple tokens can exist per user
         $token = $user->createToken('auth_token', $user->getRoleNames())->plainTextToken;

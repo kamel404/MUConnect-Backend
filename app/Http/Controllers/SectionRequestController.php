@@ -33,7 +33,6 @@ class SectionRequestController extends Controller
                 $query->where($field, $request->input($field));
             }
         }
-        // No general search
 
         // Sorting
         $sortBy = $request->input('sort_by', 'created_at');

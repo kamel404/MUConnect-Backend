@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
@@ -11,9 +12,14 @@ class RoleSeeder extends Seeder
     
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'admin']);
-        Role::firstorCreate(['name' => 'moderator']);
-        Role::firstorCreate(['name' => 'student']);
+        DB::table('roles')->truncate();
+        $roles = ['admin', 'moderator', 'student'];
 
+        foreach ($roles as $role) {
+            // Create role for default "web" guard
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
+            // And for API (sanctum) guard
+            Role::firstOrCreate(['name' => $role, 'guard_name' => 'sanctum']);
+        }
     }
 }

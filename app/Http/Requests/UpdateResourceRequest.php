@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateResourceRequest extends FormRequest
 {
@@ -28,6 +29,15 @@ class UpdateResourceRequest extends FormRequest
             'attachments.*' => 'file|max:10240', // 10MB max per file
             'remove_attachments' => 'sometimes|array',
             'remove_attachments.*' => 'integer|exists:attachments,id',
+            // relational ids
+            'course_id' => [
+                'sometimes',
+                'nullable',
+                Rule::exists('courses', 'id')->where(function ($query) {
+                    return $query->where('major_id', $this->input('major_id'));
+                }),
+            ],
+            'major_id'  => 'sometimes|nullable|exists:majors,id',
         ];
     }
 

@@ -8,6 +8,8 @@ use App\Models\Vote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Notification;
+use App\Models\User;
 
 class VotingController extends Controller
 {
@@ -165,6 +167,23 @@ class VotingController extends Controller
             ['key' => 'voting_status'],
             ['value' => $request->voting_status, 'updated_at' => now()]
         );
+
+        // Notify all verified users that the voting status has changed
+        $status = $request->voting_status; // open or closed
+        User::where('is_verified', true)->select('id')->chunk(200, function ($users) use ($user, $status) {
+            foreach ($users as $u) {
+                Notification::create([
+                    'user_id'   => $u->id,
+                    'sender_id' => $user->id,
+                    'type'      => 'voting_status',
+                    'data'      => [
+                        'status'  => $status,
+                        'message' => "Voting has been {$status}!",
+                        'url'     => url('/clubs'),
+                    ],
+                ]);
+            }
+        });
 
         return response()->json(['message' => 'System voting status updated.']);
     }

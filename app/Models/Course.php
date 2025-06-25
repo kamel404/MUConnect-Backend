@@ -43,9 +43,18 @@ class Course extends Model
         return $this->hasMany(Resource::class);
     }
 
+    // Legacy: courses previously referenced `majors()` as a collection. Retained for backward compatibility.
     public function majors()
     {
         return $this->hasMany(Major::class);
+    }
+
+    /**
+     * Get the major that this course belongs to.
+     */
+    public function major(): BelongsTo
+    {
+        return $this->belongsTo(Major::class, 'major_id');
     }
 
     public function getRouteKeyName()

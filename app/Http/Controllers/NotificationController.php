@@ -11,25 +11,33 @@ class NotificationController extends Controller
 {
 
     public function index()
-    {
-        $notifications = Auth::user()->notifications()
-            ->with('sender') // eager load sender
-            ->latest()
-            ->get()
-            ->map(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'type' => $notification->type,
-                    'data' => $notification->data,
-                    'read' => $notification->read,
-                    'created_at' => $notification->created_at,
-                    'sender_id' => $notification->sender_id,
-                    'sender_name' => $notification->sender ? $notification->sender->first_name . ' ' . $notification->sender->last_name : 'System',
-                ];
-            });
+{
+    $notifications = Auth::user()->notifications()
+        ->with('sender')
+        ->latest()
+        ->paginate(5);
 
-        return response()->json($notifications);
-    }
+    $notifications->getCollection()->transform(function ($notification) {
+        return [
+            'id' => $notification->id,
+            'type' => $notification->type,
+            'data' => $notification->data,
+            'read' => $notification->read,
+            'created_at' => $notification->created_at,
+            'sender_id' => $notification->sender_id,
+            'sender_name' => $notification->sender
+                ? $notification->sender->first_name . ' ' . $notification->sender->last_name
+                : 'System',
+            'sender_avatar' => $notification->sender
+                ? $notification->sender->avatar_url
+                : asset('storage/avatars/default.png'),
+            'url' => $notification->data['url'] ?? null,
+        ];
+    });
+
+    return response()->json($notifications);
+}
+
 
 
 

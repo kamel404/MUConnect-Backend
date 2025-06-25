@@ -24,11 +24,16 @@ use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\DownloadController;
+use App\Http\Controllers\AIQuizController;
 
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Email verification routes
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+Route::post('/email/resend', [\App\Http\Controllers\VerificationController::class, 'resend']);
 
 // Storage proxy route to handle CORS for files
 Route::get('/storage/{path}', [StorageController::class, 'proxyFile'])->where('path', '.*');
@@ -66,6 +71,8 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     // User roles management (protected)
     Route::get('/users/{id}/roles', [UserController::class, 'getUserRole']);
     Route::put('/users/{id}/roles', [UserController::class, 'updateUserRole']);
+    Route::patch('/users/{id}/toggle-active', [UserController::class, 'toggleActive']);
+    Route::get('/users', [UserController::class, 'index']);
 
     // Events routes (protected)
     Route::post('/events', [EventController::class, 'store']);
@@ -91,6 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Resource routes (protected)
     Route::get('/resources', [ResourceController::class, 'index']);
+    Route::get('/top-contributors', [ResourceController::class, 'topContributors']);
     Route::get('/resources/{id}', [ResourceController::class, 'show']);
     Route::post('/resources', [ResourceController::class, 'storeTest']);
     Route::put('/resources/{id}', [ResourceController::class, 'updateTest']);
@@ -110,6 +118,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // View own profile
     Route::get('/my-profile', [UserController::class, 'profile']);
+    // Dashboard overview
+    Route::get('/overview', [\App\Http\Controllers\OverviewController::class, 'index']);
     // View someone else's profile
     Route::get('/profile/{id}', [UserController::class, 'profile']);
     // Get recent activity
@@ -137,7 +147,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('majors/search/{query}', [MajorController::class, 'search']);
 
     // User routes (protected)
-    Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/me', [UserController::class, 'me']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::post('/users', [UserController::class, 'store']);
@@ -173,8 +182,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events/{event}', [EventController::class, 'show']);
     Route::post('/events/{event}/register', [EventController::class, 'register']);
     Route::post('/events/{event}/unregister', [EventController::class, 'unregister']);
-    Route::post('/events/{event}/save', [EventController::class, 'save']);
-    Route::post('/events/{event}/unsave', [EventController::class, 'unsave']);
+    Route::post('/events/{event}/toggleSave', [EventController::class, 'toggleSave']);
     // Club Events routes
     Route::get('/clubs/{club}/events', [ClubController::class, 'clubEvents']);
 
@@ -229,4 +237,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Download routes
     Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);
+
+    // AI Quiz routes
+    Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);
 });

@@ -6,16 +6,50 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Comment;
+use App\Models\Upvote;
+use App\Models\Resource;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $perPage = $request->input('per_page', 10);
+        $query = User::select(['id', 'username', 'first_name', 'last_name', 'email', 'is_active']);
+        
+        if ($request->filled('search')) {
+            $term = $request->input('search');
+            $query->where(function ($q) use ($term) {
+                $q->where('username', 'like', "%{$term}%")
+                  ->orWhere('first_name', 'like', "%{$term}%")
+                  ->orWhere('last_name', 'like', "%{$term}%");
+            });
+        }
+
+        $users = $query->paginate($perPage);
         return response()->json($users);
+    }
+
+    /**
+     * Toggle user's active status (admin only)
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleActive($id)
+    {
+        $user = User::findOrFail($id);
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        return response()->json([
+            'message'   => 'User status updated successfully',
+            'is_active' => $user->is_active,
+        ]);
     }
 
     public function me(Request $request)
@@ -43,10 +77,27 @@ class UserController extends Controller
     /**
      * Show user profile
      */
+    // return with major name and faculty name
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);
+        return response()->json([
+            'id' => $user->id,
+            'username' => $user->username,
+            'email' => $user->email,
+            'roles' => $user->roles->pluck('name'), // array of role names
+            'faculty' => $user->faculty,
+            'major' => $user->major,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'avatar' => $user->avatar,
+            'bio' => $user->bio,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+            'is_admin' => $user->hasRole('admin'),
+            'is_moderator' => $user->hasRole('moderator'),
+            'is_student' => $user->hasRole('student'),
+        ]);
     }
 
     /**
@@ -177,6 +228,66 @@ class UserController extends Controller
         $user = User::with(['faculty', 'major', 'roles', 'studyGroups', 'registeredEvents'])
             ->findOrFail($userId);
             
+        // Additional individual contribution stats
+        $commentsMade = Comment::where('user_id', $user->id)->count();
+        $upvotesGiven = Upvote::where('user_id', $user->id)->count();
+
+        // Calculate upvotes received (on user profile, resources, and comments)
+        $upvotesReceivedUser = Upvote::where([
+            'upvoteable_type' => User::class,
+            'upvoteable_id'   => $user->id,
+        ])->count();
+
+        $resourceIds = $user->resources()->pluck('id');
+        $upvotesReceivedResources = $resourceIds->isNotEmpty()
+            ? Upvote::where('upvoteable_type', Resource::class)
+                ->whereIn('upvoteable_id', $resourceIds)
+                ->count()
+            : 0;
+
+        $commentIds = Comment::where('user_id', $user->id)->pluck('id');
+        $upvotesReceivedComments = $commentIds->isNotEmpty()
+            ? Upvote::where('upvoteable_type', Comment::class)
+                ->whereIn('upvoteable_id', $commentIds)
+                ->count()
+            : 0;
+
+        $upvotesReceived = $upvotesReceivedUser + $upvotesReceivedResources + $upvotesReceivedComments;
+
+        // Global stats for charts (top 5)
+        $topPostingUsers = User::withCount('resources')
+            ->orderBy('resources_count', 'desc')
+            ->take(5)
+            ->get(['id', 'username', 'resources_count']);
+
+        $topCommentingUsers = Comment::select('user_id', DB::raw('COUNT(*) as comments_count'))
+            ->groupBy('user_id')
+            ->orderBy('comments_count', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($row) {
+                $usr = User::find($row->user_id);
+                return [
+                    'id'             => $usr->id,
+                    'username'       => $usr->username,
+                    'comments_count' => $row->comments_count,
+                ];
+            });
+
+        $topUpvotingUsers = Upvote::select('user_id', DB::raw('COUNT(*) as upvotes_given'))
+            ->groupBy('user_id')
+            ->orderBy('upvotes_given', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($row) {
+                $usr = User::find($row->user_id);
+                return [
+                    'id'            => $usr->id,
+                    'username'      => $usr->username,
+                    'upvotes_given' => $row->upvotes_given,
+                ];
+            });
+
         // Gather analytics data (without section requests)
         $analytics = [
             'study_groups' => [
@@ -193,8 +304,11 @@ class UserController extends Controller
             ],
             'resources' => [
                 'shared' => $user->resources()->count(),
-                // Comment out if resources has similar issues
-                // 'popular' => $user->resources()->orderBy('views', 'desc')->take(3)->get(),
+            ],
+            'contributions' => [
+                'comments_made'   => $commentsMade,
+                'upvotes_given'   => $upvotesGiven,
+                'upvotes_received'=> $upvotesReceived,
             ],
             // Comment out section_requests
             /* 
@@ -211,6 +325,11 @@ class UserController extends Controller
             ],
             // Modify activity to exclude section requests
             'activity' => $this->getRecentActivityWithoutSectionRequests($user),
+            'charts' => [
+                'top_posting_users'    => $topPostingUsers,
+                'top_commenting_users' => $topCommentingUsers,
+                'top_upvoting_users'   => $topUpvotingUsers,
+            ],
         ];
         
         return response()->json([
