@@ -17,7 +17,7 @@ class CScoursesSeeder extends Seeder
     public function run(): void
     {
         // Clear existing courses
-        DB::table('courses')->truncate();
+        DB::table('courses')->delete();
         
         // Get the JSON file path
         $json = File::get(base_path('storage/app/data/CScourses.json'));

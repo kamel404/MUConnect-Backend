@@ -12,7 +12,9 @@ class RoleSeeder extends Seeder
     
     public function run(): void
     {
-        DB::table('roles')->truncate();
+        // Clear model_has_roles first due to foreign key constraint, then roles
+        DB::table('model_has_roles')->delete();
+        DB::table('roles')->delete();
         $roles = ['admin', 'moderator', 'student'];
 
         foreach ($roles as $role) {

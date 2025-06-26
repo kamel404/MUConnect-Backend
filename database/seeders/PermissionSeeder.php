@@ -14,7 +14,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('permissions')->truncate();
+        DB::table('permissions')->delete();
 
         $permissions = [
             // Faculty 

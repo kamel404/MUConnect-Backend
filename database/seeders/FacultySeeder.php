@@ -15,7 +15,9 @@ class FacultySeeder extends Seeder
     //todo make seeding database be automated on production so it will not be needed to be run manually
     public function run(): void
     {
-        DB::table('faculties')->truncate();
+        DB::table('courses')->delete();
+        DB::table('faculties')->delete();
+        DB::statement('ALTER TABLE faculties AUTO_INCREMENT = 1;');
         $faculties = [
             [
                 'name' => 'Faculty of Sciences',
