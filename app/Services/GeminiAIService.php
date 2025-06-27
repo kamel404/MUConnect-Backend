@@ -34,7 +34,7 @@ class GeminiAIService
         $this->validateInputs($filePath, $mimeType, $questionCount, $difficulty);
         
         // Check cache first
-        $cacheKey = $this->generateCacheKey($filePath, $questionCount, $difficulty);
+        $cacheKey = $this->generateCacheKey($filePath, $questionCount, $difficulty, 'quiz');
         if ($cachedQuiz = Cache::get($cacheKey)) {
             return $cachedQuiz;
         }
@@ -49,6 +49,39 @@ class GeminiAIService
             
         } catch (\Exception $e) {
             Log::error('Quiz generation failed', [
+                'file_path' => $filePath,
+                'mime_type' => $mimeType,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+
+    public function generateSummaryFromFile(
+        string $filePath, 
+        string $mimeType, 
+        string $summaryType = 'concise',
+        int $maxWords = 300
+    ): array {
+        // Input validation for summary
+        $this->validateSummaryInputs($filePath, $mimeType, $summaryType, $maxWords);
+        
+        // Check cache first
+        $cacheKey = $this->generateCacheKey($filePath, $maxWords, $summaryType, 'summary');
+        if ($cachedSummary = Cache::get($cacheKey)) {
+            return $cachedSummary;
+        }
+
+        try {
+            $summary = $this->processFileAndGenerateSummary($filePath, $mimeType, $summaryType, $maxWords);
+            
+            // Cache the result
+            Cache::put($cacheKey, $summary, self::CACHE_TTL);
+            
+            return $summary;
+            
+        } catch (\Exception $e) {
+            Log::error('Summary generation failed', [
                 'file_path' => $filePath,
                 'mime_type' => $mimeType,
                 'error' => $e->getMessage()
@@ -84,6 +117,33 @@ class GeminiAIService
         }
     }
 
+    private function validateSummaryInputs(string $filePath, string $mimeType, string $summaryType, int $maxWords): void
+    {
+        if (!file_exists($filePath)) {
+            throw new \InvalidArgumentException("File does not exist: {$filePath}");
+        }
+
+        if (!is_readable($filePath)) {
+            throw new \InvalidArgumentException("File is not readable: {$filePath}");
+        }
+
+        if (filesize($filePath) > self::MAX_FILE_SIZE) {
+            throw new \InvalidArgumentException("File size exceeds maximum allowed size");
+        }
+
+        if (!in_array($mimeType, $this->supportedMimeTypes)) {
+            throw new \InvalidArgumentException("Unsupported MIME type: {$mimeType}");
+        }
+
+        if (!in_array($summaryType, ['concise', 'detailed', 'bullet_points', 'key_concepts'])) {
+            throw new \InvalidArgumentException("Summary type must be 'concise', 'detailed', 'bullet_points', or 'key_concepts'");
+        }
+
+        if ($maxWords < 50 || $maxWords > 1000) {
+            throw new \InvalidArgumentException("Max words must be between 50 and 1000");
+        }
+    }
+
     private function processFileAndGenerateQuiz(string $filePath, string $mimeType, int $questionCount, string $difficulty): array
     {
         if ($mimeType === 'text/plain') {
@@ -99,9 +159,24 @@ class GeminiAIService
         }
     }
 
+    private function processFileAndGenerateSummary(string $filePath, string $mimeType, string $summaryType, int $maxWords): array
+    {
+        if ($mimeType === 'text/plain') {
+            // Handle text files directly
+            $content = file_get_contents($filePath);
+            if ($content === false) {
+                throw new \RuntimeException("Failed to read file content");
+            }
+            return $this->callGeminiAPIWithTextForSummary($content, $summaryType, $maxWords);
+        } else {
+            // Handle binary files (images, PDFs)
+            return $this->callGeminiAPIWithFileForSummary($filePath, $mimeType, $summaryType, $maxWords);
+        }
+    }
+
     private function callGeminiAPIWithText(string $textContent, int $questionCount, string $difficulty): array
     {
-        $prompt = $this->buildPrompt($questionCount, $difficulty);
+        $prompt = $this->buildQuizPrompt($questionCount, $difficulty);
         $fullPrompt = $prompt . "\n\nDocument content:\n" . $textContent;
         
         return $this->makeGeminiRequest([
@@ -111,12 +186,12 @@ class GeminiAIService
                 ]
             ]],
             'generationConfig' => $this->getGenerationConfig()
-        ]);
+        ], 'quiz');
     }
 
     private function callGeminiAPIWithFile(string $filePath, string $mimeType, int $questionCount, string $difficulty): array
     {
-        $prompt = $this->buildPrompt($questionCount, $difficulty);
+        $prompt = $this->buildQuizPrompt($questionCount, $difficulty);
         $fileContent = file_get_contents($filePath);
         
         if ($fileContent === false) {
@@ -136,10 +211,50 @@ class GeminiAIService
                 ]
             ]],
             'generationConfig' => $this->getGenerationConfig()
-        ]);
+        ], 'quiz');
     }
 
-    private function makeGeminiRequest(array $payload): array
+    private function callGeminiAPIWithTextForSummary(string $textContent, string $summaryType, int $maxWords): array
+    {
+        $prompt = $this->buildSummaryPrompt($summaryType, $maxWords);
+        $fullPrompt = $prompt . "\n\nDocument content:\n" . $textContent;
+        
+        return $this->makeGeminiRequest([
+            'contents' => [[
+                'parts' => [
+                    ['text' => $fullPrompt]
+                ]
+            ]],
+            'generationConfig' => $this->getSummaryGenerationConfig()
+        ], 'summary');
+    }
+
+    private function callGeminiAPIWithFileForSummary(string $filePath, string $mimeType, string $summaryType, int $maxWords): array
+    {
+        $prompt = $this->buildSummaryPrompt($summaryType, $maxWords);
+        $fileContent = file_get_contents($filePath);
+        
+        if ($fileContent === false) {
+            throw new \RuntimeException("Failed to read file content");
+        }
+
+        return $this->makeGeminiRequest([
+            'contents' => [[
+                'parts' => [
+                    ['text' => $prompt],
+                    [
+                        'inline_data' => [
+                            'mime_type' => $mimeType,
+                            'data' => base64_encode($fileContent)
+                        ]
+                    ]
+                ]
+            ]],
+            'generationConfig' => $this->getSummaryGenerationConfig()
+        ], 'summary');
+    }
+
+    private function makeGeminiRequest(array $payload, string $responseType = 'quiz'): array
     {
         for ($attempt = 1; $attempt <= self::MAX_RETRIES; $attempt++) {
             try {
@@ -158,7 +273,11 @@ class GeminiAIService
                     ->post($this->getGeminiEndpoint(), $payload);
 
                 if ($response->successful()) {
-                    return $this->parseGeminiResponse($response->json());
+                    if ($responseType === 'summary') {
+                        return $this->parseGeminiSummaryResponse($response->json());
+                    } else {
+                        return $this->parseGeminiResponse($response->json());
+                    }
                 }
 
                 Log::warning("Gemini API attempt {$attempt} failed", [
@@ -198,7 +317,18 @@ class GeminiAIService
         ];
     }
 
-    private function buildPrompt(int $questionCount, string $difficulty): string
+    private function getSummaryGenerationConfig(): array
+    {
+        return [
+            'temperature' => 0.5,
+            'topK' => 30,
+            'topP' => 0.8,
+            'maxOutputTokens' => 1500,
+            'responseMimeType' => 'application/json'
+        ];
+    }
+
+    private function buildQuizPrompt(int $questionCount, string $difficulty): string
     {
         return <<<PROMPT
 You are an expert educational content creator. Analyze the provided document and create exactly {$questionCount} multiple-choice questions at {$difficulty} difficulty level.
@@ -230,6 +360,43 @@ Do not include any text before or after the JSON array.
 PROMPT;
     }
 
+    private function buildSummaryPrompt(string $summaryType, int $maxWords): string
+    {
+        $typeInstructions = match($summaryType) {
+            'concise' => 'Create a concise summary that captures the main points and key information.',
+            'detailed' => 'Create a detailed summary that includes main points, supporting details, and important context.',
+            'bullet_points' => 'Create a summary using bullet points to highlight key information and main concepts.',
+            'key_concepts' => 'Focus on identifying and explaining the key concepts, terms, and ideas presented in the content.',
+            default => 'Create a balanced summary of the content.'
+        };
+
+        return <<<PROMPT
+You are an expert content analyzer. Analyze the provided document and create a summary based on the following requirements:
+
+Summary Type: {$summaryType}
+Instructions: {$typeInstructions}
+Maximum Words: {$maxWords}
+
+Requirements:
+- Be accurate and faithful to the source content
+- Maintain the logical flow and structure of information
+- Use clear, professional language
+- Focus on the most important information
+- Ensure the summary is within the word limit
+
+Return ONLY valid JSON in this exact format:
+{
+  "summary": "Your summary text here",
+  "word_count": actual_word_count,
+  "summary_type": "{$summaryType}",
+  "key_topics": ["topic1", "topic2", "topic3"],
+  "confidence_score": 0.95
+}
+
+Do not include any text before or after the JSON object.
+PROMPT;
+    }
+
     private function parseGeminiResponse(array $response): array
     {
         if (!isset($response['candidates'][0]['content']['parts'][0]['text'])) {
@@ -250,6 +417,28 @@ PROMPT;
         }
 
         return $this->validateQuizStructure($quiz);
+    }
+
+    private function parseGeminiSummaryResponse(array $response): array
+    {
+        if (!isset($response['candidates'][0]['content']['parts'][0]['text'])) {
+            throw new \RuntimeException("Invalid Gemini response structure");
+        }
+
+        $text = $response['candidates'][0]['content']['parts'][0]['text'];
+        
+        // Clean up the response text
+        $text = trim($text);
+        $text = preg_replace('/^```json\s*/', '', $text);
+        $text = preg_replace('/\s*```$/', '', $text);
+
+        $summary = json_decode($text, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException("Invalid JSON in Gemini response: " . json_last_error_msg() . "\nResponse: " . $text);
+        }
+
+        return $this->validateSummaryStructure($summary);
     }
 
     private function validateQuizStructure(array $quiz): array
@@ -275,6 +464,36 @@ PROMPT;
         return $quiz;
     }
 
+    private function validateSummaryStructure(array $summary): array
+    {
+        $requiredFields = ['summary', 'word_count', 'summary_type'];
+        
+        foreach ($requiredFields as $field) {
+            if (!isset($summary[$field])) {
+                throw new \RuntimeException("Summary is missing required field: {$field}");
+            }
+        }
+
+        if (!is_string($summary['summary']) || empty($summary['summary'])) {
+            throw new \RuntimeException("Summary text must be a non-empty string");
+        }
+
+        if (!is_numeric($summary['word_count']) || $summary['word_count'] < 1) {
+            throw new \RuntimeException("Word count must be a positive number");
+        }
+
+        // Optional fields validation
+        if (isset($summary['key_topics']) && !is_array($summary['key_topics'])) {
+            throw new \RuntimeException("Key topics must be an array");
+        }
+
+        if (isset($summary['confidence_score']) && (!is_numeric($summary['confidence_score']) || $summary['confidence_score'] < 0 || $summary['confidence_score'] > 1)) {
+            throw new \RuntimeException("Confidence score must be a number between 0 and 1");
+        }
+
+        return $summary;
+    }
+
     private function getGeminiEndpoint(): string
     {
         $apiKey = config('services.gemini.api_key');
@@ -287,9 +506,9 @@ PROMPT;
         return "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
     }
 
-    private function generateCacheKey(string $filePath, int $questionCount, string $difficulty): string
+    private function generateCacheKey(string $filePath, int $param1, string $param2, string $type): string
     {
-        return 'quiz_' . md5($filePath . filemtime($filePath) . $questionCount . $difficulty);
+        return "{$type}_" . md5($filePath . filemtime($filePath) . $param1 . $param2);
     }
 
     /**

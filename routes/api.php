@@ -208,8 +208,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Requests routes
     Route::get('/requests', [SectionRequestController::class, 'index']);
     Route::get('/my-requests', [SectionRequestController::class, 'myRequests']);
-    // User can only create 2 requests per day
-    Route::post('/requests', [SectionRequestController::class, 'store'])->middleware('throttle:2,1440,section-requests');
+    Route::post('/requests', [SectionRequestController::class, 'store']);
     Route::get('/requests/{request}', [SectionRequestController::class, 'show']);
     Route::put('/requests/{request}', [SectionRequestController::class, 'update']);
     Route::delete('/requests/{request}', [SectionRequestController::class, 'destroy']);
@@ -240,4 +239,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // AI Quiz routes
     Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);
+    Route::post('/resources/{resourceId}/generate-summary', [AIQuizController::class, 'generateSummary']);
 });

@@ -14,7 +14,7 @@ class SectionRequestController extends Controller
     public function index(Request $request)
     {
         $userId = $request->user()->id;
-        $query = SectionRequest::with(['requester', 'applications'])
+        $query = SectionRequest::with(['requester', 'applications.user'])
             ->withCount('applications')
             ->where('requester_id', '!=', $userId);
 
@@ -90,23 +90,38 @@ class SectionRequestController extends Controller
     // Show a single request
     public function show($id)
     {
-        return SectionRequest::with(['requester', 'applications'])->findOrFail($id);
+        return SectionRequest::with(['requester', 'applications.user'])->findOrFail($id);
     }
 
-    // Create a new request
+    // Create a new request (limit: 2 per user every 24 hours)
     public function store(Request $request)
     {
+        $userId = $request->user()->id;
+
+        // Check how many requests this user created in the last 24 hours
+        $recentCount = SectionRequest::where('requester_id', $userId)
+            ->where('created_at', '>=', now()->subDay())
+            ->count();
+
+        if ($recentCount >= 2) {
+            return response()->json([
+                'message' => 'You can only create up to 2 requests per day.'
+            ], 429);
+        }
+
         $data = $request->validate([
-            'course_name' => 'required|string',
+            'course_name'     => 'required|string',
             'current_section' => 'required|string',
             'desired_section' => 'required|string',
-            'current_day' => 'required|string',
-            'desired_day' => 'required|string',
-            'current_time' => 'required|string',
-            'desired_time' => 'required|string',
-            'reason' => 'nullable|string'
+            'current_day'     => 'required|string',
+            'desired_day'     => 'required|string',
+            'current_time'    => 'required|string',
+            'desired_time'    => 'required|string',
+            'reason'          => 'nullable|string'
         ]);
-        $data['requester_id'] = $request->user()->id;
+
+        $data['requester_id'] = $userId;
+
         return SectionRequest::create($data);
     }
 

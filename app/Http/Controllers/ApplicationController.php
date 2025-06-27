@@ -36,7 +36,11 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Cannot apply to your own request'], 400);
         }
 
-        $existing = Application::where('request_id', $requestId)->where('user_id', $userId)->first();
+        // Only block if there is a still-active application (pending or accepted)
+        $existing = Application::where('request_id', $requestId)
+            ->where('user_id', $userId)
+            ->whereIn('status', ['pending', 'accepted'])
+            ->first();
         if ($existing) {
             return response()->json(['message' => 'Already applied'], 400);
         }
@@ -115,7 +119,11 @@ class ApplicationController extends Controller
     public function myApplications(Request $request)
     {
         $userId = $request->user()->id;
-        return Application::with('user')->where('user_id', $userId)->get();
+        $perPage = $request->input('per_page', 6);
+        return Application::with(['user', 'request'])
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     public function withdraw(Request $request, $id)
