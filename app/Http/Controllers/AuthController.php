@@ -130,9 +130,13 @@ class AuthController extends Controller
 
         $user = User::where($loginField, $loginInput)->firstOrFail();
 
-        // Ensure the user has verified their email
+        // Ensure the user has verified their email and has active account
         if (! $user->is_verified) {
             return response()->json(['message' => 'Please verify your email address before logging in.'], 403);
+        }
+
+        if (! $user->is_active) {
+            return response()->json(['message' => 'Your account has been deactivated. Please contact admin for assistance.'], 403);
         }
 
         // No token deletion here, so multiple tokens can exist per user
