@@ -361,41 +361,41 @@ PROMPT;
     }
 
     private function buildSummaryPrompt(string $summaryType, int $maxWords): string
-    {
-        $typeInstructions = match($summaryType) {
-            'concise' => 'Create a concise summary that captures the main points and key information.',
-            'detailed' => 'Create a detailed summary that includes main points, supporting details, and important context.',
-            'bullet_points' => 'Create a summary using bullet points to highlight key information and main concepts.',
-            'key_concepts' => 'Focus on identifying and explaining the key concepts, terms, and ideas presented in the content.',
-            default => 'Create a balanced summary of the content.'
-        };
-
-        return <<<PROMPT
-You are an expert content analyzer. Analyze the provided document and create a summary based on the following requirements:
-
-Summary Type: {$summaryType}
-Instructions: {$typeInstructions}
-Maximum Words: {$maxWords}
-
-Requirements:
-- Be accurate and faithful to the source content
-- Maintain the logical flow and structure of information
-- Use clear, professional language
-- Focus on the most important information
-- Ensure the summary is within the word limit
-
-Return ONLY valid JSON in this exact format:
 {
-  "summary": "Your summary text here",
-  "word_count": actual_word_count,
+    return <<<PROMPT
+You are an expert educator and summarizer. Your task is to create a **study-friendly structured summary** from the provided document.
+
+Summary Structure:
+1. **Introduction paragraph** (2–4 sentences) — explain what the document is about and its overall purpose.
+2. **Main Concepts List** — identify the key topics or concepts from the document.
+3. **Concept Summaries** — for each concept, write a short paragraph (2–4 sentences) explaining it clearly and concisely, focused on helping students understand and remember.
+
+Style & Tone:
+- Write clearly, concisely, and with academic professionalism
+- Avoid rephrasing the document line by line
+- Use formatting in JSON to make it structured
+- Don't exceed {$maxWords} words in total
+- Focus on comprehension, not verbosity
+
+Return ONLY valid JSON in the following exact format:
+{
+  "introduction": "Brief introduction here.",
+  "concept_summaries": {
+    "Concept 1": "Brief explanation of Concept 1.",
+    "Concept 2": "Brief explanation of Concept 2.",
+    "Concept 3": "Brief explanation of Concept 3.",
+    ...
+  },
   "summary_type": "{$summaryType}",
-  "key_topics": ["topic1", "topic2", "topic3"],
-  "confidence_score": 0.95
+  "word_count": actual_word_count,
+  "key_topics": ["Concept 1", "Concept 2", "Concept 3"],
+  "confidence_score": 0.9
 }
 
-Do not include any text before or after the JSON object.
+Only return this JSON. Do not include any other text outside the object.
 PROMPT;
-    }
+}
+
 
     private function parseGeminiResponse(array $response): array
     {
@@ -466,18 +466,35 @@ PROMPT;
 
     private function validateSummaryStructure(array $summary): array
     {
-        $requiredFields = ['summary', 'word_count', 'summary_type'];
-        
+        // Required fields for the new structured summary format
+        $requiredFields = ['introduction', 'concept_summaries', 'word_count', 'summary_type'];
+
         foreach ($requiredFields as $field) {
             if (!isset($summary[$field])) {
                 throw new \RuntimeException("Summary is missing required field: {$field}");
             }
         }
 
-        if (!is_string($summary['summary']) || empty($summary['summary'])) {
-            throw new \RuntimeException("Summary text must be a non-empty string");
+        // Validate introduction
+        if (!is_string($summary['introduction']) || empty(trim($summary['introduction']))) {
+            throw new \RuntimeException("Introduction must be a non-empty string");
         }
 
+        // Validate concept_summaries
+        if (!is_array($summary['concept_summaries']) || empty($summary['concept_summaries'])) {
+            throw new \RuntimeException("Concept summaries must be a non-empty associative array");
+        }
+
+        foreach ($summary['concept_summaries'] as $concept => $explanation) {
+            if (!is_string($concept) || empty(trim($concept))) {
+                throw new \RuntimeException("Each concept key must be a non-empty string");
+            }
+            if (!is_string($explanation) || empty(trim($explanation))) {
+                throw new \RuntimeException("Explanation for concept '{$concept}' must be a non-empty string");
+            }
+        }
+
+        // Validate word_count
         if (!is_numeric($summary['word_count']) || $summary['word_count'] < 1) {
             throw new \RuntimeException("Word count must be a positive number");
         }
