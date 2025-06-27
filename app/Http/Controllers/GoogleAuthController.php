@@ -18,7 +18,10 @@ class GoogleAuthController extends Controller
      */
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        // Ask Google to preselect accounts from the mu.edu.lb hosted domain. Note that this is only a UI hint; we still validate on the backend.
+        return Socialite::driver('google')
+            ->with(['hd' => 'mu.edu.lb'])
+            ->redirect();
     }
 
     /**
@@ -28,6 +31,16 @@ class GoogleAuthController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
+            
+            // Server-side safety: ensure the returned email belongs to mu.edu.lb
+            if (!str_ends_with($user->email, '@mu.edu.lb')) {
+                // If the domain is invalid, abort the flow and notify the frontend
+                $errorData = json_encode([
+                    'message' => 'Only mu.edu.lb emails are allowed to sign in.',
+                    'error'   => 'invalid_domain'
+                ]);
+                return redirect('http://localhost:5173/google-callback?data=' . urlencode($errorData));
+            }
         } catch (Throwable $e) {
             return response()->json([
                 'message' => 'Google authentication failed',
