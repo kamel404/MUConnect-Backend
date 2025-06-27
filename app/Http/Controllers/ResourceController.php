@@ -25,7 +25,7 @@ class ResourceController extends Controller
     public function topContributors(Request $request)
     {
         // Get pagination parameters from request
-        $limit = $request->input('limit', 10); // Default to top 10
+        $limit = $request->input('limit', 3); // Default to top 3
         
         // Get users with their resource counts and total upvotes received
         $topContributors = \App\Models\User::with(['faculty', 'major'])
