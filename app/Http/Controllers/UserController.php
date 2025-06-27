@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Comment;
 use App\Models\Upvote;
 use App\Models\Resource;
+use App\Models\Course;
 
 class UserController extends Controller
 {
@@ -288,6 +289,11 @@ class UserController extends Controller
                 ];
             });
 
+        $topCourses = \App\Models\Course::withCount('resources')
+            ->orderBy('resources_count', 'desc')
+            ->take(5)
+            ->get(['id', 'code', 'title', 'resources_count']);
+
         // Gather analytics data (without section requests)
         $analytics = [
             'study_groups' => [
@@ -329,6 +335,7 @@ class UserController extends Controller
                 'top_posting_users'    => $topPostingUsers,
                 'top_commenting_users' => $topCommentingUsers,
                 'top_upvoting_users'   => $topUpvotingUsers,
+                'top_courses'          => $topCourses,
             ],
         ];
         
