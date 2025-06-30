@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Club;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class ClubController extends Controller
@@ -177,5 +178,58 @@ class ClubController extends Controller
         $user = $request->user();
         $clubs = $user->clubs()->paginate(10); // or ->get() for all
         return response()->json($clubs);
+    }
+
+    /**
+     * Update an existing club (only moderators or admins)
+     */
+    public function update(Request $request, $id)
+    {
+        if (!auth()->user()->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $club = Club::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        // Handle logo upload if provided
+        if ($request->hasFile('logo')) {
+            // Optionally delete old logo from storage
+            // if ($club->logo) {
+            //     Storage::disk('public')->delete($club->logo);
+            // }
+            $validated['logo'] = $request->file('logo')->store('clubs', 'public');
+        }
+
+        $club->update($validated);
+
+        return response()->json($club);
+    }
+
+    /**
+     * Delete a club along with its events (only moderators or admins)
+     */
+    public function destroy($id)
+    {
+        if (!auth()->user()->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $club = Club::findOrFail($id);
+
+        // Delete related events
+        $club->events()->delete();
+
+        // Detach all members
+        $club->members()->detach();
+
+        $club->delete();
+
+        return response()->json(['message' => 'Club and its related events deleted successfully.']);
     }
 }

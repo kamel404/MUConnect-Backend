@@ -233,6 +233,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // search clubs by name or description
     Route::post('/clubs/{club}/join', [ClubController::class, 'joinClub']);
     Route::post('/clubs/{club}/leave', [ClubController::class, 'leaveClub']);
+    Route::put('/clubs/{club}', [ClubController::class, 'update']);
+    Route::delete('/clubs/{club}', [ClubController::class, 'destroy']);
 
     // Download routes
     Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);
