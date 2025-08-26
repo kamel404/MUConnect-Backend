@@ -137,44 +137,11 @@ This includes all endpoints for:
 - **notifications** - Real-time notification system
 - **personal_access_tokens** - API token management
 
-## API Endpoints Overview
-
-### Authentication
-- `POST /api/register` - User registration
-- `POST /api/login` - User login
-- `POST /api/logout` - User logout
-
-### Resources
-- `GET /api/resources` - List resources with filtering
-- `POST /api/resources` - Upload new resource
-- `PUT /api/resources/{id}` - Update resource
-- `DELETE /api/resources/{id}` - Delete resource
-
-### Section Exchange
-- `GET /api/section-requests` - List section requests
-- `POST /api/section-requests` - Create section request
-- `POST /api/applications` - Apply to section request
-- `PUT /api/applications/{id}` - Update application status
-
-### Notifications
-- `GET /api/notifications` - Get user notifications
-- `PUT /api/notifications/{id}/read` - Mark as read
-- `DELETE /api/notifications/{id}` - Delete notification
-
-### AI Services
-- `POST /api/ai/generate-quiz` - Generate quiz from file
-- `POST /api/ai/generate-summary` - Generate summary from file
-
 ## Development
 
 ### Running the Application
 ```bash
 php artisan serve
-```
-
-### Running Tests
-```bash
-php artisan test
 ```
 
 ### Code Formatting
