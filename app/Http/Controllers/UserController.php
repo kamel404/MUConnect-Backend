@@ -19,20 +19,60 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $query = User::select(['id', 'username', 'first_name', 'last_name', 'email', 'is_active']);
-        
-        if ($request->filled('search')) {
-            $term = $request->input('search');
-            $query->where(function ($q) use ($term) {
-                $q->where('username', 'like', "%{$term}%")
-                  ->orWhere('first_name', 'like', "%{$term}%")
-                  ->orWhere('last_name', 'like', "%{$term}%");
+        // Validate and sanitize inputs
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-_.@]+$/',
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'is_active' => 'nullable|boolean',
+            'faculty_id' => 'nullable|integer|exists:faculties,id',
+            'major_id' => 'nullable|integer|exists:majors,id'
+        ]);
+
+        $perPage = $validated['per_page'] ?? 10;
+        $searchTerm = $validated['search'] ?? null;
+
+        $query = User::select([
+            'id', 'username', 'first_name', 'last_name', 
+            'email', 'is_active', 'faculty_id', 'major_id'
+        ])->with(['faculty:id,name', 'major:id,name']);
+
+        // Apply search filter safely using parameter binding
+        if (!empty($searchTerm)) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('username', 'like', '%' . $searchTerm . '%')
+                ->orWhere('first_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('email', 'like', '%' . $searchTerm . '%');
             });
         }
 
-        $users = $query->paginate($perPage);
-        return response()->json($users);
+        // Apply additional filters
+        if (isset($validated['is_active'])) {
+            $query->where('is_active', $validated['is_active']);
+        }
+
+        if (isset($validated['faculty_id'])) {
+            $query->where('faculty_id', $validated['faculty_id']);
+        }
+
+        if (isset($validated['major_id'])) {
+            $query->where('major_id', $validated['major_id']);
+        }
+
+        try {
+            $users = $query->paginate($perPage);
+            return response()->json($users);
+        } catch (\Exception $e) {
+            \Log::error('User index failed', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to retrieve users',
+                'errors' => ['general' => ['An error occurred while fetching users']]
+            ], 500);
+        }
     }
 
     /**
