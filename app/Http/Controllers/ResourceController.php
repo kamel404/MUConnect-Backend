@@ -14,6 +14,9 @@ use App\Http\Requests\StoreResourceRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Requests\UpdateResourceRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+
 class ResourceController extends Controller
 {
     /**
@@ -696,5 +699,209 @@ class ResourceController extends Controller
 
             return response()->json(['message' => 'Error deleting resource', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    // Add this method to handle secure file uploads
+    private function validateAndStoreFile($file, $resourceId = null)
+    {
+        // Define allowed file types with their signatures
+        $allowedTypes = [
+            'pdf' => [
+                'mime' => 'application/pdf',
+                'signature' => ['25504446'] // %PDF
+            ],
+            'jpg' => [
+                'mime' => 'image/jpeg',
+                'signature' => ['FFD8FF']
+            ],
+            'png' => [
+                'mime' => 'image/png',
+                'signature' => ['89504E47']
+            ],
+            'doc' => [
+                'mime' => 'application/msword',
+                'signature' => ['D0CF11E0']
+            ],
+            'docx' => [
+                'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'signature' => ['504B0304']
+            ]
+        ];
+
+        // Check file size (max 10MB)
+        if ($file->getSize() > 10485760) {
+            throw new \InvalidArgumentException('File size exceeds 10MB limit');
+        }
+
+        // Get real MIME type using finfo
+        $realMimeType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file->getRealPath());
+        
+        // Get file signature
+        $handle = fopen($file->getRealPath(), 'rb');
+        $fileHeader = strtoupper(bin2hex(fread($handle, 4)));
+        fclose($handle);
+
+        // Validate file type
+        $isValidFile = false;
+        $detectedExtension = null;
+        
+        foreach ($allowedTypes as $ext => $config) {
+            if ($realMimeType === $config['mime']) {
+                foreach ($config['signature'] as $signature) {
+                    if (strpos($fileHeader, $signature) === 0) {
+                        $isValidFile = true;
+                        $detectedExtension = $ext;
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if (!$isValidFile) {
+            throw new \InvalidArgumentException('Invalid or potentially malicious file type');
+        }
+
+        // Generate secure filename
+        $secureFilename = Str::uuid() . '.' . $detectedExtension;
+        
+        // Store file in private storage
+        $path = $file->storeAs(
+            'attachments/' . date('Y/m'), 
+            $secureFilename, 
+            'private'
+        );
+
+        return [
+            'path' => $path,
+            'original_name' => $file->getClientOriginalName(),
+            'size' => $file->getSize(),
+            'mime_type' => $realMimeType
+        ];
+    }
+
+    // Update the store method
+    public function store(Request $request)
+    {
+        try {
+            // Validate basic resource data
+            $validated = $request->validate([
+                'title' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-_.()]+$/',
+                'description' => 'required|string|max:2000',
+                'course_id' => 'required|exists:courses,id',
+                'resource_category_id' => 'required|exists:resource_categories,id',
+                'attachments.*' => 'file|max:10240', // 10MB max per file
+            ]);
+
+            \DB::beginTransaction();
+
+            // Create resource
+            $resource = Resource::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'course_id' => $validated['course_id'],
+                'resource_category_id' => $validated['resource_category_id'],
+                'user_id' => auth()->id(),
+            ]);
+
+            // Handle file attachments securely
+            if ($request->hasFile('attachments')) {
+                $attachments = [];
+                
+                foreach ($request->file('attachments') as $file) {
+                    try {
+                        $fileData = $this->validateAndStoreFile($file, $resource->id);
+                        
+                        $attachment = $resource->attachments()->create([
+                            'file_path' => $fileData['path'],
+                            'original_name' => $fileData['original_name'],
+                            'file_size' => $fileData['size'],
+                            'mime_type' => $fileData['mime_type'],
+                        ]);
+                        
+                        $attachments[] = $attachment;
+                        
+                    } catch (\InvalidArgumentException $e) {
+                        \DB::rollBack();
+                        return response()->json([
+                            'message' => 'File validation failed',
+                            'errors' => ['attachments' => [$e->getMessage()]]
+                        ], 422);
+                    }
+                }
+            }
+
+            \DB::commit();
+
+            return response()->json([
+                'message' => 'Resource created successfully',
+                'data' => $resource->load('attachments', 'course', 'resourceCategory', 'user:id,username')
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            
+            Log::error('Resource creation failed', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to create resource',
+                'errors' => ['general' => ['An unexpected error occurred']]
+            ], 500);
+        }
+    }
+
+    // Add secure file download method
+    public function downloadAttachment($resourceId, $attachmentId)
+    {
+        try {
+            $resource = Resource::findOrFail($resourceId);
+            $attachment = $resource->attachments()->findOrFail($attachmentId);
+            
+            // Check if user has access to this resource
+            if (!$this->userCanAccessResource($resource)) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+            
+            if (!Storage::disk('private')->exists($attachment->file_path)) {
+                return response()->json(['message' => 'File not found'], 404);
+            }
+            
+            return Storage::disk('private')->download(
+                $attachment->file_path,
+                $attachment->original_name
+            );
+            
+        } catch (\Exception $e) {
+            Log::error('File download failed', [
+                'resource_id' => $resourceId,
+                'attachment_id' => $attachmentId,
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json(['message' => 'Download failed'], 500);
+        }
+    }
+
+    private function userCanAccessResource($resource)
+    {
+        $user = auth()->user();
+        
+        // Resource owner can always access
+        if ($resource->user_id === $user->id) {
+            return true;
+        }
+        
+        // Check if user is enrolled in the same course
+        return $user->enrolledCourses()->where('course_id', $resource->course_id)->exists();
     }
 }
