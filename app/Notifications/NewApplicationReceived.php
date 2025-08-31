@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use App\Models\Application;
 
-class NewApplicationReceived extends Notification
+class NewApplicationReceived extends Notification implements ShouldQueue
 {
     use Queueable;
 

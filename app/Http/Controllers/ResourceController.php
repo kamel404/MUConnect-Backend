@@ -21,62 +21,107 @@ class ResourceController extends Controller
 {
     /**
      * Get top contributors based on resources and upvotes
+     * Optimized version with efficient joins and caching
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function topContributors(Request $request)
     {
-        // Get pagination parameters from request
-        $limit = $request->input('limit', 3); // Default to top 3
+        $limit = $request->input('limit', 3);
+        $limit = min($limit, 50); // Prevent excessive results
         
-        // Get users with their resource counts and total upvotes received
-        $topContributors = \App\Models\User::with(['faculty', 'major'])
-            ->select(['users.*'])
-            ->selectRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) as resources_count')
-            ->selectSub(function ($query) {
-                $query->selectRaw('COUNT(*)')
-                    ->from('upvotes')
-                    ->whereColumn('upvotes.upvoteable_id', 'users.id')
-                    ->where('upvoteable_type', \App\Models\User::class);
-            }, 'user_upvote_count')
-            ->selectSub(function ($query) {
-                $query->selectRaw('COUNT(*)')
-                    ->from('resources')
-                    ->join('upvotes', function ($join) {
-                        $join->on('resources.id', '=', 'upvotes.upvoteable_id')
-                            ->where('upvotes.upvoteable_type', \App\Models\Resource::class);
-                    })
-                    ->whereColumn('resources.user_id', 'users.id');
-            }, 'resource_upvote_count')
-            // Add total upvotes received (user upvotes + resource upvotes)
-            ->withCasts([
-                'resources_count' => 'integer',
-                'user_upvote_count' => 'integer',
-                'resource_upvote_count' => 'integer'
-            ])
-            // Get only users with resources
-            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) > 0')
-            // Order by resources count and then by upvotes received
-            ->orderByRaw('resources_count DESC')
-            ->orderByRaw('(user_upvote_count + resource_upvote_count) DESC')
-            ->limit($limit)
-            ->get()
-            ->map(function ($user) {
-                // Add computed fields
-                $user->contribution_score = $user->resources_count + 
-                    intval($user->user_upvote_count) + 
-                    intval($user->resource_upvote_count);
+        // Use cache for expensive computation (cache for 5 minutes)
+        $cacheKey = "top_contributors_{$limit}";
+        
+        $topContributors = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($limit) {
+            return \App\Models\User::query()
+                ->select([
+                    'users.id',
+                    'users.username',
+                    'users.first_name',
+                    'users.last_name',
+                    'users.email',
+                    'users.avatar',
+                    'users.faculty_id',
+                    'users.major_id',
+                    'faculties.name as faculty_name',
+                    'majors.name as major_name',
+                    DB::raw('COUNT(DISTINCT resources.id) as resources_count'),
+                    DB::raw('COUNT(DISTINCT user_upvotes.id) as user_upvote_count'),
+                    DB::raw('COUNT(DISTINCT resource_upvotes.id) as resource_upvote_count'),
+                    DB::raw('(COUNT(DISTINCT resources.id) + COUNT(DISTINCT user_upvotes.id) + COUNT(DISTINCT resource_upvotes.id)) as contribution_score')
+                ])
+                ->leftJoin('faculties', 'users.faculty_id', '=', 'faculties.id')
+                ->leftJoin('majors', 'users.major_id', '=', 'majors.id')
+                ->leftJoin('resources', 'users.id', '=', 'resources.user_id')
+                ->leftJoin('upvotes as user_upvotes', function ($join) {
+                    $join->on('users.id', '=', 'user_upvotes.upvoteable_id')
+                         ->where('user_upvotes.upvoteable_type', '=', \App\Models\User::class);
+                })
+                ->leftJoin('upvotes as resource_upvotes', function ($join) {
+                    $join->on('resources.id', '=', 'resource_upvotes.upvoteable_id')
+                         ->where('resource_upvotes.upvoteable_type', '=', \App\Models\Resource::class);
+                })
+                ->groupBy([
+                    'users.id',
+                    'users.username', 
+                    'users.first_name',
+                    'users.last_name',
+                    'users.email',
+                    'users.avatar',
+                    'users.faculty_id',
+                    'users.major_id',
+                    'faculties.name',
+                    'majors.name'
+                ])
+                ->having('resources_count', '>', 0)
+                ->orderByDesc('contribution_score')
+                ->orderByDesc('resources_count')
+                ->limit($limit)
+                ->get()
+                ->map(function ($user) {
+                    // Cast numeric fields to integers
+                    $user->resources_count = (int) $user->resources_count;
+                    $user->user_upvote_count = (int) $user->user_upvote_count;
+                    $user->resource_upvote_count = (int) $user->resource_upvote_count;
+                    $user->contribution_score = (int) $user->contribution_score;
                     
-                // Add faculty and major names if available
-                $user->faculty_name = optional($user->faculty)->name;
-                $user->major_name = optional($user->major)->name;
-                
-                return $user;
-            });
-            
+                    return $user;
+                });
+        });
+        
         return response()->json([
-            'data' => $topContributors
+            'data' => $topContributors,
+            'meta' => [
+                'limit' => $limit,
+                'cached_until' => now()->addMinutes(5)->toISOString()
+            ]
+        ]);
+    }
+
+    /**
+     * Clear the top contributors cache
+     * Useful when you need fresh data immediately
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function clearContributorsCache()
+    {
+        $user = Auth::user();
+        
+        // Only allow admins/moderators to clear cache
+        if (!$user->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        
+        // Clear all possible cache keys
+        for ($limit = 1; $limit <= 50; $limit++) {
+            \Illuminate\Support\Facades\Cache::forget("top_contributors_{$limit}");
+        }
+        
+        return response()->json([
+            'message' => 'Top contributors cache cleared successfully'
         ]);
     }
 
@@ -297,6 +342,9 @@ class ResourceController extends Controller
             // User has already upvoted, so remove the upvote
             $existingUpvote->delete();
             
+            // Clear top contributors cache since upvotes affect rankings
+            $this->clearTopContributorsCache();
+            
             return response()->json([
                 'message' => 'Upvote removed successfully',
                 'upvoted' => false,
@@ -311,6 +359,10 @@ class ResourceController extends Controller
             ]);
             
             $upvote->save();
+            
+            // Clear top contributors cache since upvotes affect rankings
+            $this->clearTopContributorsCache();
+            
             // Notify resource owner about the upvote
             $resource->load('user');
             $owner = $resource->user;
@@ -419,6 +471,9 @@ class ResourceController extends Controller
             }
 
             DB::commit();
+
+            // Clear top contributors cache since new resource affects rankings
+            $this->clearTopContributorsCache();
 
             return response()->json([
                 'message' => 'Resource created successfully',
@@ -693,6 +748,9 @@ class ResourceController extends Controller
 
             DB::commit();
 
+            // Clear top contributors cache since resource deletion affects rankings
+            $this->clearTopContributorsCache();
+
             return response()->json(['message' => 'Resource and orphaned attachments deleted successfully.']);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -903,5 +961,19 @@ class ResourceController extends Controller
         
         // Check if user is enrolled in the same course
         return $user->enrolledCourses()->where('course_id', $resource->course_id)->exists();
+    }
+
+    /**
+     * Helper method to clear top contributors cache
+     * Called when resources are created/updated/deleted
+     *
+     * @return void
+     */
+    private function clearTopContributorsCache()
+    {
+        // Clear cache for different limit values
+        for ($limit = 1; $limit <= 50; $limit++) {
+            \Illuminate\Support\Facades\Cache::forget("top_contributors_{$limit}");
+        }
     }
 }
