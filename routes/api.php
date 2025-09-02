@@ -242,4 +242,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // AI Quiz routes
     Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);
     Route::get('/resources/{resourceId}/generate-summary', [AIQuizController::class, 'generateSummary']);
+    Route::get('/ai-content/{contentId}/status', [AIQuizController::class, 'getContentStatus']);
+    Route::post('/resources/{resourceId}/ai-batch', [AIQuizController::class, 'generateBatch']);
+    Route::get('/ai-batch/{batchId}/status', [AIQuizController::class, 'getBatchStatus']);
 });

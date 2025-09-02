@@ -58,6 +58,10 @@ class Resource extends Model
         return $this->belongsToMany(Attachment::class);
     }
 
+    public function aiContents()
+    {
+        return $this->hasMany(AIContent::class);
+    }
 
     public function hashtags() {
         return $this->belongsToMany(Hashtag::class, 'hashtag_resource');

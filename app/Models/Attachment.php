@@ -22,6 +22,11 @@ class Attachment extends Model
         return $this->belongsToMany(Resource::class);
     }
 
+    public function aiContents()
+    {
+        return $this->hasMany(AIContent::class);
+    }
+
     /**
      * Accessor for full URL (auto-used with $attachment->url)
      */
