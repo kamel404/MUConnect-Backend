@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('members')->default(0);
             $table->string('logo')->nullable();
             $table->string('upcoming_event')->nullable();
-            $table->enum('voting_status', ['open', 'closed'])->default('closed');
+            $table->string('voting_status')->default('closed'); // Changed from enum to string for PostgreSQL
             $table->timestamps();
         });
     }

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('current_time');
             $table->string('desired_time');
             $table->text('reason')->nullable();
-            $table->enum('status', ['pending', 'accepted', 'declined', 'cancelled'])->default('pending');
+            $table->string('status')->default('pending'); // Changed from enum to string for PostgreSQL
             $table->timestamps();
         });
     }

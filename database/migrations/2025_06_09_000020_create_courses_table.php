@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('title');
             $table->integer('credits');
             $table->string('year')->nullable(); // e.g., "Year 1", "Year 2"
-            $table->enum('semester', ['Fall', 'Spring', 'Summer'])->nullable();
+            $table->string('semester')->nullable(); // Changed from enum to string for PostgreSQL
             $table->foreignId('faculty_id')->constrained()->onDelete('cascade');
             $table->foreignId('major_id')->constrained()->onDelete('cascade');
             $table->timestamps();
@@ -50,7 +50,7 @@ return new class extends Migration
         Schema::create('course_user', function (Blueprint $table) {
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['completed', 'in-progress', 'not-started'])->default('not-started');
+            $table->string('status')->default('not-started'); // Changed from enum to string for PostgreSQL
             $table->primary(['course_id', 'user_id']);
             $table->timestamps();
         });
