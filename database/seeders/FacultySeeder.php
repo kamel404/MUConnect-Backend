@@ -15,7 +15,6 @@ class FacultySeeder extends Seeder
     //todo make seeding database be automated on production so it will not be needed to be run manually
     public function run(): void
     {
-        DB::table('courses')->delete();
         DB::table('faculties')->delete();
         
         // PostgreSQL compatible way to reset auto-increment sequence

@@ -30,6 +30,15 @@ class CScoursesSeeder extends Seeder
         $json = File::get($filePath);
         $courses = json_decode($json, true);
         
+        // Get the Computer Science major ID
+        $csMajor = DB::table('majors')->where('name', 'Computer Science')->first();
+        $facultyOfSciences = DB::table('faculties')->where('name', 'Faculty of Sciences')->first();
+        
+        if (!$csMajor || !$facultyOfSciences) {
+            $this->command->error('Computer Science major or Faculty of Sciences not found!');
+            return;
+        }
+        
         foreach ($courses as $course) {
             Course::create([
                 'code' => $course['code'],
@@ -37,8 +46,8 @@ class CScoursesSeeder extends Seeder
                 'credits' => $course['credits'],
                 'year' => $course['year'],
                 'semester' => $course['semester'],
-                'faculty_id' => $course['faculty_id'],
-                'major_id' => $course['major_id'],
+                'faculty_id' => $facultyOfSciences->id, // Use actual faculty ID
+                'major_id' => $csMajor->id, // Use actual major ID
             ]);
         }
         
