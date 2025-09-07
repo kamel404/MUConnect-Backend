@@ -55,15 +55,23 @@ class CourseSeeder extends Seeder
                     ->exists();
 
                 if (!$existing) {
-                    Course::create([
-                        'title' => $name,
-                        'credits' => 0,
-                        'year' => null,
-                        'semester' => null,
-                        'code' => $code,
-                        'faculty_id' => $faculty->id,
-                        'major_id' => optional($faculty->majors()->first())->id,
-                    ]);
+                    // Get the first major for this faculty, or skip if none exists
+                    $major = $faculty->majors()->first();
+                    
+                    if ($major) {
+                        Course::create([
+                            'title' => $name,
+                            'credits' => 0,
+                            'year' => null,
+                            'semester' => null,
+                            'code' => $code,
+                            'faculty_id' => $faculty->id,
+                            'major_id' => $major->id,
+                        ]);
+                    } else {
+                        // Log warning if faculty has no majors
+                        logger()->warning("Faculty '{$faculty->name}' has no majors, skipping course: {$code}");
+                    }
                 }
             } else {
                 // optionally log or throw if faculty is missing
