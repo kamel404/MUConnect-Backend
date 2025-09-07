@@ -25,10 +25,34 @@ class MajorSeeder extends Seeder
         foreach ($majors as $major) {
             Major::create([
                 'name' => $major['name'],
+                'abbreviation' => $major['abbreviation'],
                 'faculty_id' => $major['faculty_id'],
             ]);
         }
 
         $this->command->info('Majors table seeded successfully!');
+    }
+
+    /**
+     * Generate abbreviation from major name
+     */
+    private function generateAbbreviation($name)
+    {
+        // Split by spaces and take first letter of each word
+        $words = explode(' ', $name);
+        $abbreviation = '';
+        
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $abbreviation .= strtoupper($word[0]);
+            }
+        }
+        
+        // Fallback if abbreviation is too short
+        if (strlen($abbreviation) < 2) {
+            $abbreviation = strtoupper(substr($name, 0, 3));
+        }
+        
+        return $abbreviation;
     }
 }
