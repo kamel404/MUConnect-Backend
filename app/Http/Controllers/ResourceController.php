@@ -75,9 +75,9 @@ class ResourceController extends Controller
                     'faculties.name',
                     'majors.name'
                 ])
-                ->having('resources_count', '>', 0)
-                ->orderByDesc('contribution_score')
-                ->orderByDesc('resources_count')
+                ->having(DB::raw('COUNT(DISTINCT resources.id)'), '>', 0)
+                ->orderByDesc(DB::raw('(COUNT(DISTINCT resources.id) + COUNT(DISTINCT user_upvotes.id) + COUNT(DISTINCT resource_upvotes.id))'))
+                ->orderByDesc(DB::raw('COUNT(DISTINCT resources.id)'))
                 ->limit($limit)
                 ->get()
                 ->map(function ($user) {
