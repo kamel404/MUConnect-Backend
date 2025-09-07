@@ -5,32 +5,30 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use App\Models\Major;
 
 class MajorSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        DB::table('majors')->delete();
+        // Use database/seeders/data path
+        $filePath = database_path('seeders/data/majors.json');
         
-        // PostgreSQL compatible way to reset auto-increment sequence
-        if (DB::getDriverName() === 'pgsql') {
-            DB::statement('ALTER SEQUENCE majors_id_seq RESTART WITH 1;');
-        } else {
-            DB::statement('ALTER TABLE majors AUTO_INCREMENT = 1;');
-        }
-        $jsonPath = base_path('storage/app/data/majors.json');
-        if (!File::exists($jsonPath)) {
-            $this->command->error("majors.json file not found at $jsonPath");
+        if (!File::exists($filePath)) {
+            $this->command->error("majors.json file not found at {$filePath}");
             return;
         }
 
-        $majors = json_decode(File::get($jsonPath), true);
+        $json = File::get($filePath);
+        $majors = json_decode($json, true);
 
-        if (is_array($majors)) {
-            DB::table('majors')->insert($majors);
-            $this->command->info('Majors table seeded!');
-        } else {
-            $this->command->error('Invalid JSON in majors.json');
+        foreach ($majors as $major) {
+            Major::create([
+                'name' => $major['name'],
+                'faculty_id' => $major['faculty_id'],
+            ]);
         }
+
+        $this->command->info('Majors table seeded successfully!');
     }
 }

@@ -19,13 +19,17 @@ class CScoursesSeeder extends Seeder
         // Clear existing courses
         DB::table('courses')->delete();
         
-        // Get the JSON file path
-        $json = File::get(base_path('storage/app/data/CScourses.json'));
+        // Use database/seeders/data path instead
+        $filePath = database_path('seeders/data/CScourses.json');
         
-        // Convert JSON to array
+        if (!File::exists($filePath)) {
+            $this->command->error("File not found: {$filePath}");
+            return;
+        }
+        
+        $json = File::get($filePath);
         $courses = json_decode($json, true);
         
-        // Insert each course into the database
         foreach ($courses as $course) {
             Course::create([
                 'code' => $course['code'],
