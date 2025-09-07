@@ -17,9 +17,22 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get the JSON file path
-        $json = File::get(base_path('storage/app/data/courses.json'));
+        // Check for JSON file in the new location
+        $filePath = database_path('seeders/data/courses.json');
+        
+        if (!File::exists($filePath)) {
+            $this->command->info("courses.json not found at {$filePath}, skipping CourseSeeder");
+            return;
+        }
+
+        // Get the JSON file
+        $json = File::get($filePath);
         $courses = json_decode($json, true);
+
+        if (!$courses) {
+            $this->command->error("Invalid JSON in courses.json");
+            return;
+        }
 
         foreach ($courses as $item) {
             $courseName = $item['Course'];
@@ -49,7 +62,7 @@ class CourseSeeder extends Seeder
                         'semester' => null,
                         'code' => $code,
                         'faculty_id' => $faculty->id,
-                        'major_id' => optional($faculty->majors()->first())->id ?? 1,
+                        'major_id' => optional($faculty->majors()->first())->id,
                     ]);
                 }
             } else {
@@ -57,5 +70,7 @@ class CourseSeeder extends Seeder
                 logger()->warning("Faculty not found: " . $item['Faculty']);
             }
         }
+        
+        $this->command->info('Courses seeded successfully!');
     }
 }
