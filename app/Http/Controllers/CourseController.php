@@ -13,7 +13,7 @@ class CourseController extends Controller
         // List courses with optional filters and pagination
         $perPage = $request->input('per_page', 5);
 
-        $coursesQuery = Course::with(['faculty', 'categories']);
+        $coursesQuery = Course::with(['faculty']);
 
         // Filter by major_id if provided
         if ($request->filled('major_id')) {

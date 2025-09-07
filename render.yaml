@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: mu-connect-backend
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_KEY
+        value: base64:hlaZcKEborQbF4s18XGHYVX4wChdR2kTnYqCx+Vo7oc=
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false

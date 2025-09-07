@@ -9,14 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('username')->unique();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
+            $table->id();
+            $table->string('username', 255)->unique();
+            $table->string('first_name', 255);
+            $table->string('last_name', 255);
+            $table->string('email', 255)->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('avatar')->nullable()->default('default.png');
+            $table->string('password', 255);
+            $table->string('avatar', 255)->nullable()->default('default.png');
             $table->text('bio')->nullable();
             $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('major_id')->nullable()->constrained()->onDelete('set null');
