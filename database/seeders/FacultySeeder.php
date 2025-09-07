@@ -17,7 +17,13 @@ class FacultySeeder extends Seeder
     {
         DB::table('courses')->delete();
         DB::table('faculties')->delete();
-        DB::statement('ALTER TABLE faculties AUTO_INCREMENT = 1;');
+        
+        // PostgreSQL compatible way to reset auto-increment sequence
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER SEQUENCE faculties_id_seq RESTART WITH 1;');
+        } else {
+            DB::statement('ALTER TABLE faculties AUTO_INCREMENT = 1;');
+        }
         $faculties = [
             [
                 'name' => 'Faculty of Sciences',
