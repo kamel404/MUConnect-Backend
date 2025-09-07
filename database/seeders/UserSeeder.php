@@ -13,6 +13,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get actual faculty and major IDs
+        $facultyOfSciences = \App\Models\Faculty::where('name', 'Faculty of Sciences')->first();
+        $csMajor = \App\Models\Major::where('name', 'Computer Science')->first();
+        
+        $facultyId = $facultyOfSciences ? $facultyOfSciences->id : null;
+        $majorId = $csMajor ? $csMajor->id : null;
 
         // Create System Admin User 
         $systemAdmin = User::firstOrCreate(
@@ -41,8 +47,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD')),
                 'is_active' => true,
                 'is_verified' => true,
-                'faculty_id' => 1,
-                'major_id' => 1,
+                'faculty_id' => $facultyId,
+                'major_id' => $majorId,
                 'bio' => 'System administrator',
             ]
         );
@@ -58,8 +64,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make(env('MODERATOR_DEFAULT_PASSWORD')),
                 'is_active' => true,
                 'is_verified' => true,
-                'faculty_id' => 1,
-                'major_id' => 1,
+                'faculty_id' => $facultyId,
+                'major_id' => $majorId,
                 'bio' => 'Content moderator',
             ]
         );
@@ -75,8 +81,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('student'),
                 'is_active' => true,
                 'is_verified' => true,
-                'faculty_id' => 1,
-                'major_id' => 1,
+                'faculty_id' => $facultyId,
+                'major_id' => $majorId,
                 'bio' => 'Regular student user',
             ]
         );
