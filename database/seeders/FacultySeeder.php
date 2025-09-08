@@ -45,10 +45,6 @@ class FacultySeeder extends Seeder
                 'abbreviation' => 'FHS'
             ],
             [
-                'name' => 'Faculty of Education',
-                'abbreviation' => 'FED'
-            ],
-            [
                 'name' => 'Faculty of Religions & Human Sciences',
                 'abbreviation' => 'FRH'
 

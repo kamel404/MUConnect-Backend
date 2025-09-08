@@ -1235,16 +1235,6 @@
         "Faculty": "FBA"
     },
     {
-        "#": "248",
-        "Course": "TDIP210 - طرائق التعليم والتعلّم",
-        "Faculty": "FED"
-    },
-    {
-        "#": "249",
-        "Course": "TDIP340 - تكنولوجيا التعليم",
-        "Faculty": "FED"
-    },
-    {
         "#": "250",
         "Course": "ACC350 - Managerial Accounting",
         "Faculty": "FBA"
@@ -1253,16 +1243,6 @@
         "#": "251",
         "Course": "ACC420 - Auditing",
         "Faculty": "FBA"
-    },
-    {
-        "#": "252",
-        "Course": "TDIP330 - الإدارة الصفيّة",
-        "Faculty": "FED"
-    },
-    {
-        "#": "253",
-        "Course": "TDIP430 - تدريب (مشاهدة وممارسة)",
-        "Faculty": "FED"
     },
     {
         "#": "254",
@@ -1313,16 +1293,6 @@
         "#": "263",
         "Course": "MGT201 - Management Principles",
         "Faculty": "FBA"
-    },
-    {
-        "#": "264",
-        "Course": "SPTE420 - اتقاء الإصابات الرياضية",
-        "Faculty": "FED"
-    },
-    {
-        "#": "265",
-        "Course": "CHED280 - Children’s Literature",
-        "Faculty": "FED"
     },
     {
         "#": "266",
@@ -1383,11 +1353,6 @@
         "#": "277",
         "Course": "MIT210 - Computer Programming I",
         "Faculty": "FBA"
-    },
-    {
-        "#": "278",
-        "Course": "CHED250 - Emotional-social Education",
-        "Faculty": "FED"
     },
     {
         "#": "279",
@@ -1770,11 +1735,6 @@
         "Faculty": "FRH"
     },
     {
-        "#": "355",
-        "Course": "SPTE210 - علم التشريح والفيزيولوجيا العامة",
-        "Faculty": "FED"
-    },
-    {
         "#": "356",
         "Course": "QRN440 - نصوص أجنبية في الدراسات القرآنية (2)",
         "Faculty": "FRH"
@@ -1860,11 +1820,6 @@
         "Faculty": "FRH"
     },
     {
-        "#": "373",
-        "Course": "ERG230 - Analysis of religious texts",
-        "Faculty": "FED"
-    },
-    {
         "#": "374",
         "Course": "SOC200 - Introduction to the Sociology",
         "Faculty": "FRH"
@@ -1878,11 +1833,6 @@
         "#": "376",
         "Course": "CST201 - Introduction to Cultural Studies II: Community Culture",
         "Faculty": "FRH"
-    },
-    {
-        "#": "377",
-        "Course": "ERG270 - Islamic Jurisprudence",
-        "Faculty": "FED"
     },
     {
         "#": "378",
@@ -2125,11 +2075,6 @@
         "Faculty": "FRH"
     },
     {
-        "#": "426",
-        "Course": "EDUC250 - Fundamentals of Teaching & Learning Curricula",
-        "Faculty": "FED"
-    },
-    {
         "#": "427",
         "Course": "EEE225L - Digital Logic Design Laboratory",
         "Faculty": "FoE"
@@ -2159,11 +2104,7 @@
         "Course": "COE360L - Computer Networks Lab",
         "Faculty": "FoE"
     },
-    {
-        "#": "433",
-        "Course": "SPTE300 - تربية صحية",
-        "Faculty": "FED"
-    },
+    
     {
         "#": "434",
         "Course": "PRS200 - Persian Language",
@@ -3084,11 +3025,7 @@
         "Course": "PHY230 - Thermodynamics I",
         "Faculty": "FoE"
     },
-    {
-        "#": "618",
-        "Course": "EDUC280 - Lebanese Educational System",
-        "Faculty": "FED"
-    },
+    
     {
         "#": "619",
         "Course": "CIE498 - Capstone Project Proposal",
@@ -3174,11 +3111,7 @@
         "Course": "EEE500 - Special Topics in Electrical & Electronics Engineering",
         "Faculty": "FoE"
     },
-    {
-        "#": "636",
-        "Course": "EDUC235 - Educational Assessment",
-        "Faculty": "FED"
-    },
+   
     {
         "#": "637",
         "Course": "MLAB242 - Clinical Hematology",
@@ -3334,21 +3267,13 @@
         "Course": "MEE460 - Control Systems",
         "Faculty": "FoE"
     },
-    {
-        "#": "668",
-        "Course": "EDUC330 - Classroom Managemen",
-        "Faculty": "FED"
-    },
+    
     {
         "#": "669",
         "Course": "PHYS207 - Introduction to Imaging Physics I",
         "Faculty": "FHS"
     },
-    {
-        "#": "670",
-        "Course": "EDUC210 - Learning & Educational Objectives",
-        "Faculty": "FED"
-    },
+   
     {
         "#": "671",
         "Course": "RADI227 - Interventional Radiography",
@@ -3733,11 +3658,6 @@
         "#": "747",
         "Course": "NURS205 - Introduction to Professional Nursing",
         "Faculty": "FHS"
-    },
-    {
-        "#": "748",
-        "Course": "CHED210 - Early Childhood Care",
-        "Faculty": "FED"
     },
     {
         "#": "749",
