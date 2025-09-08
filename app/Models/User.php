@@ -61,10 +61,14 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        if ($this->avatar) {
-            return asset('storage/avatars/' . $this->avatar);
+        $avatarPath = $this->avatar ? 'storage/avatars/' . $this->avatar : 'storage/avatars/default.png';
+        
+        // Ensure HTTPS in production
+        if (app()->environment('production')) {
+            return secure_asset($avatarPath);
         }
-        return asset('storage/avatars/default.png');
+        
+        return asset($avatarPath);
     }
 
 

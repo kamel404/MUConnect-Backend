@@ -37,7 +37,14 @@ class Attachment extends Model
             return $value;
         }
 
-        return Storage::url($this->file_path);
+        $url = Storage::url($this->file_path);
+        
+        // Ensure HTTPS in production
+        if (app()->environment('production') && str_starts_with($url, 'http://')) {
+            return str_replace('http://', 'https://', $url);
+        }
+        
+        return $url;
     }
 
 }

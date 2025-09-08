@@ -23,6 +23,22 @@ class Event extends Model
         'is_club_event'
     ];
 
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image_path) {
+            return null;
+        }
+        
+        // Ensure HTTPS in production
+        if (app()->environment('production')) {
+            return secure_asset('storage/' . $this->image_path);
+        }
+        
+        return asset('storage/' . $this->image_path);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -18,6 +18,22 @@ class Club extends Model
         'members' => 'integer',
     ];
 
+    protected $appends = ['logo_url'];
+
+    public function getLogoUrlAttribute()
+    {
+        if (!$this->logo) {
+            return null;
+        }
+        
+        // Ensure HTTPS in production
+        if (app()->environment('production')) {
+            return secure_asset('storage/' . $this->logo);
+        }
+        
+        return asset('storage/' . $this->logo);
+    }
+
     public function events()
     {
         return $this->hasMany(Event::class);
