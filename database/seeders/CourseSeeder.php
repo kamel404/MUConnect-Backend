@@ -47,7 +47,7 @@ class CourseSeeder extends Seeder
 
                     // Validate required fields
                     if (!isset($item['Course']) || !isset($item['Faculty'])) {
-                        $this->command->warning("Skipping invalid course data at index {$index}");
+                        $this->command->info("Skipping invalid course data at index {$index}");
                         continue;
                     }
 
@@ -86,11 +86,11 @@ class CourseSeeder extends Seeder
                                     'major_id' => $major->id,
                                 ]);
                             } else {
-                                $this->command->warning("Faculty '{$faculty->name}' has no majors, skipping course: {$code}");
+                                $this->command->info("Faculty '{$faculty->name}' has no majors, skipping course: {$code}");
                             }
                         }
                     } else {
-                        $this->command->warning("Faculty not found: " . $item['Faculty']);
+                        $this->command->info("Faculty not found: " . $item['Faculty']);
                     }
                 }
             });
