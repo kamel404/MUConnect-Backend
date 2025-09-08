@@ -79,7 +79,8 @@ class EventController extends Controller
 
         // Search by title
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+            $query->where('title', $likeOperator, '%' . $request->search . '%');
         }
 
         // Filter by date range
@@ -128,7 +129,8 @@ class EventController extends Controller
 
         // Search by title
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+            $query->where('title', $likeOperator, '%' . $request->search . '%');
         }
 
         // Filter by date range

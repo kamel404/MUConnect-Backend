@@ -47,8 +47,9 @@ class StudyGroupController extends Controller
         if ($request->filled('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+                $q->where('name', $likeOperator, "%{$search}%")
+                    ->orWhere('description', $likeOperator, "%{$search}%");
             });
         }
 

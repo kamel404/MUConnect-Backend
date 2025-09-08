@@ -157,9 +157,10 @@ class ResourceController extends Controller
         // Search by title
         if ($request->has('search') && !empty($request->input('search'))) {
             $searchTerm = $request->input('search');
-            $resourcesQuery->where(function($query) use ($searchTerm) {
-                $query->where('title', 'like', "%{$searchTerm}%")
-                      ->orWhere('description', 'like', "%{$searchTerm}%");
+            $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+            $resourcesQuery->where(function($query) use ($searchTerm, $likeOperator) {
+                $query->where('title', $likeOperator, "%{$searchTerm}%")
+                      ->orWhere('description', $likeOperator, "%{$searchTerm}%");
             });
         }
         

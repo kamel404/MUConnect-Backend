@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Club;
+use App\Helpers\DatabaseHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
@@ -18,12 +19,17 @@ class ClubController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('query');
+        $clubs = Club::query();
 
-        $clubs = Club::when($query, function ($q) use ($query) {
-            $q->where('name', 'like', '%' . $query . '%')
-                ->orWhere('description', 'like', '%' . $query . '%');
-        })
-            ->paginate(10);
+        if ($query) {
+            $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+            $clubs = $clubs->where(function($q) use ($query, $likeOperator) {
+                $q->where('name', $likeOperator, '%' . $query . '%')
+                  ->orWhere('description', $likeOperator, '%' . $query . '%');
+            });
+        }
+        
+        return response()->json($clubs->paginate(10));
 
         return response()->json($clubs);
     }

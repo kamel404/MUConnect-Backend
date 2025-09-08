@@ -69,10 +69,11 @@ class SectionRequestController extends Controller
         if ($request->filled('q')) {
             $q = $request->input('q');
             $query->where(function ($sub) use ($q) {
-                $sub->where('course_name', 'like', "%$q%")
-                    ->orWhere('current_section', 'like', "%$q%")
-                    ->orWhere('desired_section', 'like', "%$q%")
-                    ->orWhere('reason', 'like', "%$q%") ;
+                $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+                $sub->where('course_name', $likeOperator, "%$q%")
+                    ->orWhere('current_section', $likeOperator, "%$q%")
+                    ->orWhere('desired_section', $likeOperator, "%$q%")
+                    ->orWhere('reason', $likeOperator, "%$q%") ;
             });
         }
         // Sorting

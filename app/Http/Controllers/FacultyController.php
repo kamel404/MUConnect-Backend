@@ -77,8 +77,9 @@ class FacultyController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $faculties = Faculty::where('name', 'LIKE', "%$query%")
-            ->orWhere('abbreviation', 'LIKE', "%$query%")
+        $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+        $faculties = Faculty::where('name', $likeOperator, "%$query%")
+            ->orWhere('abbreviation', $likeOperator, "%$query%")
             ->paginate(10);
 
         return response()->json($faculties);

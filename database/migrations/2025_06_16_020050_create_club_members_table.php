@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('club_members', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('club_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('club_id');
+            $table->foreignId('user_id');
             $table->timestamps();
 
             $table->unique(['club_id', 'user_id']);

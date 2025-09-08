@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('ai_contents', function (Blueprint $table) {
             $table->id();
             $table->string('type'); // 'quiz' or 'summary'
-            $table->unsignedBigInteger('resource_id');
-            $table->unsignedBigInteger('attachment_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('resource_id');
+            $table->foreignId('attachment_id');
+            $table->foreignId('user_id');
             $table->json('parameters'); // Store the parameters used for generation
             $table->json('content')->nullable(); // Store the generated content
             $table->string('status')->default('processing'); // processing, completed, failed

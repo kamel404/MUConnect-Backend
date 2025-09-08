@@ -75,8 +75,9 @@ class MajorController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $majors = Major::where('name', 'LIKE', "%{$query}%")
-            ->orWhere('abbreviation', 'LIKE', "%{$query}%")
+        $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+        $majors = Major::where('name', $likeOperator, "%{$query}%")
+            ->orWhere('abbreviation', $likeOperator, "%{$query}%")
             ->paginate(10);
     
         return response()->json($majors);

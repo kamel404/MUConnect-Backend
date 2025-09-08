@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id');
             $table->string('title');
             $table->foreignId('club_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_club_event')->default(false);
@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('organizer');
             $table->text('description')->nullable();
             $table->string('speaker_names')->nullable();
-            $table->unsignedInteger('attendees_count')->default(0);
+            $table->integer('attendees_count')->default(0);
             $table->string('image_path')->nullable();
             $table->timestamps();
         });

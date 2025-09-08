@@ -39,10 +39,11 @@ class UserController extends Controller
         // Apply search filter safely using parameter binding
         if (!empty($searchTerm)) {
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('username', 'like', '%' . $searchTerm . '%')
-                ->orWhere('first_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                $likeOperator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+                $q->where('username', $likeOperator, '%' . $searchTerm . '%')
+                ->orWhere('first_name', $likeOperator, '%' . $searchTerm . '%')
+                ->orWhere('last_name', $likeOperator, '%' . $searchTerm . '%')
+                ->orWhere('email', $likeOperator, '%' . $searchTerm . '%');
             });
         }
 
