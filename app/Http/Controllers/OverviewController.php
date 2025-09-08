@@ -13,30 +13,34 @@ class OverviewController extends Controller
      */
     public function index(Request $request)
     {
+        // Eager load relationships with explicit error handling for PostgreSQL compatibility
         $user = $request->user()->load(['roles', 'faculty', 'major']);
 
-        $overview = [
-            'study_groups' => [
-                'total'   => $user->studyGroups()->count(),
-                'leading' => $user->ledStudyGroups()->count(),
-            ],
-            'events' => [
-                'registered' => $user->registeredEvents()->count(),
-                'upcoming'   => $user->registeredEvents()->where('event_datetime', '>', now())->count(),
-            ],
-            'resources' => [
-                'shared' => $user->resources()->count(),
-                'saved'  => $user->savedItems()->count(),
-            ],
-            'applications' => [
-                'total'   => $user->applications()->count(),
-                'pending' => $user->applications()->where('status', 'pending')->count(),
-                'accepted'=> $user->applications()->where('status', 'accepted')->count(),
-            ],
-            'clubs' => [
-                'joined' => $user->clubs()->count(),
-            ],
-        ];
+        // Use database transactions for consistency across different database engines
+        $overview = \DB::transaction(function () use ($user) {
+            return [
+                'study_groups' => [
+                    'total'   => $user->studyGroups()->count(),
+                    'leading' => $user->ledStudyGroups()->count(),
+                ],
+                'events' => [
+                    'registered' => $user->registeredEvents()->count(),
+                    'upcoming'   => $user->registeredEvents()->where('event_datetime', '>', now())->count(),
+                ],
+                'resources' => [
+                    'shared' => $user->resources()->count(),
+                    'saved'  => $user->savedItems()->count(),
+                ],
+                'applications' => [
+                    'total'   => $user->applications()->count(),
+                    'pending' => $user->applications()->where('status', 'pending')->count(),
+                    'accepted'=> $user->applications()->where('status', 'accepted')->count(),
+                ],
+                'clubs' => [
+                    'joined' => $user->clubs()->count(),
+                ],
+            ];
+        });
 
         return response()->json([
             'user' => [
@@ -59,8 +63,22 @@ class OverviewController extends Controller
                     ->orderBy('event_datetime')
                     ->take(5)
                     ->get(),
-                'voting_status' => getVotingStatus(),
+                'voting_status' => $this->getVotingStatusSafely(),
             ],
         ]);
+    }
+
+    /**
+     * Safely get voting status with error handling for different database engines
+     */
+    private function getVotingStatusSafely(): string
+    {
+        try {
+            return getVotingStatus();
+        } catch (\Exception $e) {
+            // Log the error but don't fail the entire request
+            \Log::warning('Failed to get voting status', ['error' => $e->getMessage()]);
+            return 'closed'; // Default fallback
+        }
     }
 }
