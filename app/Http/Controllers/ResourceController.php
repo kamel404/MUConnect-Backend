@@ -725,7 +725,11 @@ class ResourceController extends Controller
             'docx' => [
                 'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'signature' => ['504B0304']
-            ]
+            ],
+            'webp' => [
+                'mime' => 'image/webp',
+                'signature' => ['52494646'] // RIFF
+            ],
         ];
 
         // Check file size (max 10MB)

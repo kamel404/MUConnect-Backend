@@ -29,7 +29,7 @@ class StoreResourceRequest extends FormRequest
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'attachments' => 'nullable|array',
-            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,docx,txt,mp4,mov,avi,mkv,webm|max:204800', // 200MB max per attachment
+            'attachments.*' => 'file|mimes:jpg,webp,jpeg,png,pdf,docx,txt,mp4,mov,avi,mkv,webm|max:204800', // 200MB max per attachment
             'poll' => 'nullable|array',
             'poll.question' => 'required_with:poll|string|max:255',
             'poll.options' => 'required_with:poll|array|min:1',
