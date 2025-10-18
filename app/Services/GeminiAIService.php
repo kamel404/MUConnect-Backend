@@ -185,7 +185,7 @@ class GeminiAIService
                     ['text' => $fullPrompt]
                 ]
             ]],
-            'generationConfig' => $this->getGenerationConfig()
+            'generation_config' => $this->getGenerationConfig()
         ], 'quiz');
     }
 
@@ -210,7 +210,7 @@ class GeminiAIService
                     ]
                 ]
             ]],
-            'generationConfig' => $this->getGenerationConfig()
+            'generation_config' => $this->getGenerationConfig()
         ], 'quiz');
     }
 
@@ -225,7 +225,7 @@ class GeminiAIService
                     ['text' => $fullPrompt]
                 ]
             ]],
-            'generationConfig' => $this->getSummaryGenerationConfig()
+            'generation_config' => $this->getSummaryGenerationConfig()
         ], 'summary');
     }
 
@@ -250,7 +250,7 @@ class GeminiAIService
                     ]
                 ]
             ]],
-            'generationConfig' => $this->getSummaryGenerationConfig()
+            'generation_config' => $this->getSummaryGenerationConfig()
         ], 'summary');
     }
 
@@ -271,6 +271,9 @@ class GeminiAIService
                         'Content-Type' => 'application/json',
                     ])
                     ->post($this->getGeminiEndpoint(), $payload);
+
+                    Log::debug('Gemini raw response', ['response' => $response->json()]);
+
 
                 if ($response->successful()) {
                     if ($responseType === 'summary') {
@@ -312,8 +315,7 @@ class GeminiAIService
             'temperature' => 0.7,
             'topK' => 40,
             'topP' => 0.8,
-            'maxOutputTokens' => 2048,
-            'responseMimeType' => 'application/json'
+            'maxOutputTokens' => 8192,
         ];
     }
 
@@ -323,8 +325,7 @@ class GeminiAIService
             'temperature' => 0.5,
             'topK' => 30,
             'topP' => 0.8,
-            'maxOutputTokens' => 1500,
-            'responseMimeType' => 'application/json'
+            'maxOutputTokens' => 8192,
         ];
     }
 
@@ -519,8 +520,8 @@ PROMPT;
             throw new \RuntimeException("Gemini API key not configured");
         }
 
-        // Using the newer Gemini 1.5 Flash model
-        return "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+        // Using the newer Gemini 2.5 Flash model
+        return "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$apiKey}";
     }
 
     private function generateCacheKey(string $filePath, int $param1, string $param2, string $type): string
