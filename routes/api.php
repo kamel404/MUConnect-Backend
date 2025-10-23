@@ -92,6 +92,11 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     Route::post('/voting-status', [App\Http\Controllers\VotingController::class, 'toggleSystemVoting']);
     Route::put('/clubs/{club}', [ClubController::class, 'update']);
     Route::delete('/clubs/{club}', [ClubController::class, 'destroy']);
+
+    // Resource approval routes
+    Route::get('/admin/resources/pending', [ResourceController::class, 'getPendingResources']);
+    Route::post('/admin/resources/{id}/approve', [ResourceController::class, 'approveResource']);
+    Route::post('/admin/resources/{id}/reject', [ResourceController::class, 'rejectResource']);
 });
 
 
@@ -107,6 +112,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
     Route::post('/resources/{id}/toggleSave', [ResourceController::class, 'toggleSave']);
     Route::post('/resources/{id}/toggle-upvote', [ResourceController::class, 'toggleUpvote']);
+    
+    // User's own resources (all statuses)
+    Route::get('/my-resources', [ResourceController::class, 'getUserResources']);
     
     // Poll routes (protected)
     Route::post('/poll-options/{id}/vote', [ResourceController::class, 'votePollOption']);

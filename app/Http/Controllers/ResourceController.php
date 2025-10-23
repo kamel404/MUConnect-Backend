@@ -27,12 +27,22 @@ class ResourceController extends Controller
      */
     public function topContributors(Request $request)
     {
-        // Get pagination parameters from request
-        $limit = $request->input('limit', 3); // Default to top 3
-        
-        // Get users with their resource counts and total upvotes received
-        $topContributors = \App\Models\User::with(['faculty', 'major'])
-            ->select(['users.*'])
+        $limit = (int) $request->input('limit', 3);
+        if ($limit <= 0) {
+            $limit = 3;
+        }
+        $limit = min($limit, 15);
+
+        $topContributors = \App\Models\User::query()
+            ->without('roles')
+            ->select([
+                'users.id',
+                'users.first_name',
+                'users.last_name',
+                'users.avatar',
+                'users.major_id',
+            ])
+            ->with(['major:id,name'])
             ->selectRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) as resources_count')
             ->selectSub(function ($query) {
                 $query->selectRaw('COUNT(*)')
@@ -49,32 +59,29 @@ class ResourceController extends Controller
                     })
                     ->whereColumn('resources.user_id', 'users.id');
             }, 'resource_upvote_count')
-            // Add total upvotes received (user upvotes + resource upvotes)
-            ->withCasts([
-                'resources_count' => 'integer',
-                'user_upvote_count' => 'integer',
-                'resource_upvote_count' => 'integer'
-            ])
-            // Get only users with resources
             ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) > 0')
-            // Order by resources count and then by upvotes received
             ->orderByRaw('resources_count DESC')
             ->orderByRaw('(user_upvote_count + resource_upvote_count) DESC')
             ->limit($limit)
             ->get()
             ->map(function ($user) {
-                // Add computed fields
-                $user->contribution_score = $user->resources_count + 
-                    intval($user->user_upvote_count) + 
-                    intval($user->resource_upvote_count);
-                    
-                // Add faculty and major names if available
-                $user->faculty_name = optional($user->faculty)->name;
-                $user->major_name = optional($user->major)->name;
-                
-                return $user;
+                $resourcesCount = (int) $user->resources_count;
+                $userUpvotes = (int) $user->user_upvote_count;
+                $resourceUpvotes = (int) $user->resource_upvote_count;
+
+                return [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'avatar_url' => $user->avatar_url,
+                    'major_name' => optional($user->major)->name,
+                    'resources_count' => $resourcesCount,
+                    'user_upvote_count' => $userUpvotes,
+                    'resource_upvote_count' => $resourceUpvotes,
+                    'contribution_score' => $resourcesCount + $userUpvotes + $resourceUpvotes,
+                ];
             });
-            
+
         return response()->json([
             'data' => $topContributors
         ]);
@@ -92,6 +99,12 @@ class ResourceController extends Controller
         $resourcesQuery = Resource::with(['attachments', 'user', 'course', 'polls' => function($query) {
             $query->with('options');
         }]);
+        
+        // Only show approved resources to regular users
+        // Admins and moderators can see all resources
+        if (!$user->hasRole(['admin', 'moderator'])) {
+            $resourcesQuery->approved();
+        }
         
         // Apply filters if provided
         // Filter by faculty_id
@@ -182,6 +195,11 @@ class ResourceController extends Controller
 
         if (!$resource) {
             return response()->json(['message' => 'Resource not found'], 404);
+        }
+
+        // Check if user can access this resource
+        if (!$this->userCanAccessResource($resource)) {
+            return response()->json(['message' => 'Access denied'], 403);
         }
         
         // Add upvote information
@@ -389,6 +407,7 @@ class ResourceController extends Controller
                 'course_id' => $request->input('course_id'),
                 'major_id' => $request->input('major_id'),
                 'faculty_id' => $request->input('faculty_id'),
+                'approval_status' => 'pending', // Always start as pending
             ]);
 
             if (!empty($attachments)) {
@@ -418,11 +437,15 @@ class ResourceController extends Controller
                 }
             }
 
+            // Notify admins and moderators about new resource pending approval
+            $this->notifyModeratorsForApproval($resource);
+
             DB::commit();
 
             return response()->json([
-                'message' => 'Resource created successfully',
-                'resource' => $resource->load(['attachments', 'user', 'polls.options']),
+                'message' => 'Resource submitted successfully and is pending approval',
+                'resource' => $resource->load(['attachments', 'user', 'course', 'polls.options']),
+                'status' => 'pending_approval'
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -896,6 +919,262 @@ class ResourceController extends Controller
         }
     }
 
+    /**
+     * Get pending resources for approval (Admin/Moderator only)
+     */
+    public function getPendingResources(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $query = Resource::with([
+            'user:id,username,first_name,last_name,avatar',
+            'attachments:id,file_path,file_type,mime_type,original_name',
+            'course:id,name',
+            'polls' => function($query) {
+                $query->with('options');
+            }
+        ])
+        ->select('id', 'user_id', 'title', 'description', 'approval_status', 'created_at')
+        ->where('approval_status', 'pending')
+        ->orderBy('created_at', 'desc');
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhereHas('user', function($uq) use ($search) {
+                    $uq->where('username', 'like', "%{$search}%")
+                        ->orWhere('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $resources = $query->paginate($request->input('per_page', 10));
+
+        // Transform to simplified structure
+        $resources->getCollection()->transform(function ($resource) {
+            return [
+                'id' => $resource->id,
+                'title' => $resource->title,
+                'description' => $resource->description,
+                'created_at' => $resource->created_at->toDateTimeString(),
+                'approval_status' => $resource->approval_status,
+                'user' => [
+                    'id' => $resource->user->id,
+                    'username' => $resource->user->username,
+                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
+                    'avatar_url' => $resource->user->avatar_url ?? asset("storage/avatars/{$resource->user->avatar}"),
+                ],
+                'course' => $resource->course?->name,
+                'attachments' => $resource->attachments->map(fn($a) => [
+                    'id' => $a->id,
+                    'url' => $a->url,
+                    'type' => $a->file_type,
+                    'mime_type' => $a->mime_type,
+                    'original_name' => $a->original_name,
+                ]),
+                'polls' => $resource->polls ? [
+                    'id' => $resource->polls->id,
+                    'question' => $resource->polls->question,
+                    'options' => $resource->polls->options->map(fn($opt) => [
+                        'id' => $opt->id,
+                        'option_text' => $opt->option_text,
+                        'vote_count' => $opt->vote_count,
+                    ]),
+                ] : null,
+            ];
+        });
+
+        return response()->json($resources);
+    }
+
+
+    /**
+     * Approve a resource (Admin/Moderator only)
+     */
+    public function approveResource($id)
+    {
+        $user = Auth::user();
+
+        if (!$user->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $resource = Resource::findOrFail($id);
+
+        if ($resource->approval_status !== 'pending') {
+            return response()->json(['message' => 'Resource is not pending approval'], 400);
+        }
+
+        $resource->update([
+            'approval_status' => 'approved',
+            'approved_by' => $user->id,
+            'approved_at' => now(),
+            'rejection_reason' => null,
+        ]);
+
+        // Notify resource owner about approval
+        Notification::create([
+            'user_id' => $resource->user_id,
+            'sender_id' => $user->id,
+            'type' => 'resource_approved',
+            'data' => [
+                'resource_id' => $resource->id,
+                'resource_title' => $resource->title,
+                'message' => 'Your resource "' . $resource->title . '" has been approved',
+                'url' => url('/resources/' . $resource->id),
+            ],
+        ]);
+
+        return response()->json([
+            'message' => 'Resource approved successfully',
+            'resource' => [
+                'id' => $resource->id,
+                'title' => $resource->title,
+                'description' => $resource->description,
+                'approval_status' => $resource->approval_status,
+                'approved_at' => $resource->approved_at,
+                'user' => [
+                    'id' => $resource->user->id,
+                    'username' => $resource->user->username,
+                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
+                    'avatar_url' => $resource->user->avatar_url ?? asset('storage/avatars/' . $resource->user->avatar),
+                ],
+                'approved_by' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'full_name' => trim($user->first_name . ' ' . $user->last_name),
+                ],
+            ]
+        ]);
+
+    }
+
+    /**
+     * Reject a resource (Admin/Moderator only)
+     */
+    public function rejectResource(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        if (!$user->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500'
+        ]);
+
+        $resource = Resource::findOrFail($id);
+
+        if ($resource->approval_status !== 'pending') {
+            return response()->json(['message' => 'Resource is not pending approval'], 400);
+        }
+
+        $resource->update([
+            'approval_status' => 'rejected',
+            'approved_by' => $user->id,
+            'approved_at' => now(),
+            'rejection_reason' => $validated['reason'],
+        ]);
+
+        // Notify resource owner about rejection
+        Notification::create([
+            'user_id' => $resource->user_id,
+            'sender_id' => $user->id,
+            'type' => 'resource_rejected',
+            'data' => [
+                'resource_id' => $resource->id,
+                'resource_title' => $resource->title,
+                'message' => 'Your resource "' . $resource->title . '" has been rejected',
+                'reason' => $validated['reason'],
+                'url' => url('/resources/' . $resource->id),
+            ],
+        ]);
+
+        // Load minimal relations
+        $resource->load(['user:id,username,first_name,last_name,avatar']);
+
+        return response()->json([
+            'message' => 'Resource rejected successfully',
+            'resource' => [
+                'id' => $resource->id,
+                'title' => $resource->title,
+                'description' => $resource->description,
+                'approval_status' => $resource->approval_status,
+                'approved_at' => $resource->approved_at,
+                'rejection_reason' => $resource->rejection_reason,
+                'user' => [
+                    'id' => $resource->user->id,
+                    'username' => $resource->user->username,
+                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
+                    'avatar_url' => $resource->user->avatar_url ?? asset('storage/avatars/' . $resource->user->avatar),
+                ],
+                'rejected_by' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'full_name' => trim($user->first_name . ' ' . $user->last_name),
+                ],
+            ]
+        ]);
+    }
+
+
+    /**
+     * Get user's own resources with all statuses
+     */
+    public function getUserResources()
+    {
+        $user = Auth::user();
+        
+        $resources = Resource::with(['attachments', 'course', 'upvotes'])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function($resource) use ($user) {
+                $resource->upvote_count = $resource->upvotes()->count();
+                $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
+                return $resource;
+            });
+
+        return response()->json([
+            'resources' => $resources,
+            'counts' => [
+                'total' => $resources->count(),
+                'approved' => $resources->where('approval_status', 'approved')->count(),
+                'pending' => $resources->where('approval_status', 'pending')->count(),
+                'rejected' => $resources->where('approval_status', 'rejected')->count(),
+            ]
+        ]);
+    }
+
+    /**
+     * Notify moderators about new resource for approval
+     */
+    private function notifyModeratorsForApproval($resource)
+    {
+        $moderators = \App\Models\User::role(['admin', 'moderator'])->get();
+        
+        foreach ($moderators as $moderator) {
+            Notification::create([
+                'user_id' => $moderator->id,
+                'sender_id' => $resource->user_id,
+                'type' => 'resource_pending_approval',
+                'data' => [
+                    'resource_id' => $resource->id,
+                    'resource_title' => $resource->title,
+                    'message' => 'New resource "' . $resource->title . '" is pending approval',
+                    'url' => url('/admin/resources/pending'),
+                ],
+            ]);
+        }
+    }
+
     private function userCanAccessResource($resource)
     {
         $user = auth()->user();
@@ -903,6 +1182,16 @@ class ResourceController extends Controller
         // Resource owner can always access
         if ($resource->user_id === $user->id) {
             return true;
+        }
+
+        // Admins and moderators can access all resources
+        if ($user->hasRole(['admin', 'moderator'])) {
+            return true;
+        }
+
+        // Regular users can only access approved resources
+        if ($resource->approval_status !== 'approved') {
+            return false;
         }
         
         // Check if user is enrolled in the same course
