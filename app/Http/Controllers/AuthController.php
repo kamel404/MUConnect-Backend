@@ -77,19 +77,26 @@ class AuthController extends Controller
             now()->addMinutes(60),
             ['id' => $user->id, 'hash' => sha1($user->email)]
         );
-        \Mail::to($user->email)->send(new \App\Mail\VerifyEmail($user, $verificationUrl));
+        try {
+            \Mail::to($user->email)->send(new \App\Mail\VerifyEmail($user, $verificationUrl));
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send verification email: '.$e->getMessage());
+        }
 
-        // Send welcome notification
-        $notification = Notification::create([
-            'user_id' => $user->id,
-            'sender_id' => User::where('email', 'system@mu.edu.lb')->first()->id,
-            'type' => 'welcome',
-            'data' => [
-                'message' => 'Welcome to the community, ' . $user->first_name . '!',
-                'url'     => url('/dashboard'),
-            ],
-        ]);
-        logger($notification);
+        try {
+            $systemUser = User::where('email', 'system@mu.edu.lb')->first();
+            Notification::create([
+                'user_id' => $user->id,
+                'sender_id' => $systemUser?->id,
+                'type' => 'welcome',
+                'data' => [
+                    'message' => 'Welcome to the community, ' . $user->first_name . '!',
+                    'url' => url('/dashboard'),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Failed to create welcome notification: '.$e->getMessage());
+        }
 
         // Load relationships for response
         $user->load(['faculty', 'major', 'roles']);

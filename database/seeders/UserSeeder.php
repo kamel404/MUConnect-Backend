@@ -14,14 +14,14 @@ class UserSeeder extends Seeder
     public function run(): void
     {
 
-        // Create System Admin User 
+        // Create System Admin User
         $systemAdmin = User::firstOrCreate(
             ['email' => 'system@mu.edu.lb'],
             [
                 'username' => 'system',
                 'first_name' => 'System',
                 'last_name' => 'Admin',
-                'password' => Hash::make(env('SYSTEM_ADMIN_DEFAULT_PASSWORD')),
+                'password' => Hash::make('system'),
                 'is_active' => true,
                 'is_verified' => true,
                 'faculty_id' => null,
@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
             ]
         );
         $systemAdmin->assignRole('admin');
-        
+
         // Create admin user
         $admin = User::firstOrCreate(
             ['email' => 'admin@mu.edu.lb'],
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
                 'username' => 'admin',
                 'first_name' => 'Admin',
                 'last_name' => 'User',
-                'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD')),
+                'password' => Hash::make('admin'),
                 'is_active' => true,
                 'is_verified' => true,
                 'faculty_id' => 1,
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
                 'username' => 'moderator',
                 'first_name' => 'Moderator',
                 'last_name' => 'User',
-                'password' => Hash::make(env('MODERATOR_DEFAULT_PASSWORD')),
+                'password' => Hash::make('moderator'),
                 'is_active' => true,
                 'is_verified' => true,
                 'faculty_id' => 1,

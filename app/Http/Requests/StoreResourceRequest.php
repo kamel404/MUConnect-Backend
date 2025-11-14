@@ -48,7 +48,7 @@ class StoreResourceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'attachments.*.max'   => 'Each attachment must not exceed 200 MB.',
+            'attachments.*.max'   => 'Each attachment must not exceed 5MB.',
             'attachments.*.mimes' => 'Unsupported file type. Allowed types: jpg, jpeg, png, pdf, docx, txt, mp4, mov, avi, mkv, webm.',
             'attachments.*.uploaded' => 'The file could not be uploaded. It may exceed the server limit (check upload_max_filesize & post_max_size).',
         ];

@@ -19,13 +19,7 @@ return [
     'allowed_methods' => ['*'],
 
     // Replace with your frontend URLs
-    'allowed_origins' => [
-        'http://localhost:5173',
-        'http://127.0.0.1:5173',
-        // Add your build server origins:
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-    ],
+    'allowed_origins' => ['https://mu-connect.me', 'https://www.mu-connect.me'],
 
     'allowed_origins_patterns' => [],
 

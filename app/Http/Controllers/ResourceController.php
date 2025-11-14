@@ -90,38 +90,35 @@ class ResourceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        
+
         // Get pagination parameters from request
         $perPage = $request->input('per_page', 10); // Default 10 items per page
         $page = $request->input('page', 1); // Default to first page
-        
+
         // Create base query with relationships
         $resourcesQuery = Resource::with(['attachments', 'user', 'course', 'polls' => function($query) {
             $query->with('options');
         }]);
-        
-        // Only show approved resources to regular users
-        // Admins and moderators can see all resources
-        if (!$user->hasRole(['admin', 'moderator'])) {
-            $resourcesQuery->approved();
-        }
-        
+
+        // Only show approved resources (for all users, including admins and moderators)
+        $resourcesQuery->approved();
+
         // Apply filters if provided
         // Filter by faculty_id
         if ($request->has('faculty_id')) {
             $resourcesQuery->where('faculty_id', $request->input('faculty_id'));
         }
-        
+
         // Filter by major_id
         if ($request->has('major_id')) {
             $resourcesQuery->where('major_id', $request->input('major_id'));
         }
-        
+
         // Filter by course_id
         if ($request->has('course_id')) {
             $resourcesQuery->where('course_id', $request->input('course_id'));
         }
-        
+
         // Search by title
         if ($request->has('search') && !empty($request->input('search'))) {
             $searchTerm = $request->input('search');
@@ -130,22 +127,22 @@ class ResourceController extends Controller
                       ->orWhere('description', 'like', "%{$searchTerm}%");
             });
         }
-        
+
         // Order by latest by default
         $resourcesQuery->latest();
-        
+
         // Get paginated results
         $paginatedResources = $resourcesQuery->paginate($perPage);
-        
+
         // Transform resources with additional data
         $resources = $paginatedResources->getCollection()->map(function ($resource) use ($user) {
             // Add upvote information
             $resource->upvote_count = $resource->upvotes()->count();
             $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
-            
+
             // Add comment count
             $resource->comment_count = $resource->comments()->count();
-            
+
             // Add saved status
             $resource->is_saved = $resource->savedBy()->where('user_id', $user->id)->exists();
 
@@ -165,10 +162,10 @@ class ResourceController extends Controller
                     return $opt;
                 });
             }
-            
+
             return $resource;
         });
-        
+
         // Create custom response with pagination metadata
         return response()->json([
             'data' => $resources,
@@ -201,14 +198,14 @@ class ResourceController extends Controller
         if (!$this->userCanAccessResource($resource)) {
             return response()->json(['message' => 'Access denied'], 403);
         }
-        
+
         // Add upvote information
         $resource->upvote_count = $resource->upvotes()->count();
         $resource->is_upvoted = $resource->isUpvotedByUser($user->id);
-        
+
         // Add comment count
         $resource->comment_count = $resource->comments()->count();
-        
+
         // Add course info
             $resource->course_info = $resource->course;
             // Add course title
@@ -250,10 +247,10 @@ class ResourceController extends Controller
 
     /**
      * Toggle save status for a resource
-     * 
+     *
      * If the resource is already saved, it will be unsaved
      * If the resource is not saved, it will be saved
-     * 
+     *
      * @param int $id The resource ID
      * @return \Illuminate\Http\JsonResponse
      */
@@ -268,7 +265,7 @@ class ResourceController extends Controller
             'saveable_id' => $resource->id,
             'saveable_type' => Resource::class,
         ])->first();
-        
+
         // If already saved, unsave it
         if ($savedItem) {
             $savedItem->delete();
@@ -276,7 +273,7 @@ class ResourceController extends Controller
                 'message' => 'Resource unsaved successfully',
                 'saved' => false
             ]);
-        } 
+        }
         // If not saved, save it
         else {
             $saved = SavedItem::create([
@@ -284,7 +281,7 @@ class ResourceController extends Controller
                 'saveable_id' => $resource->id,
                 'saveable_type' => Resource::class,
             ]);
-            
+
             return response()->json([
                 'message' => 'Resource saved successfully',
                 'saved' => true,
@@ -292,10 +289,10 @@ class ResourceController extends Controller
             ], 201);
         }
     }
-    
+
     /**
      * Toggle upvote for a resource
-     * 
+     *
      * If the user has already upvoted the resource, remove the upvote
      * Otherwise, add an upvote
      */
@@ -303,18 +300,18 @@ class ResourceController extends Controller
     {
         $user = Auth::user();
         $resource = Resource::findOrFail($id);
-        
+
         // Check if the user has already upvoted this resource
         $existingUpvote = \App\Models\Upvote::where([
             'user_id' => $user->id,
             'upvoteable_id' => $resource->id,
             'upvoteable_type' => Resource::class,
         ])->first();
-        
+
         if ($existingUpvote) {
             // User has already upvoted, so remove the upvote
             $existingUpvote->delete();
-            
+
             return response()->json([
                 'message' => 'Upvote removed successfully',
                 'upvoted' => false,
@@ -327,7 +324,7 @@ class ResourceController extends Controller
                 'upvoteable_id' => $resource->id,
                 'upvoteable_type' => Resource::class,
             ]);
-            
+
             $upvote->save();
             // Notify resource owner about the upvote
             $resource->load('user');
@@ -345,7 +342,7 @@ class ResourceController extends Controller
                     ],
                 ]);
             }
-            
+
             return response()->json([
                 'message' => 'Resource upvoted successfully',
                 'upvoted' => true,
@@ -413,20 +410,20 @@ class ResourceController extends Controller
             if (!empty($attachments)) {
                 $resource->attachments()->attach(collect($attachments)->pluck('id')->toArray());
             }
-            
+
             // Handle poll creation if poll data is provided
             if ($request->has('poll') && is_array($request->input('poll'))) {
                 $pollData = $request->input('poll');
-                
+
                 if (isset($pollData['question']) && isset($pollData['options']) && is_array($pollData['options'])) {
                     // Create the poll
                     $poll = new \App\Models\Poll([
                         'question' => $pollData['question'],
                     ]);
-                    
+
                     // Associate poll with resource
                     $resource->polls()->save($poll);
-                    
+
                     // Create poll options
                     foreach ($pollData['options'] as $optionText) {
                         $poll->options()->create([
@@ -461,15 +458,6 @@ class ResourceController extends Controller
     public function updateTest(Request $request, $id)
     {
         $user = Auth::user();
-        \Log::info('Update request data:', [
-            'all_data' => $request->all(),
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'has_files' => $request->hasFile('attachments'),
-            'remove_attachments' => $request->input('remove_attachments')
-        ]);
-        \Log::info('Request title: ' . $request->input('title'));
-        \Log::info('Has files: ' . json_encode($request->hasFile('attachments')));
 
         DB::beginTransaction();
         try {
@@ -535,14 +523,14 @@ class ResourceController extends Controller
             if (!empty($attachments)) {
                 $resource->attachments()->attach(collect($attachments)->pluck('id')->toArray());
             }
-            
+
             // Handle poll updates if poll data is provided
             if ($request->has('poll') && is_array($request->input('poll'))) {
                 $pollData = $request->input('poll');
-                
+
                 // Get existing poll or create a new one
                 $poll = $resource->polls;
-                
+
                 if (!$poll && isset($pollData['question'])) {
                     // Create new poll if it doesn't exist
                     $poll = new \App\Models\Poll([
@@ -553,13 +541,13 @@ class ResourceController extends Controller
                     // Update existing poll
                     $poll->question = $pollData['question'];
                     $poll->save();
-                    
+
                     // Delete existing options if we're replacing them
                     if (isset($pollData['options']) && is_array($pollData['options'])) {
                         $poll->options()->delete();
                     }
                 }
-                
+
                 // Create or update poll options
                 if ($poll && isset($pollData['options']) && is_array($pollData['options'])) {
                     foreach ($pollData['options'] as $optionText) {
@@ -603,7 +591,7 @@ class ResourceController extends Controller
         }
         return 'document';
     }
-    
+
     /**
      * Vote on a poll option
      *
@@ -678,7 +666,7 @@ class ResourceController extends Controller
     }
 
     public function destroyTest($id)
-    {//todo write a clean code that would return the error message if the user is not authorized to delete this 
+    {//todo write a clean code that would return the error message if the user is not authorized to delete this
         $user = Auth::user();
         // Ensure the user is authorized to delete this resource
         $resource = Resource::with('attachments')->find($id);
@@ -762,7 +750,7 @@ class ResourceController extends Controller
 
         // Get real MIME type using finfo
         $realMimeType = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file->getRealPath());
-        
+
         // Get file signature
         $handle = fopen($file->getRealPath(), 'rb');
         $fileHeader = strtoupper(bin2hex(fread($handle, 4)));
@@ -771,7 +759,7 @@ class ResourceController extends Controller
         // Validate file type
         $isValidFile = false;
         $detectedExtension = null;
-        
+
         foreach ($allowedTypes as $ext => $config) {
             if ($realMimeType === $config['mime']) {
                 foreach ($config['signature'] as $signature) {
@@ -790,11 +778,11 @@ class ResourceController extends Controller
 
         // Generate secure filename
         $secureFilename = Str::uuid() . '.' . $detectedExtension;
-        
+
         // Store file in private storage
         $path = $file->storeAs(
-            'attachments/' . date('Y/m'), 
-            $secureFilename, 
+            'attachments/' . date('Y/m'),
+            $secureFilename,
             'private'
         );
 
@@ -833,20 +821,20 @@ class ResourceController extends Controller
             // Handle file attachments securely
             if ($request->hasFile('attachments')) {
                 $attachments = [];
-                
+
                 foreach ($request->file('attachments') as $file) {
                     try {
                         $fileData = $this->validateAndStoreFile($file, $resource->id);
-                        
+
                         $attachment = $resource->attachments()->create([
                             'file_path' => $fileData['path'],
                             'original_name' => $fileData['original_name'],
                             'file_size' => $fileData['size'],
                             'mime_type' => $fileData['mime_type'],
                         ]);
-                        
+
                         $attachments[] = $attachment;
-                        
+
                     } catch (\InvalidArgumentException $e) {
                         \DB::rollBack();
                         return response()->json([
@@ -869,16 +857,10 @@ class ResourceController extends Controller
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
-            
+
         } catch (\Exception $e) {
             \DB::rollBack();
-            
-            Log::error('Resource creation failed', [
-                'user_id' => auth()->id(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
+
             return response()->json([
                 'message' => 'Failed to create resource',
                 'errors' => ['general' => ['An unexpected error occurred']]
@@ -892,21 +874,21 @@ class ResourceController extends Controller
         try {
             $resource = Resource::findOrFail($resourceId);
             $attachment = $resource->attachments()->findOrFail($attachmentId);
-            
+
             // Check if user has access to this resource
             if (!$this->userCanAccessResource($resource)) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
-            
+
             if (!Storage::disk('private')->exists($attachment->file_path)) {
                 return response()->json(['message' => 'File not found'], 404);
             }
-            
+
             return Storage::disk('private')->download(
                 $attachment->file_path,
                 $attachment->original_name
             );
-            
+
         } catch (\Exception $e) {
             Log::error('File download failed', [
                 'resource_id' => $resourceId,
@@ -914,7 +896,7 @@ class ResourceController extends Controller
                 'user_id' => auth()->id(),
                 'error' => $e->getMessage()
             ]);
-            
+
             return response()->json(['message' => 'Download failed'], 500);
         }
     }
@@ -1070,20 +1052,20 @@ class ResourceController extends Controller
             'reason' => 'required|string|max:500'
         ]);
 
-        $resource = Resource::findOrFail($id);
+        $resource = Resource::with('attachments')->findOrFail($id);
 
         if ($resource->approval_status !== 'pending') {
             return response()->json(['message' => 'Resource is not pending approval'], 400);
         }
 
-        $resource->update([
-            'approval_status' => 'rejected',
-            'approved_by' => $user->id,
-            'approved_at' => now(),
-            'rejection_reason' => $validated['reason'],
-        ]);
+        // Store resource info before deletion for response
+        $resourceInfo = [
+            'id' => $resource->id,
+            'title' => $resource->title,
+            'description' => $resource->description,
+        ];
 
-        // Notify resource owner about rejection
+        // Notify resource owner about rejection (without resource link)
         Notification::create([
             'user_id' => $resource->user_id,
             'sender_id' => $user->id,
@@ -1093,35 +1075,43 @@ class ResourceController extends Controller
                 'resource_title' => $resource->title,
                 'message' => 'Your resource "' . $resource->title . '" has been rejected',
                 'reason' => $validated['reason'],
-                'url' => url('/resources/' . $resource->id),
             ],
         ]);
 
-        // Load minimal relations
-        $resource->load(['user:id,username,first_name,last_name,avatar']);
+        DB::beginTransaction();
+        try {
+            // Delete all attachments associated with this resource
+            $attachments = $resource->attachments;
 
-        return response()->json([
-            'message' => 'Resource rejected successfully',
-            'resource' => [
-                'id' => $resource->id,
-                'title' => $resource->title,
-                'description' => $resource->description,
-                'approval_status' => $resource->approval_status,
-                'approved_at' => $resource->approved_at,
-                'rejection_reason' => $resource->rejection_reason,
-                'user' => [
-                    'id' => $resource->user->id,
-                    'username' => $resource->user->username,
-                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
-                    'avatar_url' => $resource->user->avatar_url ?? asset('storage/avatars/' . $resource->user->avatar),
-                ],
-                'rejected_by' => [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'full_name' => trim($user->first_name . ' ' . $user->last_name),
-                ],
-            ]
-        ]);
+            // Detach all attachments (pivot cleanup)
+            $resource->attachments()->detach();
+
+            // Delete the resource
+            $resource->delete();
+
+            // Delete orphaned attachments and files
+            foreach ($attachments as $attachment) {
+                if ($attachment->resources()->count() === 0) {
+                    if (Storage::disk('public')->exists($attachment->file_path)) {
+                        Storage::disk('public')->delete($attachment->file_path);
+                    }
+                    $attachment->delete();
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Resource rejected and deleted successfully',
+                'resource' => $resourceInfo
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error rejecting resource',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 
@@ -1131,7 +1121,7 @@ class ResourceController extends Controller
     public function getUserResources()
     {
         $user = Auth::user();
-        
+
         $resources = Resource::with(['attachments', 'course', 'upvotes'])
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
@@ -1159,7 +1149,7 @@ class ResourceController extends Controller
     private function notifyModeratorsForApproval($resource)
     {
         $moderators = \App\Models\User::role(['admin', 'moderator'])->get();
-        
+
         foreach ($moderators as $moderator) {
             Notification::create([
                 'user_id' => $moderator->id,
@@ -1178,8 +1168,8 @@ class ResourceController extends Controller
     private function userCanAccessResource($resource)
     {
         $user = auth()->user();
-        
-        // Resource owner can always access
+
+        // Resource owner can always access their own resources (even if rejected)
         if ($resource->user_id === $user->id) {
             return true;
         }
@@ -1193,8 +1183,10 @@ class ResourceController extends Controller
         if ($resource->approval_status !== 'approved') {
             return false;
         }
-        
+
         // Check if user is enrolled in the same course
-        return $user->enrolledCourses()->where('course_id', $resource->course_id)->exists();
+//        return $user->enrolledCourses()->where('course_id', $resource->course_id)->exists();
+
+        return true;
     }
 }
