@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Club;
 use Illuminate\Http\Request;
 use App\Models\Resource;
 use App\Models\Event;
@@ -28,14 +29,9 @@ class OverviewController extends Controller
                 'shared' => $user->resources()->count(),
                 'saved'  => $user->savedItems()->count(),
             ],
-            'applications' => [
-                'total'   => $user->applications()->count(),
-                'pending' => $user->applications()->where('status', 'pending')->count(),
-                'accepted'=> $user->applications()->where('status', 'accepted')->count(),
-            ],
             'clubs' => [
-                'joined' => $user->clubs()->count(),
-            ],
+                'total' => Club::count(),
+            ]
         ];
 
         return response()->json([

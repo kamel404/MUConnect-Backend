@@ -79,7 +79,6 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
 
     // Clubs routes (protected)
-    Route::get('/clubs/{club}/members', [ClubController::class, 'members']);
     Route::post('/clubs', [ClubController::class, 'store']);
     Route::post('/clubs/{clubId}/members', [ClubController::class, 'addMember']);
     Route::put('/clubs/{clubId}/members/{memberId}', [ClubController::class, 'updateMember']);
@@ -233,7 +232,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Clubs routes
     Route::get('/clubs', [ClubController::class, 'index']);
     Route::get('/clubs/{club}', [ClubController::class, 'show']);
-    Route::get('/my-clubs', [ClubController::class, 'myClubs']);
     Route::get('/clubs/{clubId}/members', [ClubController::class, 'getClubMembers']);
 
     // Download routes

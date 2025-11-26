@@ -8,7 +8,6 @@ class ClubMember extends Model
 {
     protected $fillable = [
         'club_id',
-        'user_id',
         'name',
         'picture',
     ];
@@ -16,10 +15,5 @@ class ClubMember extends Model
     public function club()
     {
         return $this->belongsTo(Club::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
     }
 }

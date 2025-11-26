@@ -34,7 +34,7 @@ class ClubController extends Controller
      */
     public function show($id)
     {
-        $club = Club::findOrFail($id);
+        $club = Club::with('clubMembers')->findOrFail($id);
         return response()->json($club);
     }
 
@@ -64,66 +64,6 @@ class ClubController extends Controller
 
         return response()->json($club, 201);
     }
-    
-    /**
-     * Display the members of a specific club
-     */
-    public function members($clubId)
-    {
-        $club = Club::findOrFail($clubId);
-        $members = $club->members()->paginate(10);
-
-        return response()->json([
-            'club' => $club,
-            'members' => $members
-        ]);
-    }
-    /**
-     * Join a club
-     */
-    public function joinClub(Request $request, $clubId)
-    {
-        $club = Club::findOrFail($clubId);
-        $user = Auth::user();
-
-        // Check if user is already a member
-        if ($club->members()->where('user_id', $user->id)->exists()) {
-            return response()->json(['message' => 'You are already a member of this club.'], 400);
-        }
-
-        // Add user to club members
-        $club->members()->attach($user->id);
-
-        // Increment club members count
-        $club->increment('members');
-
-        // Send welcome notification with club name
-        $user->notify(new \App\Notifications\ClubJoinedNotification($club));
-
-        return response()->json(['message' => 'Successfully joined the club.']);
-    }
-    /**
-     * Leave a club
-     */
-    public function leaveClub(Request $request, $clubId)
-    {
-        $club = Club::findOrFail($clubId);
-        $user = Auth::user();
-
-        // Check if user is a member
-        if (!$club->members()->where('user_id', $user->id)->exists()) {
-            return response()->json(['message' => 'You are not a member of this club.'], 400);
-        }
-
-        // Remove user from club members
-        $club->members()->detach($user->id);
-
-        // Decrement club members count
-        $club->decrement('members');
-
-        return response()->json(['message' => 'Successfully left the club.']);
-    }
-
 
     /**
      * Display events for a specific club
@@ -174,13 +114,6 @@ class ClubController extends Controller
         return response()->json($event, 201);
     }
 
-    public function myClubs(Request $request)
-    {
-        $user = $request->user();
-        $clubs = $user->clubs()->paginate(10); // or ->get() for all
-        return response()->json($clubs);
-    }
-
     /**
      * Update an existing club (only moderators or admins)
      */
@@ -200,10 +133,6 @@ class ClubController extends Controller
 
         // Handle logo upload if provided
         if ($request->hasFile('logo')) {
-            // Optionally delete old logo from storage
-            // if ($club->logo) {
-            //     Storage::disk('public')->delete($club->logo);
-            // }
             $validated['logo'] = $request->file('logo')->store('clubs', 'public');
         }
 
@@ -226,8 +155,8 @@ class ClubController extends Controller
         // Delete related events
         $club->events()->delete();
 
-        // Detach all members
-        $club->members()->detach();
+        // Delete all club members
+        $club->clubMembers()->delete();
 
         $club->delete();
 
@@ -235,7 +164,7 @@ class ClubController extends Controller
     }
 
     /**
-     * Add a member to club with picture and description
+     * Add a member to club with picture and name
      */
     public function addMember(Request $request, $clubId)
     {
@@ -246,22 +175,16 @@ class ClubController extends Controller
         $club = Club::findOrFail($clubId);
 
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-
-        // Check if user is already a member
-        if ($club->members()->where('user_id', $validated['user_id'])->exists()) {
-            return response()->json(['message' => 'User is already a member'], 400);
-        }
 
         $picturePath = null;
         if ($request->hasFile('picture')) {
             $picturePath = $request->file('picture')->store('club_members', 'public');
         }
 
-        $club->members()->attach($validated['user_id'], [
+        $member = $club->clubMembers()->create([
             'name' => $validated['name'],
             'picture' => $picturePath,
         ]);
@@ -270,7 +193,7 @@ class ClubController extends Controller
 
         return response()->json([
             'message' => 'Member added successfully',
-            'member' => $club->clubMembers()->where('user_id', $validated['user_id'])->first()
+            'member' => $member
         ], 201);
     }
 
@@ -284,6 +207,7 @@ class ClubController extends Controller
         }
 
         $club = Club::findOrFail($clubId);
+
         $clubMember = ClubMember::where('club_id', $clubId)
             ->where('id', $memberId)
             ->firstOrFail();
@@ -315,11 +239,13 @@ class ClubController extends Controller
         }
 
         $club = Club::findOrFail($clubId);
+
         $clubMember = ClubMember::where('club_id', $clubId)
             ->where('id', $memberId)
             ->firstOrFail();
 
         $clubMember->delete();
+
         $club->decrement('members');
 
         return response()->json(['message' => 'Member removed successfully']);
@@ -331,7 +257,7 @@ class ClubController extends Controller
     public function getClubMembers($clubId)
     {
         $club = Club::findOrFail($clubId);
-        $members = $club->clubMembers()->with('user')->get();
+        $members = $club->clubMembers()->get();
 
         return response()->json([
             'club' => $club,
