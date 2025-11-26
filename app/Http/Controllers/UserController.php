@@ -32,7 +32,7 @@ class UserController extends Controller
         $searchTerm = $validated['search'] ?? null;
 
         $query = User::select([
-            'id', 'username', 'first_name', 'last_name', 
+            'id', 'username', 'first_name', 'last_name',
             'email', 'is_active', 'faculty_id', 'major_id'
         ])->with(['faculty:id,name', 'major:id,name']);
 
@@ -67,7 +67,7 @@ class UserController extends Controller
                 'error' => $e->getMessage(),
                 'user_id' => auth()->id()
             ]);
-            
+
             return response()->json([
                 'message' => 'Failed to retrieve users',
                 'errors' => ['general' => ['An error occurred while fetching users']]
@@ -196,7 +196,7 @@ class UserController extends Controller
     }
 
     // get user role
-    // not working, change it 
+    // not working, change it
     public function getUserRole($id)
     {
         $user = User::find($id);
@@ -268,7 +268,7 @@ class UserController extends Controller
         $userId = $id ?? auth()->id();
         $user = User::with(['faculty', 'major', 'roles', 'studyGroups', 'registeredEvents'])
             ->findOrFail($userId);
-            
+
         // Additional individual contribution stats
         $commentsMade = Comment::where('user_id', $user->id)->count();
         $upvotesGiven = Upvote::where('user_id', $user->id)->count();
@@ -295,46 +295,58 @@ class UserController extends Controller
 
         $upvotesReceived = $upvotesReceivedUser + $upvotesReceivedResources + $upvotesReceivedComments;
 
-        // Global stats for charts (top 5)
-        $topPostingUsers = User::withCount('resources')
-            ->orderBy('resources_count', 'desc')
-            ->take(5)
-            ->get(['id', 'username', 'resources_count']);
+        // Global stats for charts (top 5) - only for admins/moderators
+        $charts = null;
+        $currentUser = auth()->user();
+        
+        if ($currentUser && ($currentUser->hasRole('admin') || $currentUser->hasRole('moderator'))) {
+            $topPostingUsers = User::withCount('resources')
+                ->orderBy('resources_count', 'desc')
+                ->take(5)
+                ->get(['id', 'username', 'resources_count']);
 
-        $topCommentingUsers = Comment::select('user_id', DB::raw('COUNT(*) as comments_count'))
-            ->groupBy('user_id')
-            ->orderBy('comments_count', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($row) {
-                $usr = User::find($row->user_id);
-                return [
-                    'id'             => $usr->id,
-                    'username'       => $usr->username,
-                    'comments_count' => $row->comments_count,
-                ];
-            });
+            $topCommentingUsers = Comment::select('user_id', DB::raw('COUNT(*) as comments_count'))
+                ->groupBy('user_id')
+                ->orderBy('comments_count', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($row) {
+                    $usr = User::find($row->user_id);
+                    return [
+                        'id'             => $usr->id,
+                        'username'       => $usr->username,
+                        'comments_count' => $row->comments_count,
+                    ];
+                });
 
-        $topUpvotingUsers = Upvote::select('user_id', DB::raw('COUNT(*) as upvotes_given'))
-            ->groupBy('user_id')
-            ->orderBy('upvotes_given', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($row) {
-                $usr = User::find($row->user_id);
-                return [
-                    'id'            => $usr->id,
-                    'username'      => $usr->username,
-                    'upvotes_given' => $row->upvotes_given,
-                ];
-            });
+            $topUpvotingUsers = Upvote::select('user_id', DB::raw('COUNT(*) as upvotes_given'))
+                ->groupBy('user_id')
+                ->orderBy('upvotes_given', 'desc')
+                ->take(5)
+                ->get()
+                ->map(function ($row) {
+                    $usr = User::find($row->user_id);
+                    return [
+                        'id'            => $usr->id,
+                        'username'      => $usr->username,
+                        'upvotes_given' => $row->upvotes_given,
+                    ];
+                });
 
-        $topCourses = \App\Models\Course::withCount('resources')
-            ->orderBy('resources_count', 'desc')
-            ->take(5)
-            ->get(['id', 'code', 'title', 'resources_count']);
+            $topCourses = \App\Models\Course::withCount('resources')
+                ->orderBy('resources_count', 'desc')
+                ->take(5)
+                ->get(['id', 'code', 'title', 'resources_count']);
 
-        // Gather analytics data (without section requests)
+            $charts = [
+                'top_posting_users'    => $topPostingUsers,
+                'top_commenting_users' => $topCommentingUsers,
+                'top_upvoting_users'   => $topUpvotingUsers,
+                'top_courses'          => $topCourses,
+            ];
+        }
+
+        // Gather analytics data (without section requests and clubs)
         $analytics = [
             'study_groups' => [
                 'total' => $user->studyGroups()->count(),
@@ -345,9 +357,7 @@ class UserController extends Controller
                 'registered' => $user->registeredEvents()->count(),
                 'upcoming' => $user->registeredEvents()->where('event_datetime', '>', now())->count(),
             ],
-            'clubs' => [
-                'joined' => $user->clubs()->count(),
-            ],
+            // Remove clubs section since users don't join clubs anymore
             'resources' => [
                 'shared' => $user->resources()->count(),
             ],
@@ -356,14 +366,6 @@ class UserController extends Controller
                 'upvotes_given'   => $upvotesGiven,
                 'upvotes_received'=> $upvotesReceived,
             ],
-            // Comment out section_requests
-            /* 
-            'section_requests' => [
-                'total' => $user->sectionRequests()->count(),
-                'pending' => $user->sectionRequests()->where('status', 'pending')->count(),
-                'accepted' => $user->sectionRequests()->where('status', 'accepted')->count(),
-            ],
-            */
             'applications' => [
                 'total' => $user->applications()->count(),
                 'pending' => $user->applications()->where('status', 'pending')->count(),
@@ -371,14 +373,13 @@ class UserController extends Controller
             ],
             // Modify activity to exclude section requests
             'activity' => $this->getRecentActivityWithoutSectionRequests($user),
-            'charts' => [
-                'top_posting_users'    => $topPostingUsers,
-                'top_commenting_users' => $topCommentingUsers,
-                'top_upvoting_users'   => $topUpvotingUsers,
-                'top_courses'          => $topCourses,
-            ],
         ];
-        
+
+        // Add charts only if user is admin/moderator
+        if ($charts !== null) {
+            $analytics['charts'] = $charts;
+        }
+
         return response()->json([
             'user' => $user,
             'analytics' => $analytics
@@ -392,7 +393,7 @@ class UserController extends Controller
     {
         // Combine recent activity from different sources
         $activity = collect();
-        
+
         // Add recent study group joins
         $user->studyGroups()
             ->withPivot('created_at')
@@ -409,7 +410,7 @@ class UserController extends Controller
                     ]
                 ]);
             });
-        
+
         // Add recent event registrations
         $user->registeredEvents()
             ->withPivot('created_at')
@@ -426,7 +427,7 @@ class UserController extends Controller
                     ]
                 ]);
             });
-        
+
         // Sort combined activity by date
         return $activity->sortByDesc('date')->values()->all();
     }
@@ -441,5 +442,5 @@ class UserController extends Controller
 
         return response()->json(['activity' => $activity]);
     }
-    
+
 }

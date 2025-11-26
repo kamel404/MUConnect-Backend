@@ -240,5 +240,4 @@ Route::middleware('auth:sanctum')->group(function () {
     // AI Quiz routes
     Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);
     Route::get('/resources/{resourceId}/generate-summary', [AIQuizController::class, 'generateSummary']);
-    Route::get('/ai/job/{jobId}/status', [AIQuizController::class, 'checkJobStatus'])->name('ai.job.status');
 });
