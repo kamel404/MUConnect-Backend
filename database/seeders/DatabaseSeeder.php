@@ -23,7 +23,6 @@ class DatabaseSeeder extends Seeder
             AssignPermissionsSeeder::class,
             UserSeeder::class,
             CourseSeeder::class,
-            VotingStatusSeeder::class,
         ]);
     }
 }

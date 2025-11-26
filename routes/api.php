@@ -19,7 +19,6 @@ use App\Http\Controllers\SectionRequestController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
-use App\Http\Controllers\VotingController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\StorageController;
@@ -114,13 +113,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
     Route::post('/resources/{id}/toggleSave', [ResourceController::class, 'toggleSave']);
     Route::post('/resources/{id}/toggle-upvote', [ResourceController::class, 'toggleUpvote']);
-    
+
     // User's own resources (all statuses)
     Route::get('/my-resources', [ResourceController::class, 'getUserResources']);
-    
+
     // Poll routes (protected)
     Route::post('/poll-options/{id}/vote', [ResourceController::class, 'votePollOption']);
-    
+
     // Resource comments routes
     Route::get('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'getResourceComments']);
     Route::post('/resources/{id}/comments', [\App\Http\Controllers\CommentController::class, 'addResourceComment']);
@@ -139,7 +138,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // update profile
     Route::put('/user/{id}', [UserController::class, 'update']);
 
-    // Saved Items routes 
+    // Saved Items routes
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
 
     // Resource routes (protected)

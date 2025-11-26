@@ -27,9 +27,7 @@
         "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
-        "files": [
-            "app/Helpers/SystemSettings.php"
-        ],
+        "files": [],
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",

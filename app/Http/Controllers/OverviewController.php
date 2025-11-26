@@ -59,7 +59,6 @@ class OverviewController extends Controller
                     ->orderBy('event_datetime')
                     ->take(5)
                     ->get(),
-                'voting_status' => getVotingStatus(),
             ],
         ]);
     }
