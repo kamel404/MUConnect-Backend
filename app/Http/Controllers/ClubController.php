@@ -8,6 +8,7 @@ use App\Models\Club;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\ClubMember;
 
 class ClubController extends Controller
 {
@@ -231,5 +232,110 @@ class ClubController extends Controller
         $club->delete();
 
         return response()->json(['message' => 'Club and its related events deleted successfully.']);
+    }
+
+    /**
+     * Add a member to club with picture and description
+     */
+    public function addMember(Request $request, $clubId)
+    {
+        if (!auth()->user()->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $club = Club::findOrFail($clubId);
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        // Check if user is already a member
+        if ($club->members()->where('user_id', $validated['user_id'])->exists()) {
+            return response()->json(['message' => 'User is already a member'], 400);
+        }
+
+        $picturePath = null;
+        if ($request->hasFile('picture')) {
+            $picturePath = $request->file('picture')->store('club_members', 'public');
+        }
+
+        $club->members()->attach($validated['user_id'], [
+            'name' => $validated['name'],
+            'picture' => $picturePath,
+        ]);
+
+        $club->increment('members');
+
+        return response()->json([
+            'message' => 'Member added successfully',
+            'member' => $club->clubMembers()->where('user_id', $validated['user_id'])->first()
+        ], 201);
+    }
+
+    /**
+     * Update a club member's info (name/picture)
+     */
+    public function updateMember(Request $request, $clubId, $memberId)
+    {
+        if (!auth()->user()->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $club = Club::findOrFail($clubId);
+        $clubMember = ClubMember::where('club_id', $clubId)
+            ->where('id', $memberId)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('picture')) {
+            $validated['picture'] = $request->file('picture')->store('club_members', 'public');
+        }
+
+        $clubMember->update($validated);
+
+        return response()->json([
+            'message' => 'Member updated successfully',
+            'member' => $clubMember
+        ]);
+    }
+
+    /**
+     * Remove a member from club
+     */
+    public function removeMember($clubId, $memberId)
+    {
+        if (!auth()->user()->hasRole(['admin', 'moderator'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $club = Club::findOrFail($clubId);
+        $clubMember = ClubMember::where('club_id', $clubId)
+            ->where('id', $memberId)
+            ->firstOrFail();
+
+        $clubMember->delete();
+        $club->decrement('members');
+
+        return response()->json(['message' => 'Member removed successfully']);
+    }
+
+    /**
+     * Get all club members with their info
+     */
+    public function getClubMembers($clubId)
+    {
+        $club = Club::findOrFail($clubId);
+        $members = $club->clubMembers()->with('user')->get();
+
+        return response()->json([
+            'club' => $club,
+            'members' => $members
+        ]);
     }
 }

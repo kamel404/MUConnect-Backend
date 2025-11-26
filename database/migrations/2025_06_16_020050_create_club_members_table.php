@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('club_members', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('club_id');
-            $table->unsignedBigInteger('user_id');
+
+            // club & user relations
+            $table->foreignId('club_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // extra info
+            $table->string('name'); // or ->nullable() if you want
+            $table->string('picture')->nullable();
+
             $table->timestamps();
 
+            // a user can't join the same club twice
             $table->unique(['club_id', 'user_id']);
-            $table->foreign('club_id')->references('id')->on('clubs')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

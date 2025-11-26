@@ -19,7 +19,7 @@ return [
     'allowed_methods' => ['*'],
 
     // Replace with your frontend URLs
-    'allowed_origins' => ['https://mu-connect.me', 'https://www.mu-connect.me'],
+    'allowed_origins' => ['https://mu-connect.me', 'https://www.mu-connect.me', 'http://localhost:5173'],
 
     'allowed_origins_patterns' => [],
 

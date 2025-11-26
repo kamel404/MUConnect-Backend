@@ -82,14 +82,16 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     // Clubs routes (protected)
     Route::get('/clubs/{club}/members', [ClubController::class, 'members']);
     Route::post('/clubs', [ClubController::class, 'store']);
+    Route::post('/clubs/{clubId}/members', [ClubController::class, 'addMember']);
+    Route::put('/clubs/{clubId}/members/{memberId}', [ClubController::class, 'updateMember']);
+    Route::delete('/clubs/{clubId}/members/{memberId}', [ClubController::class, 'removeMember']);
 
 
     // Club Events routes (protected)
     Route::post('/clubs/{club}/events', [ClubController::class, 'createClubEvent']);
 
     // Votes routes (protected)
-    Route::post('clubs/{club}/candidates', [App\Http\Controllers\VotingController::class, 'addCandidate']);
-    Route::post('/voting-status', [App\Http\Controllers\VotingController::class, 'toggleSystemVoting']);
+
     Route::put('/clubs/{club}', [ClubController::class, 'update']);
     Route::delete('/clubs/{club}', [ClubController::class, 'destroy']);
 
@@ -142,13 +144,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Resource routes (protected)
     Route::apiResource('events.registrations', App\Http\Controllers\EventRegistrationController::class)->shallow();
-
-    // Voting routes
-    Route::get('clubs/{club}/candidates', [App\Http\Controllers\VotingController::class, 'getCandidates']);
-    Route::post('clubs/{club}/vote', [App\Http\Controllers\VotingController::class, 'vote']);
-    Route::get('clubs/{club}/results', [App\Http\Controllers\VotingController::class, 'results']);
-    Route::get('clubs/{club}/vote-status', [App\Http\Controllers\VotingController::class, 'getVoteStatus']);
-    Route::get('/voting-status', [App\Http\Controllers\VotingController::class, 'getVotingStatus']);
 
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);
@@ -240,9 +235,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/clubs', [ClubController::class, 'index']);
     Route::get('/clubs/{club}', [ClubController::class, 'show']);
     Route::get('/my-clubs', [ClubController::class, 'myClubs']);
-    // search clubs by name or description
-    Route::post('/clubs/{club}/join', [ClubController::class, 'joinClub']);
-    Route::post('/clubs/{club}/leave', [ClubController::class, 'leaveClub']);
+    Route::get('/clubs/{clubId}/members', [ClubController::class, 'getClubMembers']);
 
     // Download routes
     Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);

@@ -25,12 +25,14 @@ class Club extends Model
 
     public function members()
     {
-        return $this->belongsToMany(User::class, 'club_members', 'club_id', 'user_id');
+        return $this->belongsToMany(User::class, 'club_members', 'club_id', 'user_id')
+            ->withPivot('name', 'picture')
+            ->withTimestamps();
     }
 
-    public function candidates()
+    public function clubMembers()
     {
-        return $this->hasMany(Candidate::class);
+        return $this->hasMany(ClubMember::class);
     }
 
     public function upcomingEvent()
