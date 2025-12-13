@@ -166,7 +166,7 @@ class EventController extends Controller
         ]);
 
         if ($request->hasFile('image_path')) {
-            $validated['image_path'] = $request->file('image_path')->store('events', 'public');
+            $validated['image_path'] = $request->file('image_path')->store('events', 's3');
         }
 
         $event = Event::create($validated);
@@ -199,7 +199,7 @@ class EventController extends Controller
         ]);
 
         if ($request->hasFile('image_path')) {
-            $validated['image_path'] = $request->file('image_path')->store('events', 'public');
+            $validated['image_path'] = $request->file('image_path')->store('events', 's3');
         }
 
         $event->update($validated);

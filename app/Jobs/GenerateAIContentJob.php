@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class GenerateAIContentJob implements ShouldQueue
 {
@@ -36,9 +37,14 @@ class GenerateAIContentJob implements ShouldQueue
                 throw new \Exception('Attachment not found');
             }
 
-            $attachmentPath = storage_path("app/public/{$attachment->file_path}");
-            if (!file_exists($attachmentPath)) {
-                throw new \Exception('Attachment file not found');
+            // Download file from S3 to temporary location
+            $tempPath = sys_get_temp_dir() . '/' . uniqid('ai_job_') . '_' . basename($attachment->file_path);
+            try {
+                $fileContents = Storage::disk('s3')->get($attachment->file_path);
+                file_put_contents($tempPath, $fileContents);
+                $attachmentPath = $tempPath;
+            } catch (\Exception $e) {
+                throw new \Exception('Attachment file not found in storage');
             }
 
             $mimeType = $attachment->mime_type ?? mime_content_type($attachmentPath) ?? 'application/octet-stream';

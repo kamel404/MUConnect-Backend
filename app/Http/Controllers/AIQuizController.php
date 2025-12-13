@@ -6,6 +6,8 @@ use App\Models\Resource;
 use App\Services\GeminiAIService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class AIQuizController extends Controller
 {
@@ -27,9 +29,14 @@ class AIQuizController extends Controller
             return response()->json(['error' => 'Attachment not found for this resource.'], 404);
         }
         
-        $attachmentPath = storage_path("app/public/{$attachment->file_path}");
-        if (!file_exists($attachmentPath)) {
-            return response()->json(['error' => 'Attachment file not found.'], 404);
+        // Download file from S3 to temporary location
+        $tempPath = sys_get_temp_dir() . '/' . uniqid('quiz_') . '_' . basename($attachment->file_path);
+        try {
+            $fileContents = Storage::disk('s3')->get($attachment->file_path);
+            file_put_contents($tempPath, $fileContents);
+            $attachmentPath = $tempPath;
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Attachment file not found in storage.'], 404);
         }
         
         $mimeType = $attachment->mime_type ?? mime_content_type($attachmentPath) ?? 'application/octet-stream';
@@ -37,8 +44,16 @@ class AIQuizController extends Controller
         $questionCount = $request->query('question_count', 10);
         $difficulty = $request->query('difficulty', 'medium');
         
+        // Cache key based on attachment file hash + parameters
+        $fileHash = md5_file($attachmentPath);
+        $cacheKey = "quiz:{$resourceId}:{$attachment->id}:{$fileHash}:{$questionCount}:{$difficulty}";
+        
         try {
-            $quiz = $aiService->generateQuizFromFile($attachmentPath, $mimeType, $questionCount, $difficulty);
+            // Cache for 24 hours (86400 seconds)
+            $quiz = Cache::remember($cacheKey, 86400, function() use ($aiService, $attachmentPath, $mimeType, $questionCount, $difficulty) {
+                return $aiService->generateQuizFromFile($attachmentPath, $mimeType, $questionCount, $difficulty);
+            });
+            
             return response()->json(['quiz' => $quiz]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -70,9 +85,14 @@ class AIQuizController extends Controller
             return response()->json(['error' => 'Attachment not found for this resource.'], 404);
         }
         
-        $attachmentPath = storage_path("app/public/{$attachment->file_path}");
-        if (!file_exists($attachmentPath)) {
-            return response()->json(['error' => 'Attachment file not found.'], 404);
+        // Download file from S3 to temporary location
+        $tempPath = sys_get_temp_dir() . '/' . uniqid('summary_') . '_' . basename($attachment->file_path);
+        try {
+            $fileContents = Storage::disk('s3')->get($attachment->file_path);
+            file_put_contents($tempPath, $fileContents);
+            $attachmentPath = $tempPath;
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Attachment file not found in storage.'], 404);
         }
         
         $mimeType = $attachment->mime_type ?? mime_content_type($attachmentPath) ?? 'application/octet-stream';
@@ -80,8 +100,15 @@ class AIQuizController extends Controller
         $summaryType = $request->query('summary_type', 'concise');
         $maxWords = $request->query('max_words', 300);
         
+        // Cache key based on attachment file hash + parameters
+        $fileHash = md5_file($attachmentPath);
+        $cacheKey = "summary:{$resourceId}:{$attachment->id}:{$fileHash}:{$summaryType}:{$maxWords}";
+        
         try {
-            $summary = $aiService->generateSummaryFromFile($attachmentPath, $mimeType, $summaryType, $maxWords);
+            // Cache for 24 hours (86400 seconds)
+            $summary = Cache::remember($cacheKey, 86400, function() use ($aiService, $attachmentPath, $mimeType, $summaryType, $maxWords) {
+                return $aiService->generateSummaryFromFile($attachmentPath, $mimeType, $summaryType, $maxWords);
+            });
             
             $response = [
                 'summary' => $summary,

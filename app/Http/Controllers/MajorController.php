@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Major;
 
 class MajorController extends Controller
@@ -13,7 +14,13 @@ class MajorController extends Controller
      */
     public function index()
     {
-        $majors = Major::paginate(10);
+        $page = request()->input('page', 1);
+        
+        // Cache for 1 hour (3600 seconds) - majors rarely change
+        $majors = Cache::remember("majors:list:page:{$page}", 3600, function () {
+            return Major::paginate(10);
+        });
+        
         return response()->json($majors);
     }
 
@@ -22,7 +29,10 @@ class MajorController extends Controller
      */
     public function show($id)
     {
-        $major = Major::with('faculty')->findOrFail($id);
+        $major = Cache::remember("major:{$id}:with_faculty", 3600, function () use ($id) {
+            return Major::with('faculty')->findOrFail($id);
+        });
+        
         return response()->json($major);
     }
 
@@ -38,6 +48,11 @@ class MajorController extends Controller
         ]);
 
         $major = Major::create($validated);
+        
+        // Clear majors list cache and faculty majors cache
+        Cache::tags(['majors'])->flush();
+        Cache::forget("faculty:{$validated['faculty_id']}:majors");
+        
         return response()->json(['message' => 'Major created successfully', 'major' => $major], 201);
     }
 
@@ -56,6 +71,17 @@ class MajorController extends Controller
         ]);
 
         $major->update($validated);
+        
+        // Clear cache for this major and majors list
+        Cache::forget("major:{$id}:with_faculty");
+        Cache::tags(['majors'])->flush();
+        
+        // Clear faculty majors cache for old and new faculty (if changed)
+        Cache::forget("faculty:{$major->faculty_id}:majors");
+        if (isset($validated['faculty_id']) && $validated['faculty_id'] != $major->faculty_id) {
+            Cache::forget("faculty:{$validated['faculty_id']}:majors");
+        }
+        
         return response()->json(['message' => 'Major updated successfully', 'major' => $major]);
     }
 
@@ -65,7 +91,14 @@ class MajorController extends Controller
     public function destroy($id)
     {
         $major = Major::findOrFail($id);
+        $facultyId = $major->faculty_id;
         $major->delete();
+        
+        // Clear cache for this major and majors list
+        Cache::forget("major:{$id}:with_faculty");
+        Cache::tags(['majors'])->flush();
+        Cache::forget("faculty:{$facultyId}:majors");
+        
         return response()->json(['message' => 'Major deleted successfully']);
     }
 

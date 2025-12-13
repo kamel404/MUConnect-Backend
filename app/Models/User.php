@@ -18,6 +18,7 @@ use App\Models\SectionRequest;
 use App\Models\Application;
 use App\Models\Notification;
 use App\Models\Club;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Comment;
 use App\Models\Upvote;
 
@@ -62,9 +63,14 @@ class User extends Authenticatable
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
-            return asset('storage/avatars/' . $this->avatar);
+            // Check if it's already a full URL (from S3)
+            if (str_starts_with($this->avatar, 'http')) {
+                return $this->avatar;
+            }
+            // If it's just a filename, construct S3 URL
+            return Storage::disk('s3')->url('avatars/' . $this->avatar);
         }
-        return asset('storage/avatars/default.png');
+        return Storage::disk('s3')->url('avatars/default.png');
     }
 
 

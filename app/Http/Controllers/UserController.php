@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Models\Comment;
 use App\Models\Upvote;
@@ -106,6 +107,7 @@ class UserController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'avatar' => $user->avatar,
+            'avatar_url' => $user->avatar_url,
             'bio' => $user->bio,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
@@ -132,6 +134,7 @@ class UserController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'avatar' => $user->avatar,
+            'avatar_url' => $user->avatar_url,
             'bio' => $user->bio,
             'created_at' => $user->created_at,
             'updated_at' => $user->updated_at,
@@ -170,7 +173,7 @@ class UserController extends Controller
         // Handle avatar upload if provided
         if ($request->hasFile('avatar')) {
             // Store the uploaded file
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $avatarPath = $request->file('avatar')->store('avatars', 's3');
             // Get just the filename without the path
             $avatarFileName = basename($avatarPath);
             $validated['avatar'] = $avatarFileName;
@@ -300,50 +303,53 @@ class UserController extends Controller
         $currentUser = auth()->user();
         
         if ($currentUser && ($currentUser->hasRole('admin') || $currentUser->hasRole('moderator'))) {
-            $topPostingUsers = User::withCount('resources')
-                ->orderBy('resources_count', 'desc')
-                ->take(5)
-                ->get(['id', 'username', 'resources_count']);
+            // Cache admin charts for 10 minutes (600 seconds) - expensive queries, same for all admins
+            $charts = Cache::remember('admin:profile_charts', 600, function () {
+                $topPostingUsers = User::withCount('resources')
+                    ->orderBy('resources_count', 'desc')
+                    ->take(5)
+                    ->get(['id', 'username', 'resources_count']);
 
-            $topCommentingUsers = Comment::select('user_id', DB::raw('COUNT(*) as comments_count'))
-                ->groupBy('user_id')
-                ->orderBy('comments_count', 'desc')
-                ->take(5)
-                ->get()
-                ->map(function ($row) {
-                    $usr = User::find($row->user_id);
-                    return [
-                        'id'             => $usr->id,
-                        'username'       => $usr->username,
-                        'comments_count' => $row->comments_count,
-                    ];
-                });
+                $topCommentingUsers = Comment::select('user_id', DB::raw('COUNT(*) as comments_count'))
+                    ->groupBy('user_id')
+                    ->orderBy('comments_count', 'desc')
+                    ->take(5)
+                    ->get()
+                    ->map(function ($row) {
+                        $usr = User::find($row->user_id);
+                        return [
+                            'id'             => $usr->id,
+                            'username'       => $usr->username,
+                            'comments_count' => $row->comments_count,
+                        ];
+                    });
 
-            $topUpvotingUsers = Upvote::select('user_id', DB::raw('COUNT(*) as upvotes_given'))
-                ->groupBy('user_id')
-                ->orderBy('upvotes_given', 'desc')
-                ->take(5)
-                ->get()
-                ->map(function ($row) {
-                    $usr = User::find($row->user_id);
-                    return [
-                        'id'            => $usr->id,
-                        'username'      => $usr->username,
-                        'upvotes_given' => $row->upvotes_given,
-                    ];
-                });
+                $topUpvotingUsers = Upvote::select('user_id', DB::raw('COUNT(*) as upvotes_given'))
+                    ->groupBy('user_id')
+                    ->orderBy('upvotes_given', 'desc')
+                    ->take(5)
+                    ->get()
+                    ->map(function ($row) {
+                        $usr = User::find($row->user_id);
+                        return [
+                            'id'            => $usr->id,
+                            'username'      => $usr->username,
+                            'upvotes_given' => $row->upvotes_given,
+                        ];
+                    });
 
-            $topCourses = \App\Models\Course::withCount('resources')
-                ->orderBy('resources_count', 'desc')
-                ->take(5)
-                ->get(['id', 'code', 'title', 'resources_count']);
+                $topCourses = \App\Models\Course::withCount('resources')
+                    ->orderBy('resources_count', 'desc')
+                    ->take(5)
+                    ->get(['id', 'code', 'title', 'resources_count']);
 
-            $charts = [
-                'top_posting_users'    => $topPostingUsers,
-                'top_commenting_users' => $topCommentingUsers,
-                'top_upvoting_users'   => $topUpvotingUsers,
-                'top_courses'          => $topCourses,
-            ];
+                return [
+                    'top_posting_users'    => $topPostingUsers,
+                    'top_commenting_users' => $topCommentingUsers,
+                    'top_upvoting_users'   => $topUpvotingUsers,
+                    'top_courses'          => $topCourses,
+                ];
+            });
         }
 
         // Gather analytics data (without section requests and clubs)

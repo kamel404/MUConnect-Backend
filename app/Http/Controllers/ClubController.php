@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\Club;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use App\Models\User;
 use App\Models\ClubMember;
 
@@ -35,6 +36,7 @@ class ClubController extends Controller
     public function show($id)
     {
         $club = Club::with('clubMembers')->findOrFail($id);
+        
         return response()->json($club);
     }
 
@@ -53,14 +55,13 @@ class ClubController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $validated['members'] = 0; // Initialize members count
-        $club = Club::create($validated);
-
         // Handle logo upload if provided
         if ($request->hasFile('logo')) {
-            $club->logo = $request->file('logo')->store('clubs', 'public');
-            $club->save();
+            $validated['logo'] = $request->file('logo')->store('clubs', 's3');
         }
+
+        $validated['members'] = 0; // Initialize members count
+        $club = Club::create($validated);
 
         return response()->json($club, 201);
     }
@@ -106,7 +107,7 @@ class ClubController extends Controller
         $validated['organizer'] = $club->name;
 
         if ($request->hasFile('image_path')) {
-            $validated['image_path'] = $request->file('image_path')->store('events', 'public');
+            $validated['image_path'] = $request->file('image_path')->store('events', 's3');
         }
 
         $event = Event::create($validated);
@@ -133,7 +134,7 @@ class ClubController extends Controller
 
         // Handle logo upload if provided
         if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')->store('clubs', 'public');
+            $validated['logo'] = $request->file('logo')->store('clubs', 's3');
         }
 
         $club->update($validated);
@@ -181,7 +182,7 @@ class ClubController extends Controller
 
         $picturePath = null;
         if ($request->hasFile('picture')) {
-            $picturePath = $request->file('picture')->store('club_members', 'public');
+            $picturePath = $request->file('picture')->store('club_members', 's3');
         }
 
         $member = $club->clubMembers()->create([
@@ -218,7 +219,7 @@ class ClubController extends Controller
         ]);
 
         if ($request->hasFile('picture')) {
-            $validated['picture'] = $request->file('picture')->store('club_members', 'public');
+            $validated['picture'] = $request->file('picture')->store('club_members', 's3');
         }
 
         $clubMember->update($validated);

@@ -32,7 +32,8 @@ class Attachment extends Model
             return $value;
         }
 
-        return Storage::url($this->file_path);
+        return Storage::disk('s3')->url($this->file_path); // Change to use 's3' disk
+
     }
 
 }

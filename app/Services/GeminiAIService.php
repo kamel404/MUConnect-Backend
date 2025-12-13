@@ -4,13 +4,11 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Client\RequestException;
 
 class GeminiAIService
 {
     private const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    private const CACHE_TTL = 3600; // 1 hour
     private const MAX_RETRIES = 3;
     
     private array $supportedMimeTypes = [
@@ -32,20 +30,9 @@ class GeminiAIService
     ): array {
         // Input validation
         $this->validateInputs($filePath, $mimeType, $questionCount, $difficulty);
-        
-        // Check cache first
-        $cacheKey = $this->generateCacheKey($filePath, $questionCount, $difficulty, 'quiz');
-        if ($cachedQuiz = Cache::get($cacheKey)) {
-            return $cachedQuiz;
-        }
 
         try {
-            $quiz = $this->processFileAndGenerateQuiz($filePath, $mimeType, $questionCount, $difficulty);
-            
-            // Cache the result
-            Cache::put($cacheKey, $quiz, self::CACHE_TTL);
-            
-            return $quiz;
+            return $this->processFileAndGenerateQuiz($filePath, $mimeType, $questionCount, $difficulty);
             
         } catch (\Exception $e) {
             Log::error('Quiz generation failed', [
@@ -65,20 +52,9 @@ class GeminiAIService
     ): array {
         // Input validation for summary
         $this->validateSummaryInputs($filePath, $mimeType, $summaryType, $maxWords);
-        
-        // Check cache first
-        $cacheKey = $this->generateCacheKey($filePath, $maxWords, $summaryType, 'summary');
-        if ($cachedSummary = Cache::get($cacheKey)) {
-            return $cachedSummary;
-        }
 
         try {
-            $summary = $this->processFileAndGenerateSummary($filePath, $mimeType, $summaryType, $maxWords);
-            
-            // Cache the result
-            Cache::put($cacheKey, $summary, self::CACHE_TTL);
-            
-            return $summary;
+            return $this->processFileAndGenerateSummary($filePath, $mimeType, $summaryType, $maxWords);
             
         } catch (\Exception $e) {
             Log::error('Summary generation failed', [
@@ -522,11 +498,6 @@ PROMPT;
 
         // Using the newer Gemini 2.5 Flash model
         return "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$apiKey}";
-    }
-
-    private function generateCacheKey(string $filePath, int $param1, string $param2, string $type): string
-    {
-        return "{$type}_" . md5($filePath . filemtime($filePath) . $param1 . $param2);
     }
 
     /**

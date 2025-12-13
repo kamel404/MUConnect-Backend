@@ -28,11 +28,6 @@ class Club extends Model
         return $this->hasMany(ClubMember::class);
     }
 
-    public function clubMembers()
-    {
-        return $this->hasMany(ClubMember::class);
-    }
-
     public function upcomingEvent()
     {
         return $this->events()

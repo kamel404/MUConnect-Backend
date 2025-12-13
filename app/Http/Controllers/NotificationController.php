@@ -30,7 +30,7 @@ class NotificationController extends Controller
                 : 'System',
             'sender_avatar' => $notification->sender
                 ? $notification->sender->avatar_url
-                : asset('storage/avatars/default.png'),
+                : Storage::disk('s3')->url('avatars/default.png'),
             'url' => $notification->data['url'] ?? null,
         ];
     });

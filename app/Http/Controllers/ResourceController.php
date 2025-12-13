@@ -9,6 +9,7 @@ use App\Models\Upvote;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Notification;
 use App\Http\Requests\StoreResourceRequest;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class ResourceController extends Controller
 {
     /**
      * Get top contributors based on resources and upvotes
+     * Uses weighted scoring system to reward quality contributions
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -33,7 +35,11 @@ class ResourceController extends Controller
         }
         $limit = min($limit, 15);
 
-        $topContributors = \App\Models\User::query()
+        // Cache for 10 minutes (600 seconds) - expensive query, same for all users
+        $cacheKey = "top_contributors:limit:{$limit}";
+        
+        $topContributors = Cache::remember($cacheKey, 600, function () use ($limit) {
+            return \App\Models\User::query()
             ->without('roles')
             ->select([
                 'users.id',
@@ -41,15 +47,27 @@ class ResourceController extends Controller
                 'users.last_name',
                 'users.avatar',
                 'users.major_id',
+                'users.created_at',
             ])
             ->with(['major:id,name'])
-            ->selectRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) as resources_count')
+            
+            // Approved resources only
+            ->selectSub(function ($query) {
+                $query->selectRaw('COUNT(*)')
+                    ->from('resources')
+                    ->whereColumn('resources.user_id', 'users.id')
+                    ->where('resources.approval_status', 'approved');
+            }, 'approved_resources_count')
+            
+            // User profile upvotes
             ->selectSub(function ($query) {
                 $query->selectRaw('COUNT(*)')
                     ->from('upvotes')
                     ->whereColumn('upvotes.upvoteable_id', 'users.id')
                     ->where('upvoteable_type', \App\Models\User::class);
             }, 'user_upvote_count')
+            
+            // Resource upvotes (only on approved resources)
             ->selectSub(function ($query) {
                 $query->selectRaw('COUNT(*)')
                     ->from('resources')
@@ -57,30 +75,62 @@ class ResourceController extends Controller
                         $join->on('resources.id', '=', 'upvotes.upvoteable_id')
                             ->where('upvotes.upvoteable_type', \App\Models\Resource::class);
                     })
-                    ->whereColumn('resources.user_id', 'users.id');
+                    ->whereColumn('resources.user_id', 'users.id')
+                    ->where('resources.approval_status', 'approved');
             }, 'resource_upvote_count')
-            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) > 0')
-            ->orderByRaw('resources_count DESC')
-            ->orderByRaw('(user_upvote_count + resource_upvote_count) DESC')
-            ->limit($limit)
+            
+            // Comments made by user
+            ->selectSub(function ($query) {
+                $query->selectRaw('COUNT(*)')
+                    ->from('comments')
+                    ->whereColumn('comments.user_id', 'users.id');
+            }, 'comments_count')
+            
+            // Upvotes on user's comments
+            ->selectSub(function ($query) {
+                $query->selectRaw('COUNT(*)')
+                    ->from('comments')
+                    ->join('upvotes', function ($join) {
+                        $join->on('comments.id', '=', 'upvotes.upvoteable_id')
+                            ->where('upvotes.upvoteable_type', \App\Models\Comment::class);
+                    })
+                    ->whereColumn('comments.user_id', 'users.id');
+            }, 'comment_upvote_count')
+            
+            // Only users with approved resources
+            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id AND resources.approval_status = "approved") > 0')
+            
             ->get()
             ->map(function ($user) {
-                $resourcesCount = (int) $user->resources_count;
+                $approvedResources = (int) $user->approved_resources_count;
                 $userUpvotes = (int) $user->user_upvote_count;
                 $resourceUpvotes = (int) $user->resource_upvote_count;
-
+                $comments = (int) $user->comments_count;
+                $commentUpvotes = (int) $user->comment_upvote_count;
+                
+                // Weighted scoring system
+                $resourceScore = $approvedResources * 5;      // 5 points per approved resource
+                $resourceUpvoteScore = $resourceUpvotes * 3;   // 3 points per resource upvote
+                $commentScore = $comments * 2;                  // 2 points per comment
+                $commentUpvoteScore = $commentUpvotes * 1;     // 1 point per comment upvote
+                $profileUpvoteScore = $userUpvotes * 5;        // 5 points per profile upvote
+                
+                $totalScore = $resourceScore + $resourceUpvoteScore + $commentScore + $commentUpvoteScore + $profileUpvoteScore;
+                
                 return [
                     'id' => $user->id,
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'avatar_url' => $user->avatar_url,
                     'major_name' => optional($user->major)->name,
-                    'resources_count' => $resourcesCount,
-                    'user_upvote_count' => $userUpvotes,
-                    'resource_upvote_count' => $resourceUpvotes,
-                    'contribution_score' => $resourcesCount + $userUpvotes + $resourceUpvotes,
+                    // Total contribution score
+                    'contribution_score' => $totalScore,
                 ];
-            });
+            })
+            ->sortByDesc('contribution_score')
+            ->take($limit)
+            ->values();
+        });
 
         return response()->json([
             'data' => $topContributors
@@ -382,7 +432,7 @@ class ResourceController extends Controller
                     };
 
                     $storagePath = "attachments/{$enumType}";
-                    $path = $file->store($storagePath, 'public');
+                    $path = $file->store($storagePath, 's3'); // Change from 'public' to 's3'
 
                     $newAttachment = Attachment::create([
                         'original_name' => $file->getClientOriginalName(),
@@ -489,7 +539,7 @@ class ResourceController extends Controller
                         default => 'others',
                     };
                     $storagePath = "attachments/{$enumType}";
-                    $path = $file->store($storagePath, 'public');
+                    $path = $file->store($storagePath, 's3'); // Change from 'public' to 's3'
                     $newAttachment = Attachment::create([
                         'original_name' => $file->getClientOriginalName(),
                         'file_path' => $path,
@@ -695,8 +745,8 @@ class ResourceController extends Controller
             // Delete orphaned attachments and files
             foreach ($attachments as $attachment) {
                 if ($attachment->resources()->count() === 0) {
-                    if (Storage::disk('public')->exists($attachment->file_path)) {
-                        Storage::disk('public')->delete($attachment->file_path);
+                    if (Storage::disk('s3')->exists($attachment->file_path)) {
+                        Storage::disk('s3')->delete($attachment->file_path);
                     }
                     $attachment->delete();
                 }
@@ -783,7 +833,7 @@ class ResourceController extends Controller
         $path = $file->storeAs(
             'attachments/' . date('Y/m'),
             $secureFilename,
-            'private'
+            's3' // Change from 'private' to 's3'
         );
 
         return [
@@ -880,11 +930,11 @@ class ResourceController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
-            if (!Storage::disk('private')->exists($attachment->file_path)) {
+            if (!Storage::disk('s3')->exists($attachment->file_path)) {
                 return response()->json(['message' => 'File not found'], 404);
             }
 
-            return Storage::disk('private')->download(
+            return Storage::disk('s3')->download(
                 $attachment->file_path,
                 $attachment->original_name
             );
@@ -1092,8 +1142,8 @@ class ResourceController extends Controller
             // Delete orphaned attachments and files
             foreach ($attachments as $attachment) {
                 if ($attachment->resources()->count() === 0) {
-                    if (Storage::disk('public')->exists($attachment->file_path)) {
-                        Storage::disk('public')->delete($attachment->file_path);
+                    if (Storage::disk('s3')->exists($attachment->file_path)) {
+                        Storage::disk('s3')->delete($attachment->file_path);
                     }
                     $attachment->delete();
                 }

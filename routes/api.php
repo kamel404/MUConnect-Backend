@@ -21,8 +21,6 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
-use App\Http\Controllers\StorageController;
-use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\AIQuizController;
 
 
@@ -33,9 +31,6 @@ Route::post('/login', [AuthController::class, 'login']);
 // Email verification routes
 Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
 Route::post('/email/resend', [\App\Http\Controllers\VerificationController::class, 'resend']);
-
-// Storage proxy route to handle CORS for files
-Route::get('/storage/{path}', [StorageController::class, 'proxyFile'])->where('path', '.*');
 
 // Auth routes (protected)
 Route::middleware('auth:sanctum')->group(function () {
@@ -233,9 +228,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/clubs', [ClubController::class, 'index']);
     Route::get('/clubs/{club}', [ClubController::class, 'show']);
     Route::get('/clubs/{clubId}/members', [ClubController::class, 'getClubMembers']);
-
-    // Download routes
-    Route::get('/resources/download/{type}/{filename}', [DownloadController::class, 'download']);
 
     // AI Quiz routes
     Route::get('/resources/{resourceId}/generate-quiz', [AIQuizController::class, 'generate']);

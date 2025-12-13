@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Faculty;
 
 class FacultyController extends Controller
@@ -12,7 +13,11 @@ class FacultyController extends Controller
     */
     public function index()
     {   
-        $faculties = Faculty::all();
+        // Cache for 1 hour (3600 seconds) - faculties rarely change
+        $faculties = Cache::remember('faculties:all', 3600, function () {
+            return Faculty::all();
+        });
+        
         return response()->json($faculties);
     }
 
@@ -30,6 +35,9 @@ class FacultyController extends Controller
 
         $faculty = Faculty::create($validatedData);
 
+        // Clear faculties cache
+        Cache::forget('faculties:all');
+
         return response()->json(['message' => 'Faculty created successfully', 'faculty' => $faculty], 201);
     }
 
@@ -38,7 +46,10 @@ class FacultyController extends Controller
     */
     public function show($id)
     {
-        $faculty = Faculty::findOrFail($id);
+        $faculty = Cache::remember("faculty:{$id}", 3600, function () use ($id) {
+            return Faculty::findOrFail($id);
+        });
+        
         return response()->json($faculty);
     }
 
@@ -57,6 +68,11 @@ class FacultyController extends Controller
 
         $faculty->update($validatedData);
 
+        // Clear cache for this faculty and all faculties list
+        Cache::forget("faculty:{$id}");
+        Cache::forget('faculties:all');
+        Cache::forget("faculty:{$id}:majors");
+
         return response()->json(['message' => 'Faculty updated successfully', 'faculty' => $faculty]);
     }
 
@@ -67,6 +83,11 @@ class FacultyController extends Controller
     {
         $faculty = Faculty::findOrFail($id);
         $faculty->delete();
+
+        // Clear cache for this faculty and all faculties list
+        Cache::forget("faculty:{$id}");
+        Cache::forget('faculties:all');
+        Cache::forget("faculty:{$id}:majors");
 
         return response()->json(['message' => 'Faculty deleted successfully']);
     }
@@ -87,8 +108,11 @@ class FacultyController extends Controller
     // get faculty majors
     public function getFacultyMajors($id)
     {
-        $faculty = Faculty::findOrFail($id);
-        $majors = $faculty->majors;
+        $majors = Cache::remember("faculty:{$id}:majors", 3600, function () use ($id) {
+            $faculty = Faculty::findOrFail($id);
+            return $faculty->majors;
+        });
+        
         return response()->json($majors);
     }
 }
