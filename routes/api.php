@@ -19,14 +19,20 @@ use App\Http\Controllers\SectionRequestController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ClubController;
-use App\Http\Controllers\EventRegistrationController;
+// use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\AIQuizController;
+use App\Http\Controllers\ResourceReportController;
 
 
 // Auth routes (public)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Password reset routes (public)
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/verify-reset-token', [AuthController::class, 'verifyResetToken']);
 
 // Email verification routes
 Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
@@ -88,10 +94,10 @@ Route::middleware(['auth:sanctum', 'role:moderator|admin'])->group(function () {
     Route::put('/clubs/{club}', [ClubController::class, 'update']);
     Route::delete('/clubs/{club}', [ClubController::class, 'destroy']);
 
-    // Resource approval routes
-    Route::get('/admin/resources/pending', [ResourceController::class, 'getPendingResources']);
-    Route::post('/admin/resources/{id}/approve', [ResourceController::class, 'approveResource']);
-    Route::post('/admin/resources/{id}/reject', [ResourceController::class, 'rejectResource']);
+    // Resource reports moderation
+    Route::get('/admin/resources/reported', [ResourceReportController::class, 'index']);
+    Route::post('/admin/resources/{id}/reports/reviewed', [ResourceReportController::class, 'markReviewed']);
+    Route::post('/admin/resources/{id}/reports/dismiss', [ResourceReportController::class, 'dismiss']);
 });
 
 
@@ -107,6 +113,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/resources/{id}', [ResourceController::class, 'destroyTest']);
     Route::post('/resources/{id}/toggleSave', [ResourceController::class, 'toggleSave']);
     Route::post('/resources/{id}/toggle-upvote', [ResourceController::class, 'toggleUpvote']);
+
+    // Report a resource
+    Route::post('/resources/{id}/report', [ResourceReportController::class, 'store']);
 
     // User's own resources (all statuses)
     Route::get('/my-resources', [ResourceController::class, 'getUserResources']);
@@ -136,7 +145,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/saved-items', [\App\Http\Controllers\SavedItemController::class, 'index']);
 
     // Resource routes (protected)
-    Route::apiResource('events.registrations', App\Http\Controllers\EventRegistrationController::class)->shallow();
+    // Route::apiResource('events.registrations', App\Http\Controllers\EventRegistrationController::class)->shallow();
 
     // Faculty routes (protected)
     Route::get('faculties/search/{query}', [FacultyController::class, 'search']);

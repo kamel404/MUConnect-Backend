@@ -52,7 +52,19 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://mu-connect.me'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Frontend Application URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used to generate links to the frontend application, such as
+    | password reset links and email verification links.
+    |
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'https://mu-connect.me'),
 
     /*
     |--------------------------------------------------------------------------

@@ -51,12 +51,11 @@ class ResourceController extends Controller
             ])
             ->with(['major:id,name'])
             
-            // Approved resources only
+            // Resources count (removed approval check)
             ->selectSub(function ($query) {
                 $query->selectRaw('COUNT(*)')
                     ->from('resources')
-                    ->whereColumn('resources.user_id', 'users.id')
-                    ->where('resources.approval_status', 'approved');
+                    ->whereColumn('resources.user_id', 'users.id');
             }, 'approved_resources_count')
             
             // User profile upvotes
@@ -67,7 +66,7 @@ class ResourceController extends Controller
                     ->where('upvoteable_type', \App\Models\User::class);
             }, 'user_upvote_count')
             
-            // Resource upvotes (only on approved resources)
+            // Resource upvotes (removed approval check)
             ->selectSub(function ($query) {
                 $query->selectRaw('COUNT(*)')
                     ->from('resources')
@@ -75,8 +74,7 @@ class ResourceController extends Controller
                         $join->on('resources.id', '=', 'upvotes.upvoteable_id')
                             ->where('upvotes.upvoteable_type', \App\Models\Resource::class);
                     })
-                    ->whereColumn('resources.user_id', 'users.id')
-                    ->where('resources.approval_status', 'approved');
+                    ->whereColumn('resources.user_id', 'users.id');
             }, 'resource_upvote_count')
             
             // Comments made by user
@@ -97,8 +95,8 @@ class ResourceController extends Controller
                     ->whereColumn('comments.user_id', 'users.id');
             }, 'comment_upvote_count')
             
-            // Only users with approved resources
-            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id AND resources.approval_status = "approved") > 0')
+            // Only users with resources (removed approval check)
+            ->whereRaw('(SELECT COUNT(*) FROM resources WHERE resources.user_id = users.id) > 0')
             
             ->get()
             ->map(function ($user) {
@@ -150,8 +148,7 @@ class ResourceController extends Controller
             $query->with('options');
         }]);
 
-        // Only show approved resources (for all users, including admins and moderators)
-        $resourcesQuery->approved();
+        // Removed: $resourcesQuery->approved();
 
         // Apply filters if provided
         // Filter by faculty_id
@@ -454,7 +451,7 @@ class ResourceController extends Controller
                 'course_id' => $request->input('course_id'),
                 'major_id' => $request->input('major_id'),
                 'faculty_id' => $request->input('faculty_id'),
-                'approval_status' => 'pending', // Always start as pending
+                // Removed: 'approval_status' => 'pending',
             ]);
 
             if (!empty($attachments)) {
@@ -484,15 +481,13 @@ class ResourceController extends Controller
                 }
             }
 
-            // Notify admins and moderators about new resource pending approval
-            $this->notifyModeratorsForApproval($resource);
+            // Removed: $this->notifyModeratorsForApproval($resource);
 
             DB::commit();
 
             return response()->json([
-                'message' => 'Resource submitted successfully and is pending approval',
+                'message' => 'Resource submitted successfully',
                 'resource' => $resource->load(['attachments', 'user', 'course', 'polls.options']),
-                'status' => 'pending_approval'
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -952,221 +947,7 @@ class ResourceController extends Controller
     }
 
     /**
-     * Get pending resources for approval (Admin/Moderator only)
-     */
-    public function getPendingResources(Request $request)
-    {
-        $user = Auth::user();
-
-        if (!$user->hasRole(['admin', 'moderator'])) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $query = Resource::with([
-            'user:id,username,first_name,last_name,avatar',
-            'attachments:id,file_path,file_type,mime_type,original_name',
-            'course:id,name',
-            'polls' => function($query) {
-                $query->with('options');
-            }
-        ])
-        ->select('id', 'user_id', 'title', 'description', 'approval_status', 'created_at')
-        ->where('approval_status', 'pending')
-        ->orderBy('created_at', 'desc');
-
-        if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhereHas('user', function($uq) use ($search) {
-                    $uq->where('username', 'like', "%{$search}%")
-                        ->orWhere('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%");
-                });
-            });
-        }
-
-        $resources = $query->paginate($request->input('per_page', 10));
-
-        // Transform to simplified structure
-        $resources->getCollection()->transform(function ($resource) {
-            return [
-                'id' => $resource->id,
-                'title' => $resource->title,
-                'description' => $resource->description,
-                'created_at' => $resource->created_at->toDateTimeString(),
-                'approval_status' => $resource->approval_status,
-                'user' => [
-                    'id' => $resource->user->id,
-                    'username' => $resource->user->username,
-                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
-                    'avatar_url' => $resource->user->avatar_url ?? asset("storage/avatars/{$resource->user->avatar}"),
-                ],
-                'course' => $resource->course?->name,
-                'attachments' => $resource->attachments->map(fn($a) => [
-                    'id' => $a->id,
-                    'url' => $a->url,
-                    'type' => $a->file_type,
-                    'mime_type' => $a->mime_type,
-                    'original_name' => $a->original_name,
-                ]),
-                'polls' => $resource->polls ? [
-                    'id' => $resource->polls->id,
-                    'question' => $resource->polls->question,
-                    'options' => $resource->polls->options->map(fn($opt) => [
-                        'id' => $opt->id,
-                        'option_text' => $opt->option_text,
-                        'vote_count' => $opt->vote_count,
-                    ]),
-                ] : null,
-            ];
-        });
-
-        return response()->json($resources);
-    }
-
-
-    /**
-     * Approve a resource (Admin/Moderator only)
-     */
-    public function approveResource($id)
-    {
-        $user = Auth::user();
-
-        if (!$user->hasRole(['admin', 'moderator'])) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $resource = Resource::findOrFail($id);
-
-        if ($resource->approval_status !== 'pending') {
-            return response()->json(['message' => 'Resource is not pending approval'], 400);
-        }
-
-        $resource->update([
-            'approval_status' => 'approved',
-            'approved_by' => $user->id,
-            'approved_at' => now(),
-            'rejection_reason' => null,
-        ]);
-
-        // Notify resource owner about approval
-        Notification::create([
-            'user_id' => $resource->user_id,
-            'sender_id' => $user->id,
-            'type' => 'resource_approved',
-            'data' => [
-                'resource_id' => $resource->id,
-                'resource_title' => $resource->title,
-                'message' => 'Your resource "' . $resource->title . '" has been approved',
-                'url' => url('/resources/' . $resource->id),
-            ],
-        ]);
-
-        return response()->json([
-            'message' => 'Resource approved successfully',
-            'resource' => [
-                'id' => $resource->id,
-                'title' => $resource->title,
-                'description' => $resource->description,
-                'approval_status' => $resource->approval_status,
-                'approved_at' => $resource->approved_at,
-                'user' => [
-                    'id' => $resource->user->id,
-                    'username' => $resource->user->username,
-                    'full_name' => trim($resource->user->first_name . ' ' . $resource->user->last_name),
-                    'avatar_url' => $resource->user->avatar_url ?? asset('storage/avatars/' . $resource->user->avatar),
-                ],
-                'approved_by' => [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                    'full_name' => trim($user->first_name . ' ' . $user->last_name),
-                ],
-            ]
-        ]);
-
-    }
-
-    /**
-     * Reject a resource (Admin/Moderator only)
-     */
-    public function rejectResource(Request $request, $id)
-    {
-        $user = Auth::user();
-
-        if (!$user->hasRole(['admin', 'moderator'])) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        $validated = $request->validate([
-            'reason' => 'required|string|max:500'
-        ]);
-
-        $resource = Resource::with('attachments')->findOrFail($id);
-
-        if ($resource->approval_status !== 'pending') {
-            return response()->json(['message' => 'Resource is not pending approval'], 400);
-        }
-
-        // Store resource info before deletion for response
-        $resourceInfo = [
-            'id' => $resource->id,
-            'title' => $resource->title,
-            'description' => $resource->description,
-        ];
-
-        // Notify resource owner about rejection (without resource link)
-        Notification::create([
-            'user_id' => $resource->user_id,
-            'sender_id' => $user->id,
-            'type' => 'resource_rejected',
-            'data' => [
-                'resource_id' => $resource->id,
-                'resource_title' => $resource->title,
-                'message' => 'Your resource "' . $resource->title . '" has been rejected',
-                'reason' => $validated['reason'],
-            ],
-        ]);
-
-        DB::beginTransaction();
-        try {
-            // Delete all attachments associated with this resource
-            $attachments = $resource->attachments;
-
-            // Detach all attachments (pivot cleanup)
-            $resource->attachments()->detach();
-
-            // Delete the resource
-            $resource->delete();
-
-            // Delete orphaned attachments and files
-            foreach ($attachments as $attachment) {
-                if ($attachment->resources()->count() === 0) {
-                    if (Storage::disk('s3')->exists($attachment->file_path)) {
-                        Storage::disk('s3')->delete($attachment->file_path);
-                    }
-                    $attachment->delete();
-                }
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Resource rejected and deleted successfully',
-                'resource' => $resourceInfo
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error rejecting resource',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-    /**
-     * Get user's own resources with all statuses
+     * Get user's own resources
      */
     public function getUserResources()
     {
@@ -1186,57 +967,13 @@ class ResourceController extends Controller
             'resources' => $resources,
             'counts' => [
                 'total' => $resources->count(),
-                'approved' => $resources->where('approval_status', 'approved')->count(),
-                'pending' => $resources->where('approval_status', 'pending')->count(),
-                'rejected' => $resources->where('approval_status', 'rejected')->count(),
             ]
         ]);
     }
 
-    /**
-     * Notify moderators about new resource for approval
-     */
-    private function notifyModeratorsForApproval($resource)
-    {
-        $moderators = \App\Models\User::role(['admin', 'moderator'])->get();
-
-        foreach ($moderators as $moderator) {
-            Notification::create([
-                'user_id' => $moderator->id,
-                'sender_id' => $resource->user_id,
-                'type' => 'resource_pending_approval',
-                'data' => [
-                    'resource_id' => $resource->id,
-                    'resource_title' => $resource->title,
-                    'message' => 'New resource "' . $resource->title . '" is pending approval',
-                    'url' => url('/admin/resources/pending'),
-                ],
-            ]);
-        }
-    }
-
     private function userCanAccessResource($resource)
     {
-        $user = auth()->user();
-
-        // Resource owner can always access their own resources (even if rejected)
-        if ($resource->user_id === $user->id) {
-            return true;
-        }
-
-        // Admins and moderators can access all resources
-        if ($user->hasRole(['admin', 'moderator'])) {
-            return true;
-        }
-
-        // Regular users can only access approved resources
-        if ($resource->approval_status !== 'approved') {
-            return false;
-        }
-
-        // Check if user is enrolled in the same course
-//        return $user->enrolledCourses()->where('course_id', $resource->course_id)->exists();
-
+        // Access logic simplified as approval is gone
         return true;
     }
 }

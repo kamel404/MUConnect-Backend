@@ -8,20 +8,34 @@ use App\Models\Course;
 
 class CourseController extends Controller
 {
+
     public function index(Request $request)
     {
-        // List courses with optional filters and pagination
         $perPage = $request->input('per_page', 5);
 
-        $coursesQuery = Course::with(['faculty', 'categories']);
+        $coursesQuery = Course::query()
+            ->select([
+                'id',
+                'code',
+                'title',
+            ]);
 
-        // Filter by major_id if provided
         if ($request->filled('major_id')) {
-            $coursesQuery->where('major_id', $request->input('major_id'));
+            $coursesQuery->where('major_id', $request->major_id);
         }
 
-        $courses = $coursesQuery->paginate($perPage);
-        return response()->json($courses);
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $coursesQuery->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        return response()->json(
+            $coursesQuery->paginate($perPage)
+        );
     }
 
     public function store(Request $request)

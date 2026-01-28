@@ -49,7 +49,7 @@ class CourseSeeder extends Seeder
                         'semester' => null,
                         'code' => $code,
                         'faculty_id' => $faculty->id,
-                        'major_id' => optional($faculty->majors()->first())->id ?? 1,
+                        'major_id' => optional($faculty->majors()->first())->id,
                     ]);
                 }
             } else {

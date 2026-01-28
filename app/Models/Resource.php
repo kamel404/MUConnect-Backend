@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ResourceReport;
 
 class Resource extends Model
 {
@@ -18,24 +19,11 @@ class Resource extends Model
         'course_id',
         'major_id',
         'faculty_id',
-        'approval_status',
-        'approved_by',
-        'approved_at',
-        'rejection_reason',
-    ];
-
-    protected $casts = [
-        'approved_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function approver()
-    {
-        return $this->belongsTo(User::class, 'approved_by');
     }
 
     public function comments()
@@ -88,27 +76,13 @@ class Resource extends Model
         return $this->upvotes()->where('user_id', $userId)->exists();
     }
 
-    /**
-     * Scope to get only approved resources
-     */
-    public function scopeApproved($query)
+    public function reports()
     {
-        return $query->where('approval_status', 'approved');
+        return $this->hasMany(ResourceReport::class);
     }
 
-    /**
-     * Scope to get pending resources
-     */
-    public function scopePending($query)
+    public function openReports()
     {
-        return $query->where('approval_status', 'pending');
-    }
-
-    /**
-     * Scope to get rejected resources
-     */
-    public function scopeRejected($query)
-    {
-        return $query->where('approval_status', 'rejected');
+        return $this->hasMany(ResourceReport::class)->open();
     }
 }

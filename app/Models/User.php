@@ -21,6 +21,7 @@ use App\Models\Club;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Comment;
 use App\Models\Upvote;
+use App\Models\ResourceReport;
 
 class User extends Authenticatable
 {
@@ -188,5 +189,17 @@ class User extends Authenticatable
     public function upvotesGiven()
     {
         return $this->hasMany(Upvote::class);
+    }
+
+    // Reports submitted by this user
+    public function resourceReports()
+    {
+        return $this->hasMany(ResourceReport::class, 'user_id');
+    }
+
+    // Reports resolved (reviewed/dismissed) by this user (admin/moderator)
+    public function resolvedResourceReports()
+    {
+        return $this->hasMany(ResourceReport::class, 'resolved_by');
     }
 }
